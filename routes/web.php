@@ -30,7 +30,7 @@ Route::view('admin', 'admin')
     ->name('admin');
 
 Route::view('profile', 'profile')
-    ->middleware(['auth', 'admin'])
+    ->middleware(['auth'])
     ->name('profile');
 
 require __DIR__.'/auth.php';
