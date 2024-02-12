@@ -25,6 +25,10 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth'])
     ->name('dashboard');
 
+Route::view('admin', 'admin')
+    ->middleware(['auth', 'admin'])
+    ->name('admin');
+
 Route::view('profile', 'profile')
     ->middleware(['auth', 'admin'])
     ->name('profile');

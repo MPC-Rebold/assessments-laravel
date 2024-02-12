@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('avatar');
@@ -21,7 +22,6 @@ return new class extends Migration
             $table->string('provider_id');
             $table->string('provider_token');
             $table->rememberToken();
-            $table->timestamps();
         });
     }
 
