@@ -10,18 +10,15 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('courses', function (Blueprint $table) {
+        Schema::create('assessments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('title');
-        });
+            $table->integer('number');
 
-        Schema::create('courses_users', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('course_id')->constrained();
-            $table->foreignId('user_id')->constrained();
 
-            $table->unique(['course_id', 'user_id']);
+            $table->unique(['course_id', 'number']);
         });
     }
 
@@ -30,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('courses');
+        Schema::dropIfExists('assessments');
     }
 };

@@ -9,6 +9,7 @@ class Canvas
 {
     private string $apiKey;
     private string $apiUrl;
+
     public function __construct()
     {
         $this->apiKey = config('canvas.token');
@@ -23,9 +24,9 @@ class Canvas
     public function getCourses(): Response
     {
         return Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->apiKey,
+            'Authorization' => 'Bearer ' . $this->apiKey,
             'Accept' => 'application/json',
-        ])->get($this->apiUrl.'/api/v1/courses?per_page=1000');
+        ])->get($this->apiUrl . '/api/v1/courses?per_page=1000');
 
     }
 }
