@@ -1,15 +1,16 @@
 <?php
 
 use Livewire\Volt\Component;
-use App\Services\Canvas;
+use App\Services\CanvasService;
 
 
 new class extends Component {
-    public function with(): array {
-        $canvas = new Canvas();
+    public function with(): array
+    {
+        $canvas = new CanvasService();
 
         return [
-            'test' => 'hi'
+            'test' => \Carbon\Carbon::now()->toDateTimeString(),
         ];
     }
 }; ?>

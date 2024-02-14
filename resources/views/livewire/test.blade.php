@@ -1,21 +1,20 @@
 <?php
 
 use Livewire\Volt\Component;
-use App\Services\Canvas;
+use App\Services\CanvasService;
 
 new class extends Component {
-    public function with()
+    public function with(): array
     {
-        $canvasApi = new Canvas();
+        $canvasApi = new CanvasService();
 
         return [
-            'canvas' => $canvasApi->getCourses(),
+            'canvas' => $canvasApi->getCourses()->json(),
         ];
     }
-
-
 }; ?>
 
 <div>
+    <livewire:dashboard.get-courses/>
     @dd($canvas)
 </div>

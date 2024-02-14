@@ -18,6 +18,6 @@ class Admin
         if (auth()->user()->is_admin) {
             return $next($request);
         }
-        return redirect('dashboard')->with('error', "You don't have admin access.");
+        return redirect('dashboard');
     }
 }
