@@ -7,26 +7,30 @@ use Illuminate\Support\Facades\Http;
 
 class Canvas
 {
-    private string $apiKey;
+    private string $apiToken;
     private string $apiUrl;
 
     public function __construct()
     {
-        $this->apiKey = config('canvas.token');
+        $this->apiToken = config('canvas.token');
         $this->apiUrl = config('canvas.host');
     }
 
-    public function get()
+    /**
+     * Get the courses from Canvas
+     *
+     * @return array
+     */
+    public function getCourses(): array
     {
-        return $this->apiKey;
-    }
+        $response =  Http::withToken($this->apiToken)
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])->withQueryParameters([
+                'per_page' => 1000,
+                'enrollment_type' => 'teacher',
+            ])->get($this->apiUrl . '/api/v1/courses');
 
-    public function getCourses(): Response
-    {
-        return Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
-            'Accept' => 'application/json',
-        ])->get($this->apiUrl . '/api/v1/courses?per_page=1000');
-
+        return $response->json();
     }
 }
