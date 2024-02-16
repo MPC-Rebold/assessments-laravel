@@ -1,3 +1,0 @@
-<div>
-    <livewire:test/>
-</div>

@@ -58,4 +58,9 @@ class User extends Authenticatable
         $courses = Course::whereJsonContains('valid_students', $this->email)->get();
         $this->courses()->sync($courses);
     }
+
+    public function isEnrolled(int $courseId): bool
+    {
+        return $this->courses->contains($courseId);
+    }
 }
