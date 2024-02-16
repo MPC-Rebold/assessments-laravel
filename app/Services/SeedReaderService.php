@@ -42,7 +42,7 @@ class SeedReaderService
         $res = [];
         for ($i = 0; $i < count($exploded) - 1; $i += 2) {
             $res[] = [
-                'question' => $exploded[$i],
+                'question' => trim($exploded[$i]),
                 'answer' => $exploded[$i + 1],
                 'number' => $i / 2 + 1,
             ];

@@ -12,10 +12,6 @@ class SettingsSeeder extends Seeder
      */
     public function run(): void
     {
-        Settings::create(
-            [
-                'specification_grading' => false,
-            ]
-        );
+        Settings::create();
     }
 }

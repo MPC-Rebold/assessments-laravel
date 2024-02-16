@@ -65,4 +65,26 @@ class CanvasService
     {
         return $this->get("courses/{$courseId}/assignments");
     }
+
+    /**
+     * Edit an assignment
+     *
+     * @param int $courseId
+     * @param int $assignmentId
+     * @param array $data
+     * @return Response
+     */
+    public function editAssignment(int $courseId, int $assignmentId, array $data): Response
+    {
+        return Http::withToken($this->apiToken)
+            ->withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ])->put(
+                $this->apiUrl . "/api/v1/courses/{$courseId}/assignments/{$assignmentId}",
+                [
+                    'assignment' => $data
+                ]
+            );
+    }
 }

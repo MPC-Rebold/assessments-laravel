@@ -6,6 +6,7 @@ use App\Services\SeedReaderService;
 use App\Models\Course;
 use App\Models\Assessment;
 use App\Models\Question;
+use App\Models\Settings;
 
 new class extends Component {
     public array $courses = [];
@@ -30,9 +31,7 @@ new class extends Component {
             $enrolled = $canvasApi->getCourseEnrollments($course["id"])->json();
 
             foreach ($enrolled as $enrollment) {
-                if ($enrollment["type"] == "StudentEnrollment") {
-                    $valid_students[] = $enrollment["user"]["login_id"];
-                }
+                $valid_students[] = $enrollment["user"]["login_id"];
             }
 
             $course = Course::updateOrCreate(
@@ -48,6 +47,7 @@ new class extends Component {
                 if (!SeedReaderService::isValidAssessment($course->title, $assessment["name"])) {
                     continue;
                 };
+
                 $assessment = Assessment::updateOrCreate(
                     ['id' => $assessment["id"]],
                     [
@@ -69,6 +69,15 @@ new class extends Component {
                     );
                 }
 
+                if (Settings::sole()->specification_grading) {
+                    $canvasApi->editAssignment($course->id, $assessment->id, [
+                        "points_possible" => 1,
+                    ]);
+                } else {
+                    $canvasApi->editAssignment($course->id, $assessment->id, [
+                        "points_possible" => $assessment->questionCount(),
+                    ]);
+                }
             }
         }
     }
