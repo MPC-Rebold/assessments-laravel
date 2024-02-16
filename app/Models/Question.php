@@ -8,6 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Question extends Model
 {
+    protected $fillable = [
+        'id',
+        'assessment_id',
+        'question',
+        'answer',
+        'max_attempts',
+        'number',
+    ];
+
     public function assessment(): BelongsTo
     {
         return $this->belongsTo(Assessment::class);

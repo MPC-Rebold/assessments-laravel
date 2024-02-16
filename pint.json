@@ -1,7 +1,8 @@
 {
-    "preset": "laravel",
-    "rules": {
-        "no_superfluous_phpdoc_tags": false
-    }
-
+  "preset": "laravel",
+  "rules": {
+    "no_superfluous_phpdoc_tags": false,
+    "concat_space": false,
+    "phpdoc_align": false
+  }
 }

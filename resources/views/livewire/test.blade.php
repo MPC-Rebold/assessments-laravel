@@ -15,6 +15,5 @@ new class extends Component {
 }; ?>
 
 <div>
-    <livewire:dashboard.get-courses/>
     @dd($canvas)
 </div>

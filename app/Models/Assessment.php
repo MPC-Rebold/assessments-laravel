@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Assessment extends Model
 {
+    protected $fillable = [
+        'id',
+        'course_id',
+        'title',
+        'due_at',
+    ];
+
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);

@@ -20,6 +20,7 @@ class ProviderController extends Controller
         $admins = file_get_contents(database_path('seed/admins.txt'));
         $admins = explode("\n", $admins);
         $admins = array_map('trim', $admins);
+
         return in_array($email, $admins);
     }
 
@@ -43,9 +44,10 @@ class ProviderController extends Controller
             'is_admin' => $this->isAdmin($SocialUser->getEmail()),
         ]);
 
+        $user->connectCourses();
+
         Auth::login($user, true);
 
         return redirect()->route('dashboard');
-
     }
 }

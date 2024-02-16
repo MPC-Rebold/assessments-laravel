@@ -45,11 +45,17 @@ class User extends Authenticatable
 
     public function courses(): BelongsToMany
     {
-        return $this->belongsToMany(Course::class);
+        return $this->belongsToMany(Course::class, 'courses_users');
     }
 
     public function questions(): BelongsToMany
     {
         return $this->belongsToMany(Question::class)->withPivot('answer', 'is_correct');
+    }
+
+    public function connectCourses(): void
+    {
+        $courses = Course::whereJsonContains('valid_students', $this->email)->get();
+        $this->courses()->sync($courses);
     }
 }
