@@ -36,15 +36,13 @@ new class extends Component {
 
                 <x-dropdown>
                     <x-slot name="trigger" class="h-full">
-
-                        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex h-full items-center">
+                        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex h-full">
                             <x-nav-link :active="request()->routeIs('courses/*')" class="h-full">
                                 {{ __('Courses') }}
                                 <x-icon name="chevron-down" class="h-5" solid/>
                             </x-nav-link>
                         </div>
                     </x-slot>
-
                 </x-dropdown>
 
                 @if(auth()->user()->is_admin)
@@ -64,8 +62,7 @@ new class extends Component {
                         <button
                                 class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ auth()->user()->name }}</div>
-                            <img class="h-8 w-8 ml-2 rounded-full object-cover" src="{{ auth()->user()->avatar }}"
-                                 alt="{{ auth()->user()->name }}"/>
+                            <x-avatar sm :src="auth()->user()->avatar" class="ml-2"/>
                             <div class="ms-1">
                                 <x-icon name="chevron-down" class="h-5" solid/>
                             </div>

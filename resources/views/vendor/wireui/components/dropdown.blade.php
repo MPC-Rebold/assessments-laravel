@@ -3,7 +3,7 @@
      x-on:click.outside="close"
      x-on:keydown.escape.window="close"
         {{ $attributes->only('wire:key') }}>
-    <div class="cursor-pointer focus:outline-none h-full" x-on:click="toggle">
+    <div class="cursor-pointer focus:outline-none h-full items-center flex" x-on:click="toggle">
         @if (isset($trigger))
             {{ $trigger }}
         @else
