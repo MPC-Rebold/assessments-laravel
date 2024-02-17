@@ -20,4 +20,5 @@ new class extends Component {
     }
 }; ?>
 
-@livewire('assessment.assessment-cards', ['assessments' => $assessments])
+<livewire:assessment.assessment-cards :assessments="$assessments"/>
+

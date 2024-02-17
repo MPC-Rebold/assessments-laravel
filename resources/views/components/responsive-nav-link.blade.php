@@ -3,12 +3,12 @@
 @php
     switch ($style) {
         case 'danger':
-            $colorsActive = 'border-red-400 text-red-500 focus:border-red-700';
-            $colorsInactive = 'border-transparent text-red-500 hover:text-red-700 hover:bg-red-50 hover:border-red-300 focus:text-red-700 focus:bg-red-50 focus:border-red-300';
+            $colorsActive = 'border-red-400 text-red-400 focus:border-red-600';
+            $colorsInactive = 'border-transparent text-red-400 hover:text-red-600 hover:border-red-300';
             break;
         case 'default':
-            $colorsActive = 'border-indigo-400 text-gray-900 focus:border-indigo-700';
-            $colorsInactive = 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300 focus:text-gray-700 focus:bg-gray-50 focus:border-gray-300';
+            $colorsActive = 'border-slate-300 text-gray-900 bg-slate-100';
+            $colorsInactive = 'border-transparent text-slate-200 hover:text-white hover:border-white focus:border-white focus:text-white';
             break;
     }
 

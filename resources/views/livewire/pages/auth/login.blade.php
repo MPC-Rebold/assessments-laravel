@@ -33,7 +33,7 @@ new #[Layout('layouts.guest')] class extends Component {
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')"/>
 
-    <x-button class="w-full bg-[#6f0834] text-white hover:bg-slate-700" href="{{ route('auth.redirect', 'google') }}">
+    <x-button primary class="w-full" href="{{ route('auth.redirect', 'google') }}">
         <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
              viewBox="0 0 18 19">
             <path fill-rule="evenodd"

@@ -23,6 +23,23 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                primary: {
+                    '500': '#680735',
+                    '600': '#560304'
+                },
+                secondary: {
+                    '50': '#DEE2DA',
+                    '100': '#ABBAA8',
+                    '200': '#90A690',
+                    '300': '#77927D',
+                    '500': '#5F7E6B',
+                    '600': '#47695b',
+                    '700': '#3b5549',
+                    '800': '#2f4137',
+                    '900': '#233023',
+                },
+            },
         },
     },
     plugins: [forms],

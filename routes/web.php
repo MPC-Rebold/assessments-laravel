@@ -33,9 +33,13 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::view('courses/{courseId}', 'course')
-    ->middleware(['auth', 'enrolled'])
+Route::view('courses', 'courses')
+    ->middleware(['auth'])
     ->name('courses');
+
+Route::view('courses/{courseId}', 'course-show')
+    ->middleware(['auth', 'enrolled'])
+    ->name('course');
 
 Route::view('courses/{courseId}/assessment/{assessmentId}', 'assessment')
     ->middleware(['auth', 'enrolled'])

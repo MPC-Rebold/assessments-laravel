@@ -93,7 +93,7 @@ new class extends Component {
             <li>{{ \Carbon\Carbon::now() }}</li>
         @endforeach
     </ul>
-    <x-button primary wire:click="syncCanvas">
+    <x-button primary wire:click="syncCanvas" spinner>
         Sync Canvas
     </x-button>
 </div>
