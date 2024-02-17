@@ -69,7 +69,9 @@ new class extends Component {
                     );
                 }
 
-                if (Settings::sole()->specification_grading) {
+                $settings = Settings::firstOrNew();
+
+                if ($settings->specification_grading) {
                     $canvasApi->editAssignment($course->id, $assessment->id, [
                         "points_possible" => 1,
                     ]);
