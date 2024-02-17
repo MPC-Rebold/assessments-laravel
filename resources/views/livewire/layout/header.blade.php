@@ -20,15 +20,11 @@ new class extends Component {
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center space-x-2">
             @for($i = 0; $i < count($routes); $i++)
+                <a class="hover:text-slate-500 hover:underline" href="{{$routes[$i]["href"]}}" wire:navigate>
+                    {{ __($routes[$i]["title"]) }}
+                </a>
                 @if($i < count($routes) - 1)
-                    <a class="hover:text-slate-500 hover:underline" href="{{$routes[$i]["href"]}}" wire:navigate>
-                        {{ __($routes[$i]["title"]) }}
-                    </a>
                     <x-icon name="chevron-right" class="h-5" solid/>
-                @else
-                    <a class="select-none">
-                        {{ __($routes[$i]["title"]) }}
-                    </a>
                 @endif
             @endfor
         </h2>
