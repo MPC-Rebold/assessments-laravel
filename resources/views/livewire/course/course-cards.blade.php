@@ -29,9 +29,9 @@ new class extends Component {
 
                     <div class="flex space-x-4">
                         <x-canvas-button class="w-10 h-10" :href="'/courses/'.$course['id']"/>
-                        <x-button secondary :href="route('course', $course['id'])" wire:navigate>
-                            Go
-                            <x-icon class="w-5 h-5" name="arrow-right"/>
+                        <x-button secondary :href="route('course', $course['id'])" wire:navigate class="relative">
+                            <span class="transition-transform duration-300">Go</span>
+                            <x-icon class="w-5 h-5 transition-transform duration-300 transform translate-x-0 group-hover:translate-x-1" name="arrow-right" />
                         </x-button>
                     </div>
                 </div>

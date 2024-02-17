@@ -10,7 +10,7 @@ new class extends Component {
 
 <div class="space-y-4">
     @foreach($assessments as $assessment)
-        <div class="px-6 py-4 text-gray-900 bg-white overflow-hidden shadow-sm sm:rounded-lg hover:scale-[1.01] transition-all">
+        <div class="px-6 py-4 text-gray-900 bg-white overflow-hidden shadow-sm sm:rounded-lg hover:scale-[1.007] transition-all">
                 <div class="flex justify-between items-center">
                     <a class="hover:underline" href="{{ route('assessment', [$assessment["course_id"], $assessment["id"]]) }}" wire:navigate>
                         <div>
@@ -25,10 +25,11 @@ new class extends Component {
 
                     <div class="flex space-x-4">
                         <x-canvas-button class="w-10 h-10" :href="'/courses/' . $assessment['course_id'] . '/assignments/' . $assessment['id']"/>
-                        <x-button secondary :href="route('assessment', [$assessment['course_id'],  $assessment['id']])" wire:navigate>
-                            Go
-                            <x-icon class="w-5 h-5" name="arrow-right"/>
+                        <x-button secondary :href="route('assessment', [$assessment['course_id'],  $assessment['id']])" wire:navigate class="relative">
+                            <span class="transition-transform duration-300">Go</span>
+                            <x-icon class="w-5 h-5 transition-transform duration-300 transform translate-x-0 group-hover:translate-x-1" name="arrow-right" />
                         </x-button>
+
                     </div>
                 </div>
         </div>
