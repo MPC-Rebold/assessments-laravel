@@ -29,7 +29,7 @@ new class extends Component {
 
                     <div class="flex space-x-4">
                         <x-canvas-button class="w-10 h-10" :href="'/courses/'.$course['id']"/>
-                        <x-button secondary :href="route('course', $course['id'])">
+                        <x-button secondary :href="route('course', $course['id'])" wire:navigate>
                             Go
                             <x-icon class="w-5 h-5" name="arrow-right"/>
                         </x-button>
