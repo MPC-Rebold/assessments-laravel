@@ -7,13 +7,19 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <livewire:dashboard.course-cards/>
-                </div>
+    <div class="py-10">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-10">
+            <div class="space-y-4">
+                <h1 class="text-2xl">{{ __('Your Courses') }}</h1>
+                <hr class="border-2">
+                <livewire:dashboard.course-cards/>
             </div>
+            <div class="space-y-4">
+                <h1 class="text-2xl">{{ __('Upcoming Assessments') }}</h1>
+                <hr class="border-2">
+                <livewire:dashboard.upcoming-assignments/>
+            </div>
+
         </div>
     </div>
 </x-app-layout>

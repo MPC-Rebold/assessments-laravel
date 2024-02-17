@@ -55,12 +55,24 @@ class User extends Authenticatable
 
     public function connectCourses(): void
     {
-        $courses = Course::whereJsonContains('valid_students', $this->email)->get();
-        $this->courses()->sync($courses);
+        if ($this->is_admin) {
+            $courses = Course::all();
+            $this->courses()->sync($courses);
+        } else {
+            $courses = Course::whereJsonContains('valid_students', $this->email)->get();
+            $this->courses()->sync($courses);
+        }
     }
 
     public function isEnrolled(int $courseId): bool
     {
         return $this->courses->contains($courseId);
+    }
+
+    public function assessments(): array
+    {
+        $assessments = $this->courses->map->assessments->flatten();
+        $assessments = $assessments->sortBy('due_at');
+        return $assessments->values()->all();
     }
 }

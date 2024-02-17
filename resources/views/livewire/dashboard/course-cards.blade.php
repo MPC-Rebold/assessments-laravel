@@ -15,10 +15,14 @@ new class extends Component {
     }
 }; ?>
 
-<div>
+<div class="space-y-2">
     @foreach($courses as $course)
-        <a href="{{ $course['href'] }}" wire:navigate class="hover:text-indigo-700">
-            {{ $course['title'] }}
-        </a>
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6 text-gray-900">
+                <a href="{{ $course['href'] }}" wire:navigate class="hover:text-indigo-700">
+                    {{ $course['title'] }}
+                </a>
+            </div>
+        </div>
     @endforeach
 </div>
