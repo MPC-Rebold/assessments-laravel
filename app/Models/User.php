@@ -69,8 +69,13 @@ class User extends Authenticatable
         return $this->courses->contains($courseId);
     }
 
-    public function assessments(): array
+    public function assessments(int $courseId = -1): array
     {
+        if ($courseId !== -1) {
+            $assessments = $this->courses->find($courseId)->assessments;
+            return $assessments->sortBy('due_at')->values()->all();
+        }
+
         $assessments = $this->courses->map->assessments->flatten();
         $assessments = $assessments->sortBy('due_at');
         return $assessments->values()->all();

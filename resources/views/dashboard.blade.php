@@ -12,12 +12,12 @@
             <div class="space-y-4">
                 <h1 class="text-2xl">{{ __('Your Courses') }}</h1>
                 <hr class="border-2">
-                <livewire:dashboard.course-cards/>
+                <livewire:course.course-cards/>
             </div>
             <div class="space-y-4">
                 <h1 class="text-2xl">{{ __('Upcoming Assessments') }}</h1>
                 <hr class="border-2">
-                <livewire:dashboard.upcoming-assignments/>
+                <livewire:assessment.upcoming-assessments/>
             </div>
 
         </div>

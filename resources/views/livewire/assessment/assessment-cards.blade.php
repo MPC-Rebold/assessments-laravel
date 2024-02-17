@@ -1,17 +1,13 @@
 <?php
 
 use Livewire\Volt\Component;
+use App\Models\Assessment;
 
 new class extends Component {
-    public function with(): array
-    {
-        return [
-            'assessments' => array_slice(auth()->user()->assessments(), 0, 4),
-        ];
-    }
+    public array $assessments;
 }; ?>
 
-<div>
+<div class="space-y-4">
     @foreach($assessments as $assessment)
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">

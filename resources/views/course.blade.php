@@ -1,5 +1,7 @@
 <?php
+
 use App\Models\Course;
+
 $course = Course::find(last(request()->segments()));
 ?>
 
@@ -18,12 +20,9 @@ $course = Course::find(last(request()->segments()));
             </a>
         </h2>
     </x-slot>
-
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                @livewire('course.assessment-cards', ['assessments' => $course->assessments->toArray()])
-            </div>
+            @livewire('assessment.upcoming-assessments', ['courseId' => $course->id])
         </div>
     </div>
 </x-app-layout>
