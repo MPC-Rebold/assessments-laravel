@@ -16,6 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->boolean('specification_grading')->default(false);
             $table->float('specification_grading_threshold')->unsigned()->default(0.80);
+            $table->dateTime('last_synced_at')->nullable();
         });
     }
 

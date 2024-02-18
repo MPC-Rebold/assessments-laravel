@@ -82,6 +82,10 @@ new class extends Component {
                 }
             }
         }
+
+        Settings::firstOrNew()->update([
+            'last_synced_at' => now(),
+        ]);
     }
 
 }; ?>
