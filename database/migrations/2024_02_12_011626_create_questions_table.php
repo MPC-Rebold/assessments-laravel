@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('max_attempts')->default(10);
             $table->integer('number');
 
-            $table->foreignId('assessment_id')->constrained();
+            $table->foreignId('assessment_id')->constrained()->cascadeOnDelete();
 
             $table->unique(['assessment_id', 'number']);
         });
