@@ -1,6 +1,5 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
-import colors from "tailwindcss/colors";
 
 
 /** @type {import('tailwindcss').Config} */
@@ -41,7 +40,7 @@ export default {
                     '900': '#30394a',
                     '950': '#202631',
                 },
-                accent: {
+                positive: {
                     '50': '#DEE2DA',
                     '100': '#ABBAA8',
                     '200': '#90A690',
