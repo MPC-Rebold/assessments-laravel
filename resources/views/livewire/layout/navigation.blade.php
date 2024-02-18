@@ -45,31 +45,36 @@ new class extends Component {
                     </x-nav-link>
                 </div>
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex h-full">
-
+                <div x-data="{coursesOpen: false}" @click="coursesOpen = !coursesOpen"
+                     @click.outside="coursesOpen = false"
+                     class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex h-full">
                     <x-dropdown align="left">
                         <x-slot name="trigger" class="h-full">
                             <div class="hidden space-x-8 sm:-my-px sm:flex h-full">
                                 <x-nav-link :active="request()->routeIs('courses', 'course', 'assessment')"
                                             class="h-full">
                                     {{ __('Courses') }}
-                                    <x-icon name="chevron-down" class="h-5" solid/>
+                                    <div :class="{'rotate-180': coursesOpen}" class="transition-all ease-in-out">
+                                        <x-icon name="chevron-down" class="h-5" solid/>
+                                    </div>
                                 </x-nav-link>
                             </div>
                         </x-slot>
                         @for($i = 0; $i < count($courses); $i++)
-                            <x-dropdown.item :separator="(bool)$i" :href="$courses[$i]['href']" wire:navigate>
-                                <div class="flex justify-between items-center">
+                            <x-dropdown.item class="group" :separator="(bool)$i" :href="$courses[$i]['href']"
+                                             wire:navigate>
+                                <div class="flex justify-between items-center w-full">
                                     <div class="font-bold text-lg">
                                         {{ $courses[$i]['title'] }}
                                     </div>
-                                    <x-icon name="chevron-right" class="h-5" solid/>
+                                    <x-icon name="chevron-right"
+                                            class="h-5 transition-transform duration-300 group-hover:translate-x-1"
+                                            solid/>
                                 </div>
                             </x-dropdown.item>
                         @endfor
                     </x-dropdown>
                 </div>
-
 
                 @if(auth()->user()->is_admin)
                     <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex h-full">
@@ -82,14 +87,15 @@ new class extends Component {
             </div>
 
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div x-data="{profileOpen: false}" @click="profileOpen = ! profileOpen" @click.outside="profileOpen = false"
+                 class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" class="w-48">
                     <x-slot name="trigger">
                         <button
                                 class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-slate-200 bg-[#6f0834] hover:text-white focus:outline-none transition ease-in-out duration-150">
                             <div>{{ auth()->user()->name }}</div>
                             <x-avatar sm :src="auth()->user()->avatar" class="ml-2"/>
-                            <div class="ms-1">
+                            <div :class="{'rotate-180': profileOpen}" class="ms-1 transition-all ease-in-out">
                                 <x-icon name="chevron-down" class="h-5" solid/>
                             </div>
                         </button>

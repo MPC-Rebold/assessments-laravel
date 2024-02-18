@@ -27,7 +27,7 @@ new class extends Component {
                         <x-canvas-button class="w-10 h-10" :href="'/courses/' . $assessment['course_id'] . '/assignments/' . $assessment['id']"/>
                         <x-button secondary :href="route('assessment', [$assessment['course_id'],  $assessment['id']])" wire:navigate class="relative">
                             <span class="transition-transform duration-300">Go</span>
-                            <x-icon class="w-5 h-5 transition-transform duration-300 transform translate-x-0 group-hover:translate-x-1" name="arrow-right" />
+                            <x-icon class="w-5 h-5 transition-transform transform translate-x-0 group-hover:translate-x-1" name="arrow-right" />
                         </x-button>
 
                     </div>
