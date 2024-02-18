@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('title');
+            $table->string('title')->unique();
             $table->json('valid_students');
         });
 
         Schema::create('courses_users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('course_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('course_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->unique(['course_id', 'user_id']);
         });
     }

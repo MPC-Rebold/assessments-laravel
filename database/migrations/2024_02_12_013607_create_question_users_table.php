@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('question_users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('question_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('question_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('answer');
             $table->boolean('is_correct');
             $table->timestamps();

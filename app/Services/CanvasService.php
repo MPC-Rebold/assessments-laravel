@@ -35,7 +35,7 @@ class CanvasService
     }
 
     /**
-     * Get the courses from Canvas
+     * Get all the courses from Canvas where the user is a teacher
      *
      * @return Response
      */
@@ -83,7 +83,7 @@ class CanvasService
             ])->put(
                 $this->apiUrl . "/api/v1/courses/{$courseId}/assignments/{$assignmentId}",
                 [
-                    'assignment' => $data
+                    'assignment' => $data,
                 ]
             );
     }

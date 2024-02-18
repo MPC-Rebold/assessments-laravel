@@ -4,6 +4,11 @@ namespace App\Services;
 
 class SeedReaderService
 {
+    public static function getCourses(): array
+    {
+        return glob(database_path('seed') . '\*', GLOB_ONLYDIR);
+    }
+
     /**
      * Checks if course is a valid directory in \database\seed
      *
