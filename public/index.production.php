@@ -16,7 +16,7 @@ define('LARAVEL_START', microtime(true));
 |
 */
 
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+if (file_exists($maintenance = __DIR__ . '/../storage/framework/maintenance.php')) {
     require $maintenance;
 }
 
@@ -31,8 +31,12 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 |
 */
 
-/** @noinspection PhpIncludeInspection */
-require __DIR__.'/../Rebold/vendor/autoload.php';
+if (config('app.env') === 'production') {
+    /** @noinspection PhpIncludeInspection */
+    require __DIR__ . '/../Rebold/vendor/autoload.php';
+} else {
+    require __DIR__ . '/../vendor/autoload.php';
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -45,8 +49,13 @@ require __DIR__.'/../Rebold/vendor/autoload.php';
 |
 */
 
-/** @noinspection PhpIncludeInspection */
-$app = require_once __DIR__.'/../Rebold/bootstrap/app.php';
+
+if (config('app.env') === 'production') {
+    /** @noinspection PhpIncludeInspection */
+    $app = require_once __DIR__ . '/../Rebold/bootstrap/app.php';
+} else {
+    $app = require_once __DIR__ . '/../bootstrap/app.php';
+}
 
 $kernel = $app->make(Kernel::class);
 

@@ -12,6 +12,6 @@ class SettingsSeeder extends Seeder
      */
     public function run(): void
     {
-        Settings::create();
+        Settings::firstOrNew();
     }
 }
