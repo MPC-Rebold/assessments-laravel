@@ -31,7 +31,8 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 |
 */
 
-require __DIR__.'/../vendor/autoload.php';
+/** @noinspection PhpIncludeInspection */
+require __DIR__.'/../Rebold/vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +45,8 @@ require __DIR__.'/../vendor/autoload.php';
 |
 */
 
-$app = require_once __DIR__.'/../bootstrap/app.php';
+/** @noinspection PhpIncludeInspection */
+$app = require_once __DIR__.'/../Rebold/bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
 

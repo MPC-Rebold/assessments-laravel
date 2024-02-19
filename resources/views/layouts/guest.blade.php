@@ -20,13 +20,16 @@
     <wireui:scripts/>
 </head>
 <body class="font-sans text-gray-900 antialiased">
-<div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-slate-400">
-    <div>
-        <x-application-logo-full class="w-60 fill-current text-gray-500 select-none"/>
-    </div>
-
+<div class="min-h-screen flex flex-col justify-center items-center bg-slate-400 pb-16">
+    <x-application-logo-full class="w-60 fill-current text-gray-500 select-none"/>
     <div class="w-full sm:max-w-sm mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
         {{ $slot }}
+    </div>
+</div>
+{{--    vopyright at bottom middle of page--}}
+<div class="absolute bottom-4 w-full text-center text-slate-300">
+    <div class="text-xs">
+        &copy; 2024 T Rebold, A Vasquez, A Wang
     </div>
 </div>
 </body>

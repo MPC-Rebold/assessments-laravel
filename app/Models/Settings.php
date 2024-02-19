@@ -8,5 +8,7 @@ class Settings extends Model
 {
     protected $fillable = [
         'specification_grading',
+        'specification_grading_threshold',
+        'last_synced_at',
     ];
 }

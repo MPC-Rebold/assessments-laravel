@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Livewire\Volt\Component;
 use App\Services\CanvasService;
 use App\Services\SeedReaderService;
@@ -13,13 +14,10 @@ new class extends Component {
 
     public function syncCanvas(): void
     {
-        $this->syncCourses();
-    }
-
-    private function syncCourses(): void
-    {
         $canvasApi = new CanvasService();
         $this->courses = $canvasApi->getCourses()->json();
+        $settings = Settings::firstOrNew();
+
 
         foreach ($this->courses as $course) {
             $title = $course["name"];
@@ -69,8 +67,6 @@ new class extends Component {
                     );
                 }
 
-                $settings = Settings::firstOrNew();
-
                 if ($settings->specification_grading) {
                     $canvasApi->editAssignment($course->id, $assessment->id, [
                         "points_possible" => 1,
@@ -83,21 +79,28 @@ new class extends Component {
             }
         }
 
-        Settings::firstOrNew()->update([
-            'last_synced_at' => now(),
+        $settings->update([
+            'last_synced_at' => Carbon::now('PST'),
         ]);
     }
 
 }; ?>
 
-<div>
+<div class="p-4 sm:p-6 bg-white shadow sm:rounded-lg">
+    <div class="flex items-center justify-between">
+        <div class="text-gray-500">
+            Last Synced: {{ Settings::first()->last_synced_at ? Settings::first()->last_synced_at . ' PST' :  'Never'}}
+        </div>
+        <x-button positive wire:click="syncCanvas" spinner>
+            <div>
+                Sync Canvas
+            </div>
+        </x-button>
+    </div>
     <ul>
         @foreach($courses as $course)
             <li>{{ $course["name"] }}</li>
-            <li>{{ \Carbon\Carbon::now() }}</li>
+            <li>{{ Carbon::now() }}</li>
         @endforeach
     </ul>
-    <x-button positive wire:click="syncCanvas" spinner>
-        Sync Canvas
-    </x-button>
 </div>
