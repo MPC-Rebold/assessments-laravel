@@ -92,7 +92,7 @@ new class extends Component {
                 <x-dropdown align="right" class="w-48">
                     <x-slot name="trigger">
                         <button
-                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-slate-200 bg-[#6f0834] hover:text-white focus:outline-none transition ease-in-out duration-150">
+                                class="inline-flex items-center h-full px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-slate-200 bg-[#6f0834] hover:text-white focus:outline-none transition ease-in-out duration-150">
                             <div>{{ auth()->user()->name }}</div>
                             <x-avatar sm :src="auth()->user()->avatar" class="ml-2"/>
                             <div :class="{'rotate-180': profileOpen}" class="ms-1 transition-all ease-in-out">

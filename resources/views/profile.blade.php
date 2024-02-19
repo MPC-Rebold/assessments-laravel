@@ -1,15 +1,13 @@
 @section('title', 'Profile')
 
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+    @livewire('layout.header', ['routes' => [
+        ['title' => 'Profile', 'href' => route('profile')],
+    ]])
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            <div class="p-4 sm:p-6 bg-white shadow sm:rounded-lg">
                 <div class="flex align-middle justify-between">
                     <div class="flex justify-between">
                         <x-avatar xl :src="auth()->user()->avatar" class="mx-auto"/>
@@ -52,8 +50,20 @@
                     @endif
                 </div>
             </div>
-
-
+            <div class="relative w-full">
+                <div class="absolute right-0">
+                    <div class="flex space-x-4 ">
+                        @if (auth()->user()->is_admin)
+                            <x-button red class="w-28 shadow" icon="cog" :href="route('admin')">
+                                Admin
+                            </x-button>
+                        @endif
+                        <div class="w-28 shadow">
+                            <livewire:profile.logout-button/>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>
