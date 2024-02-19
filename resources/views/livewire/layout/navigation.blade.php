@@ -47,10 +47,10 @@ new class extends Component {
 
                 <div x-data="{coursesOpen: false}" @click="coursesOpen = !coursesOpen"
                      @click.outside="coursesOpen = false"
-                     class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex h-full">
+                     class="hidden space-x-8 sm:ms-6 sm:flex h-full">
                     <x-dropdown align="left">
                         <x-slot name="trigger" class="h-full">
-                            <div class="hidden space-x-8 sm:-my-px sm:flex h-full">
+                            <div class="h-full">
                                 <x-nav-link :active="request()->routeIs('courses', 'course', 'assessment')"
                                             class="h-full">
                                     {{ __('Courses') }}

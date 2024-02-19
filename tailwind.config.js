@@ -11,7 +11,6 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
-        "./node_modules/flowbite/**/*.js",
 
         './vendor/wireui/wireui/resources/**/*.blade.php',
         './vendor/wireui/wireui/ts/**/*.ts',
@@ -45,6 +44,7 @@ export default {
                     '100': '#ABBAA8',
                     '200': '#90A690',
                     '300': '#77927D',
+                    '400': '#5F7E6B',
                     '500': '#5F7E6B',
                     '600': '#47695b',
                     '700': '#3b5549',
