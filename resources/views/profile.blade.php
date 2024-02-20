@@ -1,3 +1,9 @@
+<?php
+
+use App\Models\Course;
+
+?>
+
 @section('title', 'Profile')
 
 <x-app-layout>
@@ -32,7 +38,7 @@
                     @if(auth()->user()->is_admin)
                         <h2 class="font-bold text-gray-800">All Courses:</h2>
                         <div class="ms-1">
-                            @if (\App\Models\Course::count() > 0)
+                            @if (Course::count() > 0)
                                 {{  implode(', ', \App\Models\Course::pluck('title')->toArray()) }}
                             @else
                                 There are no courses. Try syncing with Canvas.
