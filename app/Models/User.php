@@ -57,11 +57,10 @@ class User extends Authenticatable
     {
         if ($this->is_admin) {
             $courses = Course::all();
-            $this->courses()->sync($courses);
         } else {
             $courses = Course::whereJsonContains('valid_students', $this->email)->get();
-            $this->courses()->sync($courses);
         }
+        $this->courses()->sync($courses);
     }
 
     public function isEnrolled(int $courseId): bool

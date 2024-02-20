@@ -76,12 +76,12 @@ class CanvasService
     }
 
     /**
-     * Get the assignments for a course
+     * Get the assignments for a section
      *
      * @param int $courseId
      * @return Response
      */
-    public static function getCourseAssignments(int $courseId): Response
+    public static function getSectionAssignments(int $courseId): Response
     {
         return self::get("courses/{$courseId}/assignments");
     }

@@ -19,11 +19,8 @@ class SyncCanvas extends Component
 
     public function syncCanvas(): void
     {
-        $courses = CanvasService::getCourses()->json();
-
-        foreach ($courses as $course) {
-            $this->syncCourse($course);
-        }
+        $this->syncSections();
+        $this->syncCourses();
 
         Settings::firstOrNew()->update([
             'last_synced_at' => Carbon::now('PST'),
@@ -34,31 +31,43 @@ class SyncCanvas extends Component
         );
     }
 
-    public function syncCourse($course): void
+    public function syncSections(): void
     {
-        $title = $course["name"];
-        if (!SeedReaderService::isValidCourse($title)) {
-            return;
+        // Canvas 'courses' are 'sections' in our database
+        $sections = CanvasService::getCourses()->json();
+
+        foreach ($sections as $section) {
+            $valid_students = [];
+            $enrolled = CanvasService::getCourseEnrollments($section["id"])->json();
+            foreach ($enrolled as $enrollment) {
+                $valid_students[] = $enrollment["user"]["login_id"];
+            }
+
+            Course::updateOrCreate(
+                ['id' => $section["id"]],
+                [
+                    'name' => $section["name"],
+                    'valid_students' => $valid_students,
+                ]
+            );
         }
 
-        $valid_students = [];
-        $enrolled = CanvasService::getCourseEnrollments($course["id"])->json();
+    }
 
-        foreach ($enrolled as $enrollment) {
-            $valid_students[] = $enrollment["user"]["login_id"];
-        }
+    public function syncCourses(): void
+    {
+        $courses = SeedReaderService::getCourses();
 
-        $course = Course::updateOrCreate(
-            ['id' => $course["id"]],
-            [
-                'title' => $title,
-                'valid_students' => $valid_students,
-            ]
-        );
+        foreach ($courses as $course) {
+            $course = Course::firstOrCreate(
+                ['title' => $course]
+            );
 
-        $assessments = CanvasService::getCourseAssignments($course->id)->json();
-        foreach ($assessments as $assessment) {
-            $this->syncAssessment($course, $assessment);
+            $assessments = CanvasService::getSectionAssignments($course->id)->json();
+
+            foreach ($assessments as $assessment) {
+                $this->syncAssessment($course, $assessment);
+            }
         }
     }
 
