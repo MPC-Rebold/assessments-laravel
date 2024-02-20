@@ -12,6 +12,8 @@ class SettingsSeeder extends Seeder
      */
     public function run(): void
     {
-        Settings::firstOrNew();
+        if (Settings::count() === 0) {
+            Settings::create();
+        }
     }
 }
