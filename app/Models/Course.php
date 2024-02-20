@@ -20,7 +20,19 @@ class Course extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'courses_users');
+        return $this->belongsToMany(User::class);
+    }
+
+    public function sections(): HasMany
+    {
+        return $this->hasMany(Section::class);
+    }
+
+    public function sectionForUser(string $userEmail): Section
+    {
+        return $this->sections->first(function (Section $section) use ($userEmail) {
+            return in_array($userEmail, $section->valid_students);
+        });
     }
 
     public function assessments(): HasMany

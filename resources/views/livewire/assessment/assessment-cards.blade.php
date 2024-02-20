@@ -9,10 +9,12 @@ new class extends Component {
 }; ?>
 
 <div class="space-y-4">
-    @foreach($assessments as $assessment)
-        <div class="px-6 py-4 text-gray-900 bg-white overflow-hidden shadow-sm sm:rounded-lg hover:scale-[1.007] transition-all">
+    @if (count($assessments) > 0)
+        @foreach($assessments as $assessment)
+            <div class="px-6 py-4 text-gray-900 bg-white overflow-hidden shadow-sm sm:rounded-lg hover:scale-[1.007] transition-all">
                 <div class="flex justify-between items-center">
-                    <a class="hover:underline" href="{{ route('assessment', [$assessment["course_id"], $assessment["id"]]) }}" wire:navigate>
+                    <a class="hover:underline"
+                       href="{{ route('assessment', [$assessment["course_id"], $assessment["id"]]) }}" wire:navigate>
                         <div>
                             <div class="text-lg font-semibold">
                                 {{ $assessment["title"] }}
@@ -24,14 +26,24 @@ new class extends Component {
                     </a>
 
                     <div class="flex space-x-4">
-                        <x-canvas-button class="w-10 h-10" :href="'/courses/' . $assessment['course_id'] . '/assignments/' . $assessment['id']"/>
-                        <x-button secondary :href="route('assessment', [$assessment['course_id'],  $assessment['id']])" wire:navigate class="relative">
+                        <x-canvas-button class="w-10 h-10"
+                                         :href="'/courses/' . $assessment['course_id'] . '/assignments/' . $assessment['id']"/>
+                        <x-button secondary :href="route('assessment', [$assessment['course_id'],  $assessment['id']])"
+                                  wire:navigate class="relative">
                             <span class="transition-transform duration-300">Go</span>
-                            <x-icon class="w-5 h-5 transition-transform transform translate-x-0 group-hover:translate-x-1" name="arrow-right" />
+                            <x-icon class="w-5 h-5 transition-transform transform translate-x-0 group-hover:translate-x-1"
+                                    name="arrow-right"/>
                         </x-button>
 
                     </div>
                 </div>
+            </div>
+        @endforeach
+    @else
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="px-6 py-4 text-gray-900 w-full max-h-20 flex justify-between items-center">
+                No assessments found
+            </div>
         </div>
-    @endforeach
+    @endif
 </div>

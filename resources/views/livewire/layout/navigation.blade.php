@@ -60,19 +60,30 @@ new class extends Component {
                                 </x-nav-link>
                             </div>
                         </x-slot>
-                        @for($i = 0; $i < count($courses); $i++)
-                            <x-dropdown.item class="group" :separator="(bool)$i" :href="$courses[$i]['href']"
-                                             wire:navigate>
+                        @if(count($courses) > 0)
+                            @for($i = 0; $i < count($courses); $i++)
+                                <x-dropdown.item class="group" :separator="(bool)$i" :href="$courses[$i]['href']"
+                                                 wire:navigate>
+                                    <div class="flex justify-between items-center w-full">
+                                        <div class="font-bold text-lg">
+                                            {{ $courses[$i]['title'] }}
+                                        </div>
+                                        <x-icon name="chevron-right"
+                                                class="h-5 transition-transform duration-300 group-hover:translate-x-1"
+                                                solid/>
+                                    </div>
+                                </x-dropdown.item>
+                            @endfor
+                        @else
+                            <x-dropdown.item>
                                 <div class="flex justify-between items-center w-full">
                                     <div class="font-bold text-lg">
-                                        {{ $courses[$i]['title'] }}
+                                        No Courses
                                     </div>
-                                    <x-icon name="chevron-right"
-                                            class="h-5 transition-transform duration-300 group-hover:translate-x-1"
-                                            solid/>
                                 </div>
                             </x-dropdown.item>
-                        @endfor
+                        @endif
+
                     </x-dropdown>
                 </div>
 

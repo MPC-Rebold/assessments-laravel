@@ -35,7 +35,7 @@
                             @if (\App\Models\Course::count() > 0)
                                 {{  implode(', ', \App\Models\Course::pluck('title')->toArray()) }}
                             @else
-                                There are no available courses. Try syncing with Canvas.
+                                There are no courses. Try syncing with Canvas.
                             @endif
                         </div>
                     @else
