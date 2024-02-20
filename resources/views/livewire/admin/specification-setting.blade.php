@@ -2,8 +2,11 @@
 
 use Livewire\Volt\Component;
 use App\Models\Settings;
+use WireUi\Traits\Actions;
 
 new class extends Component {
+    use Actions;
+
     public bool $specification_grading;
     public string $specification_grading_threshold;
 
@@ -34,6 +37,10 @@ new class extends Component {
         ]);
 
         $this->specification_grading = Settings::sole()->specification_grading;
+
+        $this->notification()->success(
+            $title = 'Specification Grading Turned ' . ($specification_grading ? 'On' : 'Off'),
+        );
     }
 
 }; ?>

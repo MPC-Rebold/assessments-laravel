@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\Http;
 
 class CanvasService
 {
-    private string $apiToken;
+    private static string $apiToken;
 
-    private string $apiUrl;
+    private static string $apiUrl;
 
-    public function __construct()
+    public static function initialize(): void
     {
-        $this->apiToken = config('canvas.token');
-        $this->apiUrl = config('canvas.host');
+        self::$apiToken = config('canvas.token');
+        self::$apiUrl = config('canvas.host');
     }
 
     /**
@@ -24,14 +24,34 @@ class CanvasService
      * @param  $query  array the query parameters
      * @return Response the response from the API
      */
-    public function get(string $path, array $query = []): Response
+    public static function get(string $path, array $query = []): Response
     {
-        return Http::withToken($this->apiToken)
+        self::initialize();
+
+        return Http::withToken(self::$apiToken)
             ->withHeaders([
                 'Accept' => 'application/json',
             ])->withQueryParameters(
                 ['per_page' => 1000] + $query
-            )->get($this->apiUrl . '/api/v1/' . $path);
+            )->get(self::$apiUrl . '/api/v1/' . $path);
+    }
+
+    /**
+     * Send a PUT request to the Canvas API
+     *
+     * @param string $path
+     * @param array $data
+     * @return Response
+     */
+    public static function put(string $path, array $data): Response
+    {
+        self::initialize();
+
+        return Http::withToken(self::$apiToken)
+            ->withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ])->put(self::$apiUrl . '/api/v1/' . $path, $data);
     }
 
     /**
@@ -39,9 +59,9 @@ class CanvasService
      *
      * @return Response
      */
-    public function getCourses(): Response
+    public static function getCourses(): Response
     {
-        return $this->get('courses', ['enrollment_type' => 'teacher']);
+        return self::get('courses', ['enrollment_type' => 'teacher']);
     }
 
     /**
@@ -50,9 +70,9 @@ class CanvasService
      * @param int $courseId
      * @return Response
      */
-    public function getCourseEnrollments(int $courseId): Response
+    public static function getCourseEnrollments(int $courseId): Response
     {
-        return $this->get("courses/{$courseId}/enrollments");
+        return self::get("courses/{$courseId}/enrollments");
     }
 
     /**
@@ -61,9 +81,9 @@ class CanvasService
      * @param int $courseId
      * @return Response
      */
-    public function getCourseAssignments(int $courseId): Response
+    public static function getCourseAssignments(int $courseId): Response
     {
-        return $this->get("courses/{$courseId}/assignments");
+        return self::get("courses/{$courseId}/assignments");
     }
 
     /**
@@ -74,17 +94,8 @@ class CanvasService
      * @param array $data
      * @return Response
      */
-    public function editAssignment(int $courseId, int $assignmentId, array $data): Response
+    public static function editAssignment(int $courseId, int $assignmentId, array $data): Response
     {
-        return Http::withToken($this->apiToken)
-            ->withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-            ])->put(
-                $this->apiUrl . "/api/v1/courses/{$courseId}/assignments/{$assignmentId}",
-                [
-                    'assignment' => $data,
-                ]
-            );
+        return self::put("courses/{$courseId}/assignments/{$assignmentId}", ['assignment' => $data]);
     }
 }
