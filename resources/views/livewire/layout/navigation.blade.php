@@ -19,66 +19,64 @@ new class extends Component {
 
     public function mount(): void
     {
-        $this->courses = auth()->user()->courses->map(fn($course) => [
-            'title' => $course->title,
-            'href' => route('course', $course['id']),
-        ]);
+        $this->courses = auth()->user()->courses->map(
+            fn($course) => [
+                'title' => $course->title,
+                'href' => route('course', $course['id']),
+            ],
+        );
     }
 }; ?>
 
-<nav x-data="{open: false}" class="bg-[#6f0834] border-b border-gray-100">
+<nav x-data="{ open: false }" class="border-b border-gray-100 bg-[#6f0834]">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-14">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-14 justify-between">
             <div class="flex items-center">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
+                <div class="flex shrink-0 items-center">
                     <a href="{{ route('dashboard') }}" wire:navigate>
-                        <x-application-logo class="h-10"/>
+                        <x-application-logo class="h-10" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex h-full">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
-                                wire:navigate>
+                <div class="hidden h-full space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
 
-                <div x-data="{coursesOpen: false}" @click="coursesOpen = !coursesOpen"
-                     @click.outside="coursesOpen = false"
-                     class="hidden space-x-8 sm:ms-6 sm:flex h-full">
+                <div x-data="{ coursesOpen: false }" @click="coursesOpen = !coursesOpen" @click.outside="coursesOpen = false"
+                    class="hidden h-full space-x-8 sm:ms-6 sm:flex">
                     <x-dropdown align="left">
                         <x-slot name="trigger" class="h-full">
                             <div class="h-full">
-                                <x-nav-link :active="request()->routeIs('courses', 'course', 'assessment')"
-                                            class="h-full">
+                                <x-nav-link :active="request()->routeIs('courses', 'course', 'assessment')" class="h-full">
                                     {{ __('Courses') }}
-                                    <div :class="{'rotate-180': coursesOpen}" class="transition-all ease-in-out">
-                                        <x-icon name="chevron-down" class="h-5" solid/>
+                                    <div :class="{ 'rotate-180': coursesOpen }" class="transition-all ease-in-out">
+                                        <x-icon name="chevron-down" class="h-5" solid />
                                     </div>
                                 </x-nav-link>
                             </div>
                         </x-slot>
-                        @if(count($courses) > 0)
-                            @for($i = 0; $i < count($courses); $i++)
-                                <x-dropdown.item class="group" :separator="(bool)$i" :href="$courses[$i]['href']"
-                                                 wire:navigate>
-                                    <div class="flex justify-between items-center w-full">
-                                        <div class="font-bold text-lg">
+                        @if (count($courses) > 0)
+                            @for ($i = 0; $i < count($courses); $i++)
+                                <x-dropdown.item class="group" :separator="(bool) $i" :href="$courses[$i]['href']" wire:navigate>
+                                    <div class="flex w-full items-center justify-between">
+                                        <div class="text-lg font-bold">
                                             {{ $courses[$i]['title'] }}
                                         </div>
                                         <x-icon name="chevron-right"
-                                                class="h-5 transition-transform duration-300 group-hover:translate-x-1"
-                                                solid/>
+                                            class="h-5 transition-transform duration-300 group-hover:translate-x-1"
+                                            solid />
                                     </div>
                                 </x-dropdown.item>
                             @endfor
                         @else
                             <x-dropdown.item>
-                                <div class="flex justify-between items-center w-full">
-                                    <div class="font-bold text-lg">
+                                <div class="flex w-full items-center justify-between">
+                                    <div class="text-lg font-bold">
                                         - No Courses -
                                     </div>
                                 </div>
@@ -88,10 +86,10 @@ new class extends Component {
                     </x-dropdown>
                 </div>
 
-                @if(auth()->user()->is_admin)
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex h-full">
-                        <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')" wire:navigate
-                                    class="text-red-500" :style="'danger'">
+                @if (auth()->user()->is_admin)
+                    <div class="hidden h-full space-x-8 sm:-my-px sm:ms-6 sm:flex">
+                        <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')" wire:navigate class="text-red-500"
+                            :style="'danger'">
                             {{ __('ADMIN') }}
                         </x-nav-link>
                     </div>
@@ -99,16 +97,16 @@ new class extends Component {
             </div>
 
             <!-- Settings Dropdown -->
-            <div x-data="{profileOpen: false}" @click="profileOpen = ! profileOpen" @click.outside="profileOpen = false"
-                 class="hidden sm:flex sm:items-center sm:ms-6">
+            <div x-data="{ profileOpen: false }" @click="profileOpen = ! profileOpen" @click.outside="profileOpen = false"
+                class="hidden sm:ms-6 sm:flex sm:items-center">
                 <x-dropdown align="right" class="w-48">
                     <x-slot name="trigger">
                         <button
-                                class="inline-flex items-center h-full px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-slate-200 bg-[#6f0834] hover:text-white focus:outline-none transition ease-in-out duration-150">
+                            class="inline-flex h-full items-center rounded-md border border-transparent bg-[#6f0834] px-3 py-2 text-sm font-medium leading-4 text-slate-200 transition duration-150 ease-in-out hover:text-white focus:outline-none">
                             <div>{{ auth()->user()->name }}</div>
-                            <x-avatar sm :src="auth()->user()->avatar" class="ml-2"/>
-                            <div :class="{'rotate-180': profileOpen}" class="ms-1 transition-all ease-in-out">
-                                <x-icon name="chevron-down" class="h-5" solid/>
+                            <x-avatar sm :src="auth()->user()->avatar" class="ml-2" />
+                            <div :class="{ 'rotate-180': profileOpen }" class="ms-1 transition-all ease-in-out">
+                                <x-icon name="chevron-down" class="h-5" solid />
                             </div>
                         </button>
                     </x-slot>
@@ -124,12 +122,12 @@ new class extends Component {
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-slate-200 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <div :class="{'hidden': open, 'inline-flex': ! open }">
-                        <x-icon name="menu" class="h-6" solid/>
+                    class="inline-flex items-center justify-center rounded-md p-2 text-slate-200 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none">
+                    <div :class="{ 'hidden': open, 'inline-flex': !open }">
+                        <x-icon name="menu" class="h-6" solid />
                     </div>
-                    <div :class="{'hidden': ! open, 'inline-flex': open }">
-                        <x-icon name="x" class="h-6" solid/>
+                    <div :class="{ 'hidden': !open, 'inline-flex': open }">
+                        <x-icon name="x" class="h-6" solid />
                     </div>
                 </button>
             </div>
@@ -137,46 +135,43 @@ new class extends Component {
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
+    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
+        <div class="space-y-1 pb-3 pt-2">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
         <!-- Courses -->
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('courses')"
-                                   :active="request()->routeIs('courses', 'course', 'assessment')" wire:navigate>
+        <div class="space-y-1 pb-3 pt-2">
+            <x-responsive-nav-link :href="route('courses')" :active="request()->routeIs('courses', 'course', 'assessment')" wire:navigate>
                 {{ __('Courses') }}
             </x-responsive-nav-link>
         </div>
         @if (auth()->user()->is_admin)
-            <div class="pt-2 pb-3 space-y-1">
-                <x-responsive-nav-link :href="route('admin')" :active="request()->routeIs('admin')" wire:navigate
-                                       :style="'danger'">
+            <div class="space-y-1 pb-3 pt-2">
+                <x-responsive-nav-link :href="route('admin')" :active="request()->routeIs('admin')" wire:navigate :style="'danger'">
                     {{ __('ADMIN') }}
                 </x-responsive-nav-link>
             </div>
         @endif
         <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
+        <div class="border-t border-gray-200 pb-1 pt-4">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-200"
-                     x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name"
-                     x-on:profile-updated.window="name = $event.detail.name"></div>
-                <div class="font-medium text-sm text-gray-400">{{ auth()->user()->email }}</div>
+                <div class="text-base font-medium text-gray-200" x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name"
+                    x-on:profile-updated.window="name = $event.detail.name"></div>
+                <div class="text-sm font-medium text-gray-400">{{ auth()->user()->email }}</div>
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile')" wire:navigate class="flex space-x-1 items-center">
-                    <x-icon name="user" class="h-5"/>
+                <x-responsive-nav-link :href="route('profile')" wire:navigate class="flex items-center space-x-1">
+                    <x-icon name="user" class="h-5" />
                     <div>{{ __('Profile') }}</div>
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
                 <button wire:click="logout" class="w-full text-start">
-                    <x-responsive-nav-link class="flex space-x-1 items-center">
-                        <x-icon name="logout" class="h-5"/>
+                    <x-responsive-nav-link class="flex items-center space-x-1">
+                        <x-icon name="logout" class="h-5" />
                         <div>{{ __('Log Out') }}</div>
                     </x-responsive-nav-link>
                 </button>

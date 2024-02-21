@@ -10,12 +10,12 @@ new class extends Component {
     public function mount(): void
     {
         if (isset($this->courseId)) {
-            $this->assessments = array_slice(auth()->user()->assessments($this->courseId), 0, 4);
+            $this->assessments = auth()->user()->assessments($this->courseId);
         } else {
-            $this->assessments = array_slice(auth()->user()->assessments(), 0, 4);
+            $this->assessments = auth()->user()->assessments();
         }
+        $this->assessments = array_slice($this->assessments, 0, 4)
     }
 }; ?>
 
-<livewire:assessment.assessment-cards :assessments="$assessments"/>
-
+<livewire:assessment.assessment-cards :assessments="$assessments" />

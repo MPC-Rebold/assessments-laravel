@@ -9,7 +9,6 @@ new class extends Component {
     public array $connectedCourses;
     public array $allAvailableCourses;
 
-
     public function mount(): void
     {
         $this->allAvailableCourses = Course::all()->whereNull('master_id')->pluck('title')->toArray();
@@ -17,6 +16,21 @@ new class extends Component {
     }
 }; ?>
 
-<div>
-    {{ $masterCourse->title }}
+<div class="flex flex-row items-center">
+    <div class="min-w-16 basis-1/12">
+        @if (true)
+            <x-button.circle warning icon="exclamation" />
+        @endif
+    </div>
+    <div class="min-w-24 basis-2/12">
+        {{ $masterCourse->title }}
+    </div>
+    <div class="grow overflow-hidden text-ellipsis pe-4">
+        asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfa
+    </div>
+    <div class="basis-1/12">
+        <x-button icon="pencil">
+            Edit
+        </x-button>
+    </div>
 </div>

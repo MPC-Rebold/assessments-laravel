@@ -8,15 +8,15 @@
             break;
         case 'default':
             $colorsActive = 'border-slate-300 text-gray-900 bg-slate-100';
-            $colorsInactive = 'border-transparent text-slate-200 hover:text-white hover:border-white focus:border-white focus:text-white';
+            $colorsInactive =
+                'border-transparent text-slate-200 hover:text-white hover:border-white focus:border-white focus:text-white';
             break;
     }
 
-    $base = 'inline-flex items-center px-4 pt-1 border-b-4 text-sm font-medium leading-5 focus:outline-none transition-all duration-150 ease-in-out';
+    $base =
+        'inline-flex items-center px-4 pt-1 border-b-4 text-sm font-medium leading-5 focus:outline-none transition-all duration-150 ease-in-out';
 
-    $classes = ($active ?? false)
-        ? $base . ' ' . $colorsActive
-        : $base . ' ' . $colorsInactive;
+    $classes = $active ?? false ? $base . ' ' . $colorsActive : $base . ' ' . $colorsInactive;
 @endphp
 
 <a {{ $attributes->merge(['class' => $classes]) }}>

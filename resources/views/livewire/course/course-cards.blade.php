@@ -9,31 +9,35 @@ new class extends Component {
 
     public function mount(): void
     {
-        $this->courses = auth()->user()->courses->map(fn($course) => [
-            'title' => $course->title,
-            'id' => $course->id,
-            'href' => route('course', $course['id'])
-        ]);
+        $this->courses = auth()->user()->courses->map(
+            fn($course) => [
+                'title' => $course->title,
+                'id' => $course->id,
+                'href' => route('course', $course['id']),
+            ],
+        );
     }
 }; ?>
 
 <div>
     @if (count($courses) > 0)
-        @foreach($courses as $course)
-            <div class="hover:scale-[1.007] transition-all">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 w-full max-h-20 flex justify-between items-center">
-                        <a href="{{$course['href']}}" wire:navigate>
+        @foreach ($courses as $course)
+            <div class="transition-all hover:scale-[1.007]">
+                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    <div class="flex max-h-20 w-full items-center justify-between p-6 text-gray-900">
+                        <a href="{{ $course['href'] }}" wire:navigate>
                             <h2 class="py-2 text-xl font-semibold hover:underline">
                                 {{ $course['title'] }}
                             </h2>
                         </a>
 
                         <div class="flex space-x-4">
-                            <x-canvas-button class="w-10 h-10" :href="'/courses/'.$course['id']"/>
+                            <x-canvas-button class="h-10 w-10" :href="'/courses/' . $course['id']" />
                             <x-button secondary :href="route('course', $course['id'])" wire:navigate class="relative">
                                 <span>Go</span>
-                                <x-icon class="w-5 h-5 transition-transform transform translate-x-0 group-hover:translate-x-1" name="arrow-right" />
+                                <x-icon
+                                    class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"
+                                    name="arrow-right" />
                             </x-button>
                         </div>
                     </div>
@@ -41,9 +45,9 @@ new class extends Component {
             </div>
         @endforeach
     @else
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="px-6 py-4 text-gray-900 w-full max-h-20 flex justify-between items-center">
-                    No courses found
+        <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+            <div class="flex max-h-20 w-full items-center justify-between px-6 py-4 text-gray-900">
+                No courses found
             </div>
         </div>
     @endif
