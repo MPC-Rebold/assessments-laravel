@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('title')->unique();
+            $table->string('sync_status')->nullable();
+            $table->string('sync_status_details')->nullable();
         });
     }
 

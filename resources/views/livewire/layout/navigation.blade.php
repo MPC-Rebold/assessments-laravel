@@ -2,8 +2,11 @@
 
 use App\Livewire\Actions\Logout;
 use Livewire\Volt\Component;
+use Illuminate\Database\Eloquent\Collection;
 
 new class extends Component {
+    public Collection $courses;
+
     /**
      * Log the current user out of the application.
      */
@@ -14,14 +17,12 @@ new class extends Component {
         $this->redirect('/', navigate: true);
     }
 
-    public function with(): array
+    public function mount(): void
     {
-        return [
-            'courses' => auth()->user()->courses->map(fn($course) => [
-                'title' => $course->title,
-                'href' => route('course', $course['id']),
-            ]),
-        ];
+        $this->courses = auth()->user()->courses->map(fn($course) => [
+            'title' => $course->title,
+            'href' => route('course', $course['id']),
+        ]);
     }
 }; ?>
 

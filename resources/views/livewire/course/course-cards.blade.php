@@ -2,17 +2,18 @@
 
 use Livewire\Volt\Component;
 use App\Models\Course;
+use Illuminate\Database\Eloquent\Collection;
 
 new class extends Component {
-    public function with(): array
+    public Collection $courses;
+
+    public function mount(): void
     {
-        return [
-            'courses' => auth()->user()->courses->map(fn($course) => [
-                'title' => $course->title,
-                'id' => $course->id,
-                'href' => route('course', $course['id']),
-            ]),
-        ];
+        $this->courses = auth()->user()->courses->map(fn($course) => [
+            'title' => $course->title,
+            'id' => $course->id,
+            'href' => route('course', $course['id'])
+        ]);
     }
 }; ?>
 

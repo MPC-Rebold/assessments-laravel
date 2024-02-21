@@ -45,7 +45,8 @@ class User extends Authenticatable
 
     public function courses(): BelongsToMany
     {
-        return $this->belongsToMany(Course::class);
+        // master_id is null if the course is not connected to a master course
+        return $this->belongsToMany(Course::class)->whereNotNull('master_id');
     }
 
     public function questions(): BelongsToMany
@@ -79,6 +80,7 @@ class User extends Authenticatable
                 if ($course->master) {
                     return $course->master->map->assessments->flatten();
                 }
+
                 return null;
             })->filter()->flatten()->sortBy('due_at')->values()->all();
         }

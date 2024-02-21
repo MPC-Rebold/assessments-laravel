@@ -11,10 +11,6 @@ class Master extends Model
         'title',
     ];
 
-    protected $casts = [
-        'valid_students' => 'array',
-    ];
-
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class);
