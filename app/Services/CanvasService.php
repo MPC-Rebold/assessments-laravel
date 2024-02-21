@@ -72,18 +72,18 @@ class CanvasService
      */
     public static function getCourseEnrollments(int $courseId): Response
     {
-        return self::get("courses/{$courseId}/enrollments");
+        return self::get("courses/$courseId/enrollments");
     }
 
     /**
-     * Get the assignments for a section
+     * Get the assignments for a course
      *
      * @param int $courseId
      * @return Response
      */
-    public static function getSectionAssignments(int $courseId): Response
+    public static function getCourseAssignments(int $courseId): Response
     {
-        return self::get("courses/{$courseId}/assignments");
+        return self::get("courses/$courseId/assignments");
     }
 
     /**
@@ -96,6 +96,6 @@ class CanvasService
      */
     public static function editAssignment(int $courseId, int $assignmentId, array $data): Response
     {
-        return self::put("courses/{$courseId}/assignments/{$assignmentId}", ['assignment' => $data]);
+        return self::put("courses/$courseId/assignments/$assignmentId", ['assignment' => $data]);
     }
 }

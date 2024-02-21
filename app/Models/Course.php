@@ -11,11 +11,13 @@ class Course extends Model
     protected $fillable = [
         'id',
         'title',
-        'valid_students'
+        'valid_students',
+        'valid_assessments',
     ];
 
     protected $casts = [
         'valid_students' => 'array',
+        'valid_assessments' => 'array',
     ];
 
     public function users(): BelongsToMany

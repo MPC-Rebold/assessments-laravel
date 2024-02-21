@@ -16,7 +16,8 @@ return new class extends Migration
             $table->timestamps();
             $table->string('title');
             $table->json('valid_students');
-            $table->foreignId('master_id')->constrained()->cascadeOnDelete();
+            $table->json('valid_assessments');
+            $table->foreignId('master_id')->nullable()->constrained()->cascadeOnDelete();
         });
 
         Schema::create('course_user', function (Blueprint $table) {

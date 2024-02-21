@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Master extends Model
 {
     protected $fillable = [
-        'id',
         'title',
-        'valid_students',
     ];
 
     protected $casts = [

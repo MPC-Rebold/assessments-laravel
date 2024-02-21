@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('assessments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('title')->unique();
+            $table->string('title');
             $table->dateTime('due_at')->nullable();
             $table->foreignId('master_id')->constrained()->cascadeOnDelete();
+
+            $table->unique(['title', 'master_id']);
         });
     }
 

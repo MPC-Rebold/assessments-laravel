@@ -4,11 +4,13 @@ namespace App\Livewire\Admin;
 
 use App\Models\Assessment;
 use App\Models\Course;
+use App\Models\Master;
 use App\Models\Question;
 use App\Models\Settings;
 use App\Services\CanvasService;
 use App\Services\SeedReaderService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 use WireUi\Traits\Actions;
@@ -19,8 +21,8 @@ class SyncCanvas extends Component
 
     public function syncCanvas(): void
     {
-        $this->syncSections();
         $this->syncCourses();
+        $this->syncMasters();
 
         Settings::firstOrNew()->update([
             'last_synced_at' => Carbon::now('PST'),
@@ -31,81 +33,88 @@ class SyncCanvas extends Component
         );
     }
 
-    public function syncSections(): void
-    {
-        // Canvas 'courses' are 'sections' in our database
-        $sections = CanvasService::getCourses()->json();
-
-        foreach ($sections as $section) {
-            $valid_students = [];
-            $enrolled = CanvasService::getCourseEnrollments($section["id"])->json();
-            foreach ($enrolled as $enrollment) {
-                $valid_students[] = $enrollment["user"]["login_id"];
-            }
-
-            Course::updateOrCreate(
-                ['id' => $section["id"]],
-                [
-                    'name' => $section["name"],
-                    'valid_students' => $valid_students,
-                ]
-            );
-        }
-
-    }
-
     public function syncCourses(): void
     {
-        $courses = SeedReaderService::getCourses();
+        $courses = CanvasService::getCourses()->json();
 
         foreach ($courses as $course) {
-            $course = Course::firstOrCreate(
-                ['title' => $course]
-            );
-
-            $assessments = CanvasService::getSectionAssignments($course->id)->json();
-
-            foreach ($assessments as $assessment) {
-                $this->syncAssessment($course, $assessment);
+            $enrolled = CanvasService::getCourseEnrollments($course["id"])->json();
+            $validStudents = [];
+            foreach ($enrolled as $enrollment) {
+                $validStudents[] = $enrollment["user"]["login_id"];
             }
-        }
-    }
 
-    public function syncAssessment($course, $assessment): void
-    {
-        if (!SeedReaderService::isValidAssessment($course->title, $assessment["name"])) {
-            return;
-        }
+            $validAssessments = [];
+            $canvasAssignments = CanvasService::getCourseAssignments($course["id"])->json();
+            foreach ($canvasAssignments as $canvasAssignment) {
+                $validAssessments[] = $canvasAssignment["name"];
+            }
 
-        $assessment = Assessment::updateOrCreate(
-            ['id' => $assessment["id"]],
-            [
-                'course_id' => $course->id,
-                'title' => $assessment["name"],
-                'due_at' => $assessment["due_at"],
-            ]
-        );
 
-        $questions = SeedReaderService::getQuestions($course->title, $assessment->title);
-        foreach ($questions as $question) {
-            Question::updateOrCreate(
-                ['assessment_id' => $assessment->id, 'number' => $question["number"]],
+            Course::updateOrCreate(
+                ['id' => $course["id"]],
                 [
-                    'question' => $question["question"],
-                    'answer' => $question["answer"],
-                    'number' => $question["number"],
+                    'title' => $course["name"],
+                    'valid_students' => $validStudents,
+                    'valid_assessments' => $validAssessments,
                 ]
             );
         }
 
-        if (Settings::firstOrNew()->specification_grading) {
-            CanvasService::editAssignment($course->id, $assessment->id, [
-                "points_possible" => 1,
-            ]);
-        } else {
-            CanvasService::editAssignment($course->id, $assessment->id, [
-                "points_possible" => $assessment->questionCount(),
-            ]);
+    }
+
+    public function syncMasters(): void
+    {
+        $masters = SeedReaderService::getMasters();
+
+        foreach ($masters as $master) {
+            $masterModel = Master::firstOrCreate(
+                ['title' => $master]
+            );
+
+            $courses = $masterModel->courses;
+
+            foreach ($courses as $course) {
+                $this->syncAssessments($masterModel, $course);
+            }
+        }
+    }
+
+    public function syncAssessments(Master $master, Course $course): void
+    {
+        $assessments = SeedReaderService::getAssessments($master->title);
+        $canvasAssignments = CanvasService::getCourseAssignments($course->id)->json();
+
+        foreach ($assessments as $assessment) {
+            $canvasAssignment = collect($canvasAssignments)->where('name', $assessment);
+
+            if ($canvasAssignment->count() > 1) {
+                throw new Exception();
+            } else if ($canvasAssignment->count() == 0) {
+                throw new Exception();
+            } else {
+                $canvasAssignment = $canvasAssignment->first();
+            }
+
+            $questions = SeedReaderService::getQuestions($master->title, $assessment);
+
+            $assessmentModel = Assessment::updateOrCreate(
+                ['title' => $assessment, 'master_id' => $master->id],
+                [
+                    'due_at' => $canvasAssignment['due_at'],
+                ]
+            );
+
+            foreach ($questions as $question) {
+                Question::updateOrCreate(
+                    ['title' => $question, 'assessment_id' => $assessmentModel->id],
+                    [
+                        'question' => $question['question'],
+                        'answer' => $question['answer'],
+                        'number' => $question['number'],
+                    ]
+                );
+            }
         }
     }
 

@@ -9,10 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Assessment extends Model
 {
     protected $fillable = [
-        'id',
-        'course_id',
         'title',
         'due_at',
+        'master_id',
     ];
 
     public function course(): BelongsTo

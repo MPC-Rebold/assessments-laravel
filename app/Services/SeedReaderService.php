@@ -4,9 +4,17 @@ namespace App\Services;
 
 class SeedReaderService
 {
-    public static function getCourses(): array
+    public static function getMasters(): array
     {
-        return glob(database_path('seed') . '\*', GLOB_ONLYDIR);
+        return array_map('basename', glob(database_path('seed') . '\*', GLOB_ONLYDIR));
+
+    }
+
+    public static function getAssessments(string $masterTitle): array
+    {
+        return array_map(function ($file) {
+            return pathinfo($file, PATHINFO_FILENAME);
+        }, glob(database_path('seed/' . $masterTitle) . '\*.txt'));
     }
 
     /**
