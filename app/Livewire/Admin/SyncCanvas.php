@@ -12,12 +12,16 @@ use App\Services\SeedReaderService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 
 class SyncCanvas extends Component
 {
     use Actions;
+
+    public Collection $masterCourses;
+
 
     public function syncCanvas(): void
     {
@@ -27,6 +31,8 @@ class SyncCanvas extends Component
         Settings::firstOrNew()->update([
             'last_synced_at' => Carbon::now('PST'),
         ]);
+
+        $this->mount();
 
         $this->notification()->success(
             'Canvas Synced',
@@ -143,6 +149,11 @@ class SyncCanvas extends Component
     //            }
     //        }
     //    }
+
+    public function mount(): void
+    {
+        $this->masterCourses = Master::all();
+    }
 
     public function render(): View
     {
