@@ -43,13 +43,13 @@ class SeedReaderService
     /**
      * Returns the questions and answers from the file \database\seed\{courseTitle}\{assessmentTitle}.txt
      *
-     * @param string $courseTitle
+     * @param string $masterTitle
      * @param string $assessmentTitle
      * @return array
      */
-    public static function getQuestions(string $courseTitle, string $assessmentTitle): array
+    public static function getQuestions(string $masterTitle, string $assessmentTitle): array
     {
-        $questions_txt = file_get_contents(database_path('seed/' . $courseTitle . '/' . $assessmentTitle . '.txt'));
+        $questions_txt = file_get_contents(database_path('seed/' . $masterTitle . '/' . $assessmentTitle . '.txt'));
         $exploded = explode('@@', $questions_txt);
 
         $res = [];

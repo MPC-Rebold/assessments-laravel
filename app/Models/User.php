@@ -71,12 +71,18 @@ class User extends Authenticatable
     public function assessments(int $courseId = -1): array
     {
         if ($courseId !== -1) {
-            $assessments = $this->courses->find($courseId)->assessments;
-            return $assessments->sortBy('due_at')->values()->all();
+            $assessments = $this->courses->find($courseId)->master->assessments
+                ->sortBy('due_at')->values()->all();
+
+        } else {
+            $assessments = $this->courses->map(function ($course) {
+                if ($course->master) {
+                    return $course->master->map->assessments->flatten();
+                }
+                return null;
+            })->filter()->flatten()->sortBy('due_at')->values()->all();
         }
 
-        $assessments = $this->courses->map->assessments->flatten();
-        $assessments = $assessments->sortBy('due_at');
-        return $assessments->values()->all();
+        return $assessments;
     }
 }

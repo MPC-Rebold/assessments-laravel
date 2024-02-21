@@ -78,7 +78,7 @@ new class extends Component {
                             <x-dropdown.item>
                                 <div class="flex justify-between items-center w-full">
                                     <div class="font-bold text-lg">
-                                        No Courses
+                                        - No Courses -
                                     </div>
                                 </div>
                             </x-dropdown.item>
