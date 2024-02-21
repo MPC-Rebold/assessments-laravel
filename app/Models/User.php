@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -79,13 +79,10 @@ class User extends Authenticatable
     public function assessments(int $courseId = null): Collection
     {
         if ($courseId) {
-            return $this->courses->find($courseId)->master->assessments
-                ->sortBy('due_at');
+            return $this->courses->find($courseId)->master->assessments->sortBy('due_at');
         }
 
-        dd(Master::find(1)->assessments->sortBy('due_at'));
-
-        dd($this->courses->map->master);
+        return $this->courses->map->master->map->assessments->sortBy('due_at')->flatten();
 
     }
 }

@@ -41,7 +41,7 @@ Route::view('courses/{courseId}', 'course.show')
     ->middleware(['auth', 'enrolled'])
     ->name('course.show');
 
-Route::view('courses/{courseId}/assessment/{assessmentId}', 'assessment.index')
+Route::view('courses/{courseId}/assessment/{assessmentId}', 'assessment.show')
     ->middleware(['auth', 'enrolled'])
     ->name('assessment.show');
 

@@ -2,10 +2,11 @@
 
 use Livewire\Volt\Component;
 use App\Models\Course;
+use Illuminate\Support\Collection;
 
 new class extends Component {
     public int $courseId;
-    public array $assessments;
+    public Collection $assessments;
 
     public function mount(): void
     {
@@ -16,7 +17,8 @@ new class extends Component {
         } else {
             $this->assessments = auth()->user()->assessments();
         }
-        $this->assessments = array_slice($this->assessments, 0, 4);
+
+        $this->assessments = $this->assessments->take(4);
     }
 }; ?>
 

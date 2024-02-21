@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Master;
 use App\Models\Course;
 
 ?>
@@ -32,18 +33,33 @@ use App\Models\Course;
                 </div>
             </div>
             <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                <div class="flex">
-                    @if (auth()->user()->is_admin)
-                        <h2 class="font-bold text-gray-800">All Courses:</h2>
-                        <div class="ms-1">
-                            @if (Course::count() > 0)
-                                {{ implode(', ', \App\Models\Course::pluck('title')->toArray()) }}
-                            @else
-                                There are no courses. Try syncing with Canvas.
-                            @endif
+                @if (auth()->user()->is_admin)
+                    <div class="space-y-2">
+                        <div class="flex">
+                            <h2 class="min-w-fit font-bold text-gray-800">Master Courses:</h2>
+                            <div class="ms-1 text-wrap">
+                                @if (Master::count() > 0)
+                                    {{ implode(', ', Master::pluck('title')->toArray()) }}
+                                @else
+                                    There are no courses. Try syncing with Canvas.
+                                @endif
+                            </div>
                         </div>
-                    @else
-                        <h2 class="font-bold text-gray-800">Courses:</h2>
+                        <div class="flex">
+                            <h2 class="min-w-fit font-bold text-gray-800">Canvas Courses:</h2>
+                            <div class="ms-1 text-wrap">
+                                @if (Course::count() > 0)
+                                    {{ implode(', ', Course::pluck('title')->toArray()) }}
+                                @else
+                                    There are no courses. Try syncing with Canvas.
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="flex">
+
+                        <h2 class="font-bold text-gray-800">Your Courses:</h2>
                         <div class="ms-1">
                             @if (auth()->user()->courses->count() > 0)
                                 {{ implode(', ', auth()->user()->courses->pluck('title')->toArray()) }}
@@ -51,8 +67,9 @@ use App\Models\Course;
                                 You are not enrolled in any courses.
                             @endif
                         </div>
-                    @endif
-                </div>
+                    </div>
+
+                @endif
             </div>
             <div class="relative w-full">
                 <div class="absolute right-0">

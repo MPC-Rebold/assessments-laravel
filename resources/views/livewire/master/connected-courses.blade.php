@@ -34,7 +34,6 @@ new class extends Component {
                 Connected Courses
             </h2>
             <div class="flex w-full items-center gap-4">
-                {{ implode($connectedCourses) }}
                 <x-select multiselect class="w-full" wire:model="connectedCourses" placeholder="No connected courses"
                     :options="$availableCourses" />
                 <div>

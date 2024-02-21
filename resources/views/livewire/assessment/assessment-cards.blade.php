@@ -1,34 +1,36 @@
 <?php
 
 use Livewire\Volt\Component;
+use Illuminate\Support\Collection;
 use App\Models\Assessment;
 use App\Models\Course;
+use App\Models\Master;
 
 new class extends Component {
-    public array $assessments;
+    public Collection $assessments;
 }; ?>
 
 <div class="space-y-4">
-    @if (count($assessments) > 0)
+    @if ($assessments->isNotEmpty())
         @foreach ($assessments as $assessment)
             <div
                 class="overflow-hidden bg-white px-6 py-4 text-gray-900 shadow-sm transition-all hover:scale-[1.007] sm:rounded-lg">
                 <div class="flex items-center justify-between">
                     <a class="hover:underline"
-                        href="{{ route('assessment', [$assessment['course_id'], $assessment['id']]) }}" wire:navigate>
+                        href="{{ route('assessment.show', [$assessment->master_id, $assessment->id]) }}" wire:navigate>
                         <div>
                             <div class="text-lg font-semibold">
-                                {{ $assessment['title'] }}
+                                {{ $assessment->title }}
                             </div>
                             <div class="text-sm text-gray-500">
-                                {{ Course::find($assessment['course_id'])->title }}
+                                {{ Master::find($assessment->master_id)->title }}
                             </div>
                         </div>
                     </a>
 
                     <div class="flex space-x-4">
                         <x-canvas-button class="h-10 w-10" :href="'/courses/' . $assessment['course_id'] . '/assignments/' . $assessment['id']" />
-                        <x-button secondary :href="route('assessment', [$assessment['course_id'], $assessment['id']])" wire:navigate class="relative">
+                        <x-button secondary :href="route('assessment.show', [$assessment->master_id, $assessment->id])" wire:navigate class="relative">
                             <span class="transition-transform duration-300">Go</span>
                             <x-icon
                                 class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"

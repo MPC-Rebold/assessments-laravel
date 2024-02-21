@@ -10,7 +10,6 @@ use App\Models\Settings;
 use App\Services\CanvasService;
 use App\Services\SeedReaderService;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;

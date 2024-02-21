@@ -9,13 +9,7 @@ new class extends Component {
 
     public function mount(): void
     {
-        $this->courses = auth()->user()->courses->map(
-            fn($course) => [
-                'title' => $course->title,
-                'id' => $course->id,
-                'href' => route('course.index', $course['id']),
-            ],
-        );
+        $this->courses = auth()->user()->courses;
     }
 }; ?>
 
@@ -25,15 +19,20 @@ new class extends Component {
             <div class="transition-all hover:scale-[1.007]">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="flex max-h-20 w-full items-center justify-between p-6 text-gray-900">
-                        <a href="{{ $course['href'] }}" wire:navigate>
-                            <h2 class="py-2 text-xl font-semibold hover:underline">
-                                {{ $course['title'] }}
-                            </h2>
+                        <a href="{{ route('course.show', $course->id) }}" wire:navigate>
+                            <div class="group me-2 flex flex-wrap items-baseline gap-x-2 py-2">
+                                <h2 class="text-xl font-semibold group-hover:underline">
+                                    {{ $course->master->title }}
+                                </h2>
+                                <h2 class="text-gray-500">
+                                    ({{ $course->title }})
+                                </h2>
+                            </div>
                         </a>
 
                         <div class="flex space-x-4">
-                            <x-canvas-button class="h-10 w-10" :href="'/courses/' . $course['id']" />
-                            <x-button secondary :href="route('course.index', $course['id'])" wire:navigate class="relative">
+                            <x-canvas-button class="h-10 w-10" :href="'/courses/' . $course->id" />
+                            <x-button secondary :href="route('course.index', $course->id)" wire:navigate class="relative">
                                 <span>Go</span>
                                 <x-icon
                                     class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"

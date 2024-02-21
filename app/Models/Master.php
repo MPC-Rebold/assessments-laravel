@@ -20,4 +20,11 @@ class Master extends Model
     {
         return $this->hasMany(Assessment::class);
     }
+
+    public function courseForUser(User $user): Course
+    {
+        return $this->courses()->whereHas('users', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->first();
+    }
 }
