@@ -95,11 +95,10 @@ class SyncCanvas extends Component
 
             foreach ($questions as $question) {
                 Question::updateOrCreate(
-                    ['title' => $question, 'assessment_id' => $assessmentModel->id],
+                    ['number' => $question['number'], 'assessment_id' => $assessmentModel->id],
                     [
                         'question' => $question['question'],
                         'answer' => $question['answer'],
-                        'number' => $question['number'],
                     ]
                 );
             }

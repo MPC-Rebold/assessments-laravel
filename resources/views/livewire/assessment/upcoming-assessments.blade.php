@@ -10,11 +10,13 @@ new class extends Component {
     public function mount(): void
     {
         if (isset($this->courseId)) {
-            $this->assessments = auth()->user()->assessments($this->courseId);
+            $this->assessments = auth()
+                ->user()
+                ->assessments($this->courseId);
         } else {
             $this->assessments = auth()->user()->assessments();
         }
-        $this->assessments = array_slice($this->assessments, 0, 4)
+        $this->assessments = array_slice($this->assessments, 0, 4);
     }
 }; ?>
 

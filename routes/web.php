@@ -33,16 +33,20 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::view('courses', 'courses')
+Route::view('courses', 'course.index')
     ->middleware(['auth'])
-    ->name('courses');
+    ->name('course.index');
 
-Route::view('courses/{courseId}', 'course-show')
+Route::view('courses/{courseId}', 'course.show')
     ->middleware(['auth', 'enrolled'])
-    ->name('course');
+    ->name('course.show');
 
-Route::view('courses/{courseId}/assessment/{assessmentId}', 'assessment')
+Route::view('courses/{courseId}/assessment/{assessmentId}', 'assessment.index')
     ->middleware(['auth', 'enrolled'])
-    ->name('assessment');
+    ->name('assessment.show');
+
+Route::view('admin/masters/{masterId}', 'master.edit')
+    ->middleware(['auth', 'admin'])
+    ->name('master.edit');
 
 require __DIR__.'/auth.php';

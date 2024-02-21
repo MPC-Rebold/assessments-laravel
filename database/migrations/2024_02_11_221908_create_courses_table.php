@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('title');
+            $table->string('title')->unique();
             $table->json('valid_students');
             $table->json('valid_assessments');
             $table->foreignId('master_id')->nullable()->constrained()->cascadeOnDelete();

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Collection;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -69,22 +70,22 @@ class User extends Authenticatable
         return $this->courses->contains($courseId);
     }
 
-    public function assessments(int $courseId = -1): array
+    /**
+     * Returns the user's assessments for a given course or all courses sorted by due date.
+     *
+     * @param int|null $courseId The course id, or null for all courses
+     * @return Collection
+     */
+    public function assessments(int $courseId = null): Collection
     {
-        if ($courseId !== -1) {
-            $assessments = $this->courses->find($courseId)->master->assessments
-                ->sortBy('due_at')->values()->all();
-
-        } else {
-            $assessments = $this->courses->map(function ($course) {
-                if ($course->master) {
-                    return $course->master->map->assessments->flatten();
-                }
-
-                return null;
-            })->filter()->flatten()->sortBy('due_at')->values()->all();
+        if ($courseId) {
+            return $this->courses->find($courseId)->master->assessments
+                ->sortBy('due_at');
         }
 
-        return $assessments;
+        dd(Master::find(1)->assessments->sortBy('due_at'));
+
+        dd($this->courses->map->master);
+
     }
 }

@@ -15,7 +15,7 @@ class SpecificationSetting extends Component
 
     public string $specification_grading_threshold;
 
-    public function with(): void
+    public function mount(): void
     {
         $this->specification_grading = Settings::sole()->specification_grading;
 

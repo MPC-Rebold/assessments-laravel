@@ -2,7 +2,7 @@
 
 use Livewire\Volt\Component;
 use App\Models\Course;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 new class extends Component {
     public Collection $courses;
@@ -13,7 +13,7 @@ new class extends Component {
             fn($course) => [
                 'title' => $course->title,
                 'id' => $course->id,
-                'href' => route('course', $course['id']),
+                'href' => route('course.index', $course['id']),
             ],
         );
     }
@@ -33,7 +33,7 @@ new class extends Component {
 
                         <div class="flex space-x-4">
                             <x-canvas-button class="h-10 w-10" :href="'/courses/' . $course['id']" />
-                            <x-button secondary :href="route('course', $course['id'])" wire:navigate class="relative">
+                            <x-button secondary :href="route('course.index', $course['id'])" wire:navigate class="relative">
                                 <span>Go</span>
                                 <x-icon
                                     class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"

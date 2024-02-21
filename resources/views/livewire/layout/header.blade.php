@@ -18,14 +18,14 @@ new class extends Component {
 <div>
     <x-slot name="header">
         <h2 class="flex items-center space-x-2 text-xl font-semibold leading-tight text-gray-800">
-            @for ($i = 0; $i < count($routes); $i++)
-                <a class="hover:text-slate-500 hover:underline" href="{{ $routes[$i]['href'] }}" wire:navigate>
-                    {{ __($routes[$i]['title']) }}
+            @foreach ($routes as $route)
+                <a class="hover:text-slate-500 hover:underline" href="{{ $route['href'] }}" wire:navigate>
+                    {{ __($route['title']) }}
                 </a>
-                @if ($i < count($routes) - 1)
+                @if (!$loop->last)
                     <x-icon name="chevron-right" class="h-5" solid />
                 @endif
-            @endfor
+            @endforeach
         </h2>
     </x-slot>
 </div>

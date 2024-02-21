@@ -14,9 +14,9 @@ class Assessment extends Model
         'master_id',
     ];
 
-    public function course(): BelongsTo
+    public function master(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Master::class);
     }
 
     public function questions(): HasMany

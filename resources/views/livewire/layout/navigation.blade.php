@@ -2,7 +2,7 @@
 
 use App\Livewire\Actions\Logout;
 use Livewire\Volt\Component;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 new class extends Component {
     public Collection $courses;
@@ -22,7 +22,7 @@ new class extends Component {
         $this->courses = auth()->user()->courses->map(
             fn($course) => [
                 'title' => $course->title,
-                'href' => route('course', $course['id']),
+                'href' => route('course.show', $course['id']),
             ],
         );
     }
@@ -30,6 +30,7 @@ new class extends Component {
 
 <nav x-data="{ open: false }" class="border-b border-gray-100 bg-[#6f0834]">
     <!-- Primary Navigation Menu -->
+
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-14 justify-between">
             <div class="flex items-center">
@@ -74,7 +75,7 @@ new class extends Component {
                                 </x-dropdown.item>
                             @endfor
                         @else
-                            <x-dropdown.item>
+                            <x-dropdown.item :href="route('dashboard')" wire:navigate>
                                 <div class="flex w-full items-center justify-between">
                                     <div class="text-lg font-bold">
                                         - No Courses -
@@ -82,13 +83,12 @@ new class extends Component {
                                 </div>
                             </x-dropdown.item>
                         @endif
-
                     </x-dropdown>
                 </div>
 
                 @if (auth()->user()->is_admin)
                     <div class="hidden h-full space-x-8 sm:-my-px sm:ms-6 sm:flex">
-                        <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')" wire:navigate class="text-red-500"
+                        <x-nav-link :href="route('admin')" :active="request()->segment(1) == 'admin'" wire:navigate class="text-red-500"
                             :style="'danger'">
                             {{ __('ADMIN') }}
                         </x-nav-link>
@@ -143,13 +143,13 @@ new class extends Component {
         </div>
         <!-- Courses -->
         <div class="space-y-1 pb-3 pt-2">
-            <x-responsive-nav-link :href="route('courses')" :active="request()->routeIs('courses', 'course', 'assessment')" wire:navigate>
+            <x-responsive-nav-link :href="route('course.index')" :active="request()->routeIs('courses', 'course', 'assessment')" wire:navigate>
                 {{ __('Courses') }}
             </x-responsive-nav-link>
         </div>
         @if (auth()->user()->is_admin)
             <div class="space-y-1 pb-3 pt-2">
-                <x-responsive-nav-link :href="route('admin')" :active="request()->routeIs('admin')" wire:navigate :style="'danger'">
+                <x-responsive-nav-link :href="route('admin')" :active="request()->segment(1) == 'admin'" wire:navigate :style="'danger'">
                     {{ __('ADMIN') }}
                 </x-responsive-nav-link>
             </div>
