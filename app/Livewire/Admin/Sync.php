@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Assessment;
+use App\Models\AssessmentCourse;
 use App\Models\Course;
 use App\Models\Master;
 use App\Models\Question;
@@ -15,17 +16,17 @@ use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 
-class SyncCanvas extends Component
+class Sync extends Component
 {
     use Actions;
 
     public Collection $masterCourses;
 
-
-    public function syncCanvas(): void
+    public function sync(): void
     {
         $this->createMasters();
         $this->syncCourses();
+        $this->synAssessmentCourses();
 
         Settings::firstOrNew()->update([
             'last_synced_at' => Carbon::now('PST'),
@@ -34,7 +35,7 @@ class SyncCanvas extends Component
         $this->mount();
 
         $this->notification()->success(
-            'Canvas Synced',
+            'Sync Complete',
         );
     }
 
@@ -52,7 +53,11 @@ class SyncCanvas extends Component
             $validAssessments = [];
             $canvasAssignments = CanvasService::getCourseAssignments($course['id'])->json();
             foreach ($canvasAssignments as $canvasAssignment) {
-                $validAssessments[] = $canvasAssignment['name'];
+                $validAssessments[] = [
+                    'canvas_id' => $canvasAssignment['id'],
+                    'title' => $canvasAssignment['name'],
+                    'due_at' => $canvasAssignment['due_at'],
+                ];
             }
 
             Course::updateOrCreate(
@@ -77,12 +82,6 @@ class SyncCanvas extends Component
             );
 
             $this->createAssessments($masterModel);
-
-//                        $courses = $masterModel->courses;
-//
-//                        foreach ($courses as $course) {
-//                            $this->syncAssessments($masterModel, $course);
-//                        }
         }
     }
 
@@ -107,47 +106,44 @@ class SyncCanvas extends Component
                     ]
                 );
             }
-
         }
     }
 
-    //    public function syncAssessments(Master $master, Course $course): void
-    //    {
-    //        $assessments = SeedReaderService::getAssessments($master->title);
-    //        $canvasAssignments = CanvasService::getCourseAssignments($course->id)->json();
-    //
-    //        foreach ($assessments as $assessment) {
-    //            $canvasAssignment = collect($canvasAssignments)->where('name', $assessment);
-    //
-    //            if ($canvasAssignment->count() > 1) {
-    //                throw new Exception();
-    //            } else if ($canvasAssignment->count() == 0) {
-    //                throw new Exception();
-    //            } else {
-    //                $canvasAssignment = $canvasAssignment->first();
-    //            }
-    //
-    //            $questions = SeedReaderService::getQuestions($master->title, $assessment);
-    //
-    //            $assessmentModel = Assessment::updateOrCreate(
-    //                ['title' => $assessment, 'master_id' => $master->id],
-    //                [
-    //                    'due_at' => $canvasAssignment['due_at'],
-    //                ]
-    //            );
-    //
-    //            foreach ($questions as $question) {
-    //                Question::updateOrCreate(
-    //                    ['title' => $question, 'assessment_id' => $assessmentModel->id],
-    //                    [
-    //                        'question' => $question['question'],
-    //                        'answer' => $question['answer'],
-    //                        'number' => $question['number'],
-    //                    ]
-    //                );
-    //            }
-    //        }
-    //    }
+    public function synAssessmentCourses(): void
+    {
+        $masters = Master::all();
+
+        foreach ($masters as $master) {
+            $courses = $master->courses;
+
+            foreach ($courses as $course) {
+                $assessments = Assessment::where('master_id', $master->id)->get();
+                $validAssessments = $course->valid_assessments;
+
+
+                foreach ($assessments as $assessment) {
+                    $assessment_canvas_id = -1;
+                    $due_at = null;
+
+                    foreach ($validAssessments as $validAssessment) {
+                        if ($assessment->title === $validAssessment['title']) {
+                            $assessment_canvas_id = $validAssessment['canvas_id'];
+                            $due_at = $validAssessment['due_at'];
+                            break;
+                        }
+                    }
+
+                    AssessmentCourse::updateOrCreate(
+                        ['assessment_id' => $assessment->id, 'course_id' => $course->id],
+                        [
+                            'assessment_canvas_id' => $assessment_canvas_id,
+                            'due_at' => $due_at,
+                        ]
+                    );
+                }
+            }
+        }
+    }
 
     public function mount(): void
     {
@@ -156,6 +152,6 @@ class SyncCanvas extends Component
 
     public function render(): View
     {
-        return view('livewire.admin.sync-canvas');
+        return view('livewire.admin.sync');
     }
 }

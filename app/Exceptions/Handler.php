@@ -3,6 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +29,16 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e): Response|JsonResponse|RedirectResponse
+    {
+        if ($this->isHttpException($e)) {
+            if ($e->getStatusCode() == 404) {
+                return response()->view('errors.404', [], 404);
+            }
+        }
+
+        return parent::render($request, $e);
     }
 }

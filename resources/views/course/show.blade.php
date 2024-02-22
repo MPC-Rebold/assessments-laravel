@@ -3,6 +3,10 @@
 use App\Models\Course;
 
 $course = Course::find(last(request()->segments()));
+if (!$course) {
+    abort(404);
+}
+
 ?>
 
 @section('title', $course->title)
@@ -13,7 +17,7 @@ $course = Course::find(last(request()->segments()));
         ['title' => $course->title, 'href' => route('course.show', $course->id)],
     ]" />
 
-    <div class="py-12">
+    <div class="py-10">
         <div class="mx-auto max-w-7xl space-y-4 sm:px-6 lg:px-8">
             <livewire:layout.section-header :header="__('Current Assessments')" />
             <livewire:assessment.upcoming-assessments :courseId="$course->id" />

@@ -11,10 +11,8 @@ use App\Models\Settings;
                 Last Synced:
                 {{ Settings::first()->last_synced_at ? Settings::first()->last_synced_at . ' PST' : 'Never' }}
             </div>
-            <x-button positive spinner class="min-w-28" wire:click="syncCanvas">
-                <div>
-                    Sync Canvas
-                </div>
+            <x-button positive spinner class="min-w-24" wire:click="sync">
+                Sync
             </x-button>
         </div>
     </div>

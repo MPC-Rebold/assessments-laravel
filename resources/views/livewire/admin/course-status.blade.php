@@ -22,7 +22,7 @@ new class extends Component {
         @if ($connectedCourses->isEmpty())
             <x-button.circle slate icon="ban" />
         @else
-            <x-button.circle warning icon="exclamation" />
+            <x-button.circle warning icon="exclamation" class="animate-pulse" />
         @endif
     </div>
     <div class="min-w-24 basis-2/12">

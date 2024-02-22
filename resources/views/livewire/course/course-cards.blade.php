@@ -32,7 +32,7 @@ new class extends Component {
 
                         <div class="flex space-x-4">
                             <x-canvas-button class="h-10 w-10" :href="'/courses/' . $course->id" />
-                            <x-button secondary :href="route('course.index', $course->id)" wire:navigate class="relative">
+                            <x-button secondary :href="route('course.show', $course->id)" wire:navigate class="relative">
                                 <span>Go</span>
                                 <x-icon
                                     class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"

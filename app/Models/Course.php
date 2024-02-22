@@ -25,6 +25,12 @@ class Course extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function assessments(): BelongsToMany
+    {
+        return $this->belongsToMany(Assessment::class, 'assessment_courses')
+            ->withPivot('due_at', 'assessment_canvas_id');
+    }
+
     public function master(): BelongsTo
     {
         return $this->belongsTo(Master::class);

@@ -10,7 +10,7 @@ use App\Models\Course;
 <x-app-layout>
     <livewire:layout.header :routes="[['title' => 'Profile', 'href' => route('profile')]]" />
 
-    <div class="py-12">
+    <div class="py-10">
         <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
             <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
                 <div class="flex justify-between align-middle">

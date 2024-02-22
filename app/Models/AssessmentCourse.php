@@ -10,6 +10,7 @@ class AssessmentCourse extends Model
     protected $fillable = [
         'assessment_id',
         'course_id',
+        'assessment_canvas_id',
         'due_at',
     ];
 

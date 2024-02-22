@@ -28,7 +28,7 @@ new class extends Component {
     }
 }; ?>
 
-<nav x-data="{ open: false }" class="border-b border-gray-100 bg-[#6f0834]">
+<nav x-data="{ open: false }" class="sticky top-0 z-50 h-full border-b border-gray-100 bg-[#6f0834]">
     <!-- Primary Navigation Menu -->
 
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -53,7 +53,7 @@ new class extends Component {
                     <x-dropdown align="left">
                         <x-slot name="trigger" class="h-full">
                             <div class="h-full">
-                                <x-nav-link :active="request()->routeIs('courses', 'course', 'assessment')" class="h-full">
+                                <x-nav-link :active="request()->routeIs('course.index', 'course.show', 'assessment')" class="h-full">
                                     {{ __('Courses') }}
                                     <div :class="{ 'rotate-180': coursesOpen }" class="transition-all ease-in-out">
                                         <x-icon name="chevron-down" class="h-5" solid />
@@ -110,9 +110,18 @@ new class extends Component {
                             </div>
                         </button>
                     </x-slot>
+                    @if (auth()->user()->is_admin)
+                        <x-dropdown.item :href="route('admin')" wire:navigate>
+                            <div class="flex items-center text-red-500">
+                                <x-icon class="mr-2 h-5 w-5" name="cog" />
+                                {{ __('Admin') }}
+                            </div>
+                        </x-dropdown.item>
+                    @endif
                     <x-dropdown.item :href="route('profile')" wire:navigate icon="user">
                         {{ __('Profile') }}
                     </x-dropdown.item>
+
                     <x-dropdown.item wire:click="logout" icon="logout">
                         {{ __('Log Out') }}
                     </x-dropdown.item>
@@ -135,7 +144,7 @@ new class extends Component {
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
+    <div :class="{ 'block': open, 'hidden': !open }" class="absolute w-full bg-[#6f0834] pb-2">
         <div class="space-y-1 pb-3 pt-2">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
@@ -143,7 +152,7 @@ new class extends Component {
         </div>
         <!-- Courses -->
         <div class="space-y-1 pb-3 pt-2">
-            <x-responsive-nav-link :href="route('course.index')" :active="request()->routeIs('courses', 'course', 'assessment')" wire:navigate>
+            <x-responsive-nav-link :href="route('course.index')" :active="request()->routeIs('course.index', 'course.show', 'assessment')" wire:navigate>
                 {{ __('Courses') }}
             </x-responsive-nav-link>
         </div>

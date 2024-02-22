@@ -23,7 +23,6 @@
                 wire:click="updateSpecificationGrading">
                 Save
             </x-button>
-
         </div>
     </div>
 </div>

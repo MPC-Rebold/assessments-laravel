@@ -79,10 +79,9 @@ class User extends Authenticatable
     public function assessments(int $courseId = null): Collection
     {
         if ($courseId) {
-            return $this->courses->find($courseId)->master->assessments->sortBy('due_at');
+            return $this->courses->find($courseId)->assessments->sortBy('due_at');
         }
 
-        return $this->courses->map->master->map->assessments->sortBy('due_at')->flatten();
-
+        return $this->courses->map->assessments->sortBy('due_at')->flatten();
     }
 }

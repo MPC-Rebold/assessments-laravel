@@ -16,8 +16,8 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignId('assessment_id')->constrained()->cascadeOnDelete();
             $table->foreignId('course_id')->constrained()->cascadeOnDelete();
-            $table->dateTime('due_at');
             $table->integer('assessment_canvas_id');
+            $table->dateTime('due_at')->nullable();
 
             $table->unique(['assessment_id', 'course_id']);
         });

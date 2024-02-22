@@ -3,8 +3,12 @@
 use Livewire\Volt\Component;
 use App\Models\Master;
 use App\Models\Course;
+use App\Models\User;
+use WireUi\Traits\Actions;
 
 new class extends Component {
+    use Actions;
+
     public Master $master;
     public array $connectedCourses;
     public array $availableCourses;
@@ -21,9 +25,17 @@ new class extends Component {
 
     public function save(): void
     {
-        $courses = Course::whereIn('title', $this->connectedCourses)->get();
-        $this->master->courses()->saveMany($courses);
-        $this->master->load('courses');
+        $this->master->courses()->update(['master_id' => null]);
+
+        $courses = Course::whereIn('title', $this->connectedCourses);
+        $courses->update(['master_id' => $this->master->id]);
+
+        $users = User::all();
+        foreach ($users as $user) {
+            $user->connectCourses();
+        }
+
+        $this->notification()->success('Course connections saved');
     }
 }; ?>
 
@@ -33,9 +45,9 @@ new class extends Component {
             <h2 class="min-w-44 text-lg font-bold text-gray-800">
                 Connected Courses
             </h2>
-            <div class="flex w-full items-center gap-4">
-                <x-select multiselect class="w-full" wire:model="connectedCourses" placeholder="No connected courses"
-                    :options="$availableCourses" />
+            <div class="flex w-full items-center justify-end gap-4">
+                <x-select multiselect searchable class="max-w-md" wire:model="connectedCourses"
+                    placeholder="No connected courses" :options="$availableCourses" />
                 <div>
                     @error('title')
                         <span class="error">{{ $message }}</span>
