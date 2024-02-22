@@ -4,6 +4,7 @@ use Livewire\Volt\Component;
 use App\Models\Master;
 use App\Models\Course;
 use App\Models\User;
+use App\Livewire\Admin\Sync;
 use WireUi\Traits\Actions;
 
 new class extends Component {
@@ -12,9 +13,13 @@ new class extends Component {
     public Master $master;
     public array $connectedCourses;
     public array $availableCourses;
+    public string $status;
 
     public function mount(): void
     {
+        $hasMissingCourses = $this->master->status->missing_courses;
+        $hasMissingAssessments = $this->master->status->missing_assessments;
+        $this->status = $this->master->statusString();
         $this->connectedCourses = $this->master->courses->pluck('title')->toArray();
         $this->availableCourses = Course::whereNull('master_id')
             ->orWhere('master_id', $this->master->id)
@@ -35,30 +40,75 @@ new class extends Component {
             $user->connectCourses();
         }
 
+        $sync = new Sync();
+        $sync->syncCourses();
+        $this->mount();
         $this->notification()->success('Course connections saved');
     }
 }; ?>
 
-<div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
-    <form>
-        <div class="flex flex-wrap items-center justify-between gap-x-16 gap-y-4 sm:flex-nowrap">
-            <h2 class="min-w-44 text-lg font-bold text-gray-800">
-                Connected Courses
-            </h2>
-            <div class="flex w-full items-center justify-end gap-4">
-                <x-select multiselect searchable class="max-w-md" wire:model="connectedCourses"
-                    placeholder="No connected courses" :options="$availableCourses" />
-                <div>
-                    @error('title')
-                        <span class="error">{{ $message }}</span>
-                    @enderror
+<div class="space-y-4">
+    <div>
+        @if ($status === 'Okay')
+            <div class='border border-positive-600 bg-positive-50 p-4 sm:rounded-lg'>
+                <div class="flex items-center border-positive-200">
+                    <x-icon name="check" class="h-6 w-6 text-positive-600" />
+                    <span class="ml-1 text-lg font-semibold text-positive-600">
+                        Okay
+                    </span>
                 </div>
-                <x-button disabled positive spinner class="min-w-24 bg-slate-300 hover:bg-slate-300"
-                    wire:dirty.attr.remove="disabled" wire:dirty.class.remove="bg-slate-300 hover:bg-slate-300"
-                    wire:click="save">
-                    Save
-                </x-button>
             </div>
-        </div>
-    </form>
+        @elseif($status === 'Disconnected')
+            <div class='border border-gray-600 bg-gray-100 p-4 sm:rounded-lg'>
+                <div class="flex flex-wrap items-center justify-between gap-2 border-gray-200">
+                    <div class="flex flex-nowrap">
+                        <x-icon name="ban" class="h-6 w-6 text-gray-600" />
+                        <span class="ml-1 text-lg font-semibold text-gray-600">
+                            Disconnected
+                        </span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        No connected courses. This course is inactive.
+                    </div>
+                </div>
+            </div>
+        @elseif($status === 'Warning')
+            <div class='border border-negative-600 bg-negative-50 p-4 sm:rounded-lg'>
+                <div class="flex items-center border-b-2 border-negative-200 pb-3">
+                    <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
+                    <span class="ml-1 text-lg font-semibold text-negative-600">
+                        Warning
+                    </span>
+                </div>
+                <div class="ml-5 mt-2 pl-1">
+                    <ul class="list-disc space-y-1 text-negative-600">
+                        <li>{{ $status }}</li>
+                    </ul>
+                </div>
+            </div>
+        @endif
+    </div>
+    <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
+        <form>
+            <div class="flex flex-wrap items-center justify-between gap-x-16 gap-y-4 sm:flex-nowrap">
+                <h2 class="min-w-44 text-lg font-bold text-gray-800">
+                    Connected Courses
+                </h2>
+                <div class="flex w-full items-center justify-end gap-4">
+                    <x-select multiselect searchable class="max-w-md" wire:model="connectedCourses"
+                        placeholder="No connected courses" :options="$availableCourses" />
+                    <div>
+                        @error('title')
+                            <span class="error">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <x-button disabled positive spinner class="min-w-24 bg-slate-300 hover:bg-slate-300"
+                        wire:dirty.attr.remove="disabled" wire:dirty.class.remove="bg-slate-300 hover:bg-slate-300"
+                        wire:click="save">
+                        Save
+                    </x-button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>

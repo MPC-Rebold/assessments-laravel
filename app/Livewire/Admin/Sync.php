@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Master;
 use App\Models\Question;
 use App\Models\Settings;
+use App\Models\Status;
 use App\Services\CanvasService;
 use App\Services\SeedReaderService;
 use Carbon\Carbon;
@@ -26,7 +27,7 @@ class Sync extends Component
     {
         $this->createMasters();
         $this->syncCourses();
-        $this->synAssessmentCourses();
+        $this->syncAssessmentCourses();
 
         Settings::firstOrNew()->update([
             'last_synced_at' => Carbon::now('PST'),
@@ -41,35 +42,86 @@ class Sync extends Component
 
     public function syncCourses(): void
     {
-        $courses = CanvasService::getCourses()->json();
+        $canvasCourses = CanvasService::getCourses()->json();
 
-        foreach ($courses as $course) {
-            $enrolled = CanvasService::getCourseEnrollments($course['id'])->json();
-            $validStudents = [];
-            foreach ($enrolled as $enrollment) {
-                $validStudents[] = $enrollment['user']['login_id'];
-            }
+        $this->pruneCourses($canvasCourses);
 
-            $validAssessments = [];
-            $canvasAssignments = CanvasService::getCourseAssignments($course['id'])->json();
-            foreach ($canvasAssignments as $canvasAssignment) {
-                $validAssessments[] = [
-                    'canvas_id' => $canvasAssignment['id'],
-                    'title' => $canvasAssignment['name'],
-                    'due_at' => $canvasAssignment['due_at'],
-                ];
-            }
+        foreach ($canvasCourses as $canvasCourse) {
+            $validStudents = $this->getValidStudents($canvasCourse);
+            $validAssessments = $this->getValidAssessments($canvasCourse);
 
             Course::updateOrCreate(
-                ['id' => $course['id']],
+                ['id' => $canvasCourse['id']],
                 [
-                    'title' => $course['name'],
+                    'title' => $canvasCourse['name'],
                     'valid_students' => $validStudents,
                     'valid_assessments' => $validAssessments,
                 ]
             );
         }
 
+        $this->checkMastersCourses($canvasCourses);
+    }
+
+    /**
+     * Removes courses that are no longer in the Canvas and are not associated with any master
+     *
+     * @param array $canvasCourses
+     * @return void
+     */
+    public function pruneCourses(array $canvasCourses): void
+    {
+        $canvasCoursesIds = array_column($canvasCourses, 'id');
+        $courses = Course::all();
+
+        foreach ($courses as $course) {
+            if (! in_array($course->id, $canvasCoursesIds) && ! $course->master){
+                $course->delete();
+            }
+        }
+    }
+
+    public function checkMastersCourses(array $courses): void
+    {
+        $masters = Master::all();
+        foreach ($masters as $master) {
+            $masterCoursesIds = $master->courses->pluck('id')->toArray();
+            $canvasCoursesIds = array_column($courses, 'id');
+
+            foreach ($masterCoursesIds as $masterCourseId) {
+                if (! in_array($masterCourseId, $canvasCoursesIds)) {
+                    $master->status->update([
+                        'missing_courses' => array_merge($master->status->missing_courses, [$masterCourseId]),
+                    ]);
+                }
+            }
+        }
+    }
+
+    private function getValidStudents($course): array
+    {
+        $enrolled = CanvasService::getCourseEnrollments($course['id'])->json();
+        $validStudents = [];
+        foreach ($enrolled as $enrollment) {
+            $validStudents[] = $enrollment['user']['login_id'];
+        }
+
+        return $validStudents;
+    }
+
+    private function getValidAssessments($course): array
+    {
+        $validAssessments = [];
+        $canvasAssignments = CanvasService::getCourseAssignments($course['id'])->json();
+        foreach ($canvasAssignments as $canvasAssignment) {
+            $validAssessments[] = [
+                'canvas_id' => $canvasAssignment['id'],
+                'title' => $canvasAssignment['name'],
+                'due_at' => $canvasAssignment['due_at'],
+            ];
+        }
+
+        return $validAssessments;
     }
 
     public function createMasters(): void
@@ -81,6 +133,14 @@ class Sync extends Component
                 ['title' => $master]
             );
 
+            Status::updateOrCreate(
+                ['master_id' => $masterModel->id],
+                [
+                    'missing_assessments' => [],
+                    'missing_courses' => [],
+                ]
+            );
+
             $this->createAssessments($masterModel);
         }
     }
@@ -90,7 +150,6 @@ class Sync extends Component
         $assessments = SeedReaderService::getAssessments($master->title);
 
         foreach ($assessments as $assessment) {
-
             $assessmentModel = Assessment::updateOrCreate(
                 ['title' => $assessment, 'master_id' => $master->id]
             );
@@ -109,7 +168,7 @@ class Sync extends Component
         }
     }
 
-    public function synAssessmentCourses(): void
+    public function syncAssessmentCourses(): void
     {
         $masters = Master::all();
 
@@ -119,7 +178,6 @@ class Sync extends Component
             foreach ($courses as $course) {
                 $assessments = Assessment::where('master_id', $master->id)->get();
                 $validAssessments = $course->valid_assessments;
-
 
                 foreach ($assessments as $assessment) {
                     $assessment_canvas_id = -1;
@@ -131,6 +189,12 @@ class Sync extends Component
                             $due_at = $validAssessment['due_at'];
                             break;
                         }
+                    }
+
+                    if ($assessment_canvas_id === -1) {
+                        $master->status->update([
+                            'missing_assessments' => array_merge($master->status->missing_assessments, [$course->id => $assessment->id]),
+                        ]);
                     }
 
                     AssessmentCourse::updateOrCreate(

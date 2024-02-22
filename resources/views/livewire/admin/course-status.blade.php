@@ -9,20 +9,24 @@ new class extends Component {
     public Master $masterCourse;
     public Collection $connectedCourses;
     public array $allAvailableCourses;
+    public string $status;
 
     public function mount(): void
     {
         $this->allAvailableCourses = Course::all()->whereNull('master_id')->pluck('title')->toArray();
         $this->connectedCourses = $this->masterCourse->courses;
+        $this->status = $this->masterCourse->statusString();
     }
 }; ?>
 
 <div class="flex flex-row items-center">
     <div class="min-w-16 basis-1/12">
-        @if ($connectedCourses->isEmpty())
+        @if ($status === 'Okay')
+            <x-button.circle positive icon="check" />
+        @elseif ($status === 'Disconnected')
             <x-button.circle slate icon="ban" />
-        @else
-            <x-button.circle warning icon="exclamation" class="animate-pulse" />
+        @elseif($status === 'Warning')
+            <x-button.circle negative icon="exclamation" class="animate-pulse" />
         @endif
     </div>
     <div class="min-w-24 basis-2/12">
