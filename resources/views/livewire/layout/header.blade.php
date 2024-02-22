@@ -17,13 +17,16 @@ new class extends Component {
 
 <div>
     <x-slot name="header">
-        <h2 class="flex items-center space-x-2 text-xl font-semibold leading-tight text-gray-800">
+        <h2 class="flex items-center space-x-2 overflow-auto text-xl font-semibold leading-tight">
             @foreach ($routes as $route)
-                <a class="hover:text-slate-500 hover:underline" href="{{ $route['href'] }}" wire:navigate>
-                    {{ __($route['title']) }}
-                </a>
+                <div
+                    class="{{ $route['title'] == 'Admin' ? 'text-red-500 hover:text-red-400' : 'text-slate-800 hover:text-slate-500 ' }}">
+                    <a class="text-nowrap hover:underline" href="{{ $route['href'] }}" wire:navigate>
+                        {{ __($route['title']) }}
+                    </a>
+                </div>
                 @if (!$loop->last)
-                    <x-icon name="chevron-right" class="h-5" solid />
+                    <x-icon name="chevron-right" class="h-5 min-h-5 w-5 min-w-5" solid />
                 @endif
             @endforeach
         </h2>

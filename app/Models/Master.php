@@ -29,12 +29,20 @@ class Master extends Model
 
     public function statusString(): string
     {
-        $hasMissingCourses = $this->status->missing_courses;
-        $hasMissingAssessments = $this->status->missing_assessments;
-
+        if (! $this->status) {
+            return '';
+        }
+        if (! $this->status->has_seed) {
+            return 'NoSeed';
+        }
         if ($this->courses->isEmpty()) {
             return 'Disconnected';
-        } elseif (! $hasMissingCourses && ! $hasMissingAssessments) {
+        }
+
+        $hasMissingCourses = $this->status->missing_courses->isNotEmpty();
+        $hasMissingAssessments = $this->status->missing_assessments->isNotEmpty();
+
+        if (! $hasMissingCourses && ! $hasMissingAssessments) {
             return 'Okay';
         } else {
             return 'Warning';

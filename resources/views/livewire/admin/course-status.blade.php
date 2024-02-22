@@ -26,6 +26,8 @@ new class extends Component {
         @elseif ($status === 'Disconnected')
             <x-button.circle slate icon="ban" />
         @elseif($status === 'Warning')
+            <x-button.circle warning icon="exclamation" class="animate-pulse" />
+        @elseif($status === 'NoSeed')
             <x-button.circle negative icon="exclamation" class="animate-pulse" />
         @endif
     </div>
@@ -33,7 +35,11 @@ new class extends Component {
         {{ $masterCourse->title }}
     </div>
     <div class="grow overflow-hidden text-ellipsis pe-4 text-gray-500">
-        @if ($connectedCourses->isEmpty())
+        @if ($status === 'NoSeed')
+            <div class="text-red-500">
+                No seed course detected
+            </div>
+        @elseif ($connectedCourses->isEmpty())
             - No courses connected -
         @else
             {{ implode(', ', $connectedCourses->pluck('title')->all()) }}

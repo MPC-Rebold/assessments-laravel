@@ -14,9 +14,23 @@ return new class extends Migration
         Schema::create('statuses', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('master_id')->constrained();
-            $table->json('missing_courses')->default('[]');
-            $table->json('missing_assessments')->default('[]');
+            $table->foreignId('master_id')->constrained()->cascadeOnDelete();
+            $table->boolean('has_seed')->default(true);
+        });
+
+        Schema::create('status_courses', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->foreignId('status_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('course_id')->constrained();
+        });
+
+        Schema::create('status_assessments', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->foreignId('status_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('course_id')->constrained();
+            $table->foreignId('assessment_id')->constrained();
         });
     }
 

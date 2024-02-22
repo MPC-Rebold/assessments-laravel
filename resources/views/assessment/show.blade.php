@@ -2,7 +2,6 @@
 
 use App\Models\Assessment;
 use App\Models\AssessmentCourse;
-use Illuminate\Support\Facades\DB;
 
 $assessment_canvas_id = last(request()->segments());
 $assessmentCourse = AssessmentCourse::firstWhere('assessment_canvas_id', $assessment_canvas_id);
@@ -31,6 +30,7 @@ $course = $assessmentCourse->course;
     <div class="py-10">
         <div class="mx-auto max-w-7xl space-y-4 sm:px-6 lg:px-8">
             <livewire:layout.section-header :header="__($assessment->title)" />
+            <livewire:assessment.instructions :assessment="$assessment" />
         </div>
     </div>
 </x-app-layout>

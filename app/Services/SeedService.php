@@ -2,14 +2,27 @@
 
 namespace App\Services;
 
-class SeedReaderService
+use App\Models\Assessment;
+use App\Models\Master;
+
+class SeedService
 {
+    /**
+     * Gets the titles of all masters in \database\seed
+     *
+     * @return array of master titles
+     */
     public static function getMasters(): array
     {
         return array_map('basename', glob(database_path('seed') . '\*', GLOB_ONLYDIR));
-
     }
 
+    /**
+     * Gets the titles of all assessments in \database\seed\{masterTitle}
+     *
+     * @param string $masterTitle
+     * @return array
+     */
     public static function getAssessments(string $masterTitle): array
     {
         return array_map(function ($file) {
@@ -18,12 +31,12 @@ class SeedReaderService
     }
 
     /**
-     * Checks if course is a valid directory in \database\seed
+     * Checks if a master is a valid directory in \database\seed
      *
-     * @param string $courseTitle
-     * @return bool
+     * @param string $courseTitle title of the course to check
+     * @return bool true course is valid, false otherwise
      */
-    public static function isValidCourse(string $courseTitle): bool
+    public static function isValidMaster(string $courseTitle): bool
     {
         return is_dir(database_path('seed/' . $courseTitle));
     }
@@ -62,5 +75,36 @@ class SeedReaderService
         }
 
         return $res;
+    }
+
+    /**
+     * Restores the master and its assessments from the database to the seed directory
+     *
+     * @param Master $master
+     * @return void
+     */
+    public static function restore(Master $master): void
+    {
+        if (self::isValidMaster($master->title)) {
+            return;
+        }
+
+        mkdir(database_path('seed/' . $master->title));
+        foreach ($master->assessments as $assessment) {
+            self::writeAssessment($assessment);
+        }
+    }
+
+    public static function writeAssessment(Assessment $assessment): void
+    {
+        $questionsText = '';
+        $questions = $assessment->questions;
+
+        foreach ($questions as $question) {
+            $questionsText .= $question->question . "\n@@" . $question->answer . "@@\n\n";
+        }
+
+        $assessmentPath = database_path('seed/' . $assessment->master->title . '/' . $assessment->title . '.txt');
+        file_put_contents($assessmentPath, $questionsText);
     }
 }

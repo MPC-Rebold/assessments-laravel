@@ -1,8 +1,10 @@
 <?php
 
 use Livewire\Volt\Component;
+use Illuminate\Database\Eloquent\Collection;
 use App\Models\Master;
 use App\Models\Course;
+use App\Models\Assessment;
 use App\Models\User;
 use App\Livewire\Admin\Sync;
 use WireUi\Traits\Actions;
@@ -13,22 +15,26 @@ new class extends Component {
     public Master $master;
     public array $connectedCourses;
     public array $availableCourses;
-    public string $status;
+    public string $statusString;
+
+    public Collection $missingCourses;
+    public Collection $missingAssessments;
 
     public function mount(): void
     {
-        $hasMissingCourses = $this->master->status->missing_courses;
-        $hasMissingAssessments = $this->master->status->missing_assessments;
-        $this->status = $this->master->statusString();
+        $this->statusString = $this->master->statusString();
         $this->connectedCourses = $this->master->courses->pluck('title')->toArray();
         $this->availableCourses = Course::whereNull('master_id')
             ->orWhere('master_id', $this->master->id)
             ->get()
             ->pluck('title')
             ->toArray();
+
+        $this->missingCourses = $this->master->status->missing_courses;
+        $this->missingAssessments = $this->master->status->missing_assessments;
     }
 
-    public function save(): void
+    public function saveConnectedCourses(): void
     {
         $this->master->courses()->update(['master_id' => null]);
 
@@ -41,51 +47,27 @@ new class extends Component {
         }
 
         $sync = new Sync();
-        $sync->syncCourses();
+        $sync->sync();
+
         $this->mount();
-        $this->notification()->success('Course connections saved');
+        if ($this->master->statusString() === 'Okay' or $this->master->statusString() === 'Disconnected') {
+            $this->notification()->success('Course connections saved');
+        } else {
+            $this->notification()->error('Course connections saved with errors');
+        }
     }
 }; ?>
 
 <div class="space-y-4">
     <div>
-        @if ($status === 'Okay')
-            <div class='border border-positive-600 bg-positive-50 p-4 sm:rounded-lg'>
-                <div class="flex items-center border-positive-200">
-                    <x-icon name="check" class="h-6 w-6 text-positive-600" />
-                    <span class="ml-1 text-lg font-semibold text-positive-600">
-                        Okay
-                    </span>
-                </div>
-            </div>
-        @elseif($status === 'Disconnected')
-            <div class='border border-gray-600 bg-gray-100 p-4 sm:rounded-lg'>
-                <div class="flex flex-wrap items-center justify-between gap-2 border-gray-200">
-                    <div class="flex flex-nowrap">
-                        <x-icon name="ban" class="h-6 w-6 text-gray-600" />
-                        <span class="ml-1 text-lg font-semibold text-gray-600">
-                            Disconnected
-                        </span>
-                    </div>
-                    <div class="text-sm text-gray-500">
-                        No connected courses. This course is inactive.
-                    </div>
-                </div>
-            </div>
-        @elseif($status === 'Warning')
-            <div class='border border-negative-600 bg-negative-50 p-4 sm:rounded-lg'>
-                <div class="flex items-center border-b-2 border-negative-200 pb-3">
-                    <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
-                    <span class="ml-1 text-lg font-semibold text-negative-600">
-                        Warning
-                    </span>
-                </div>
-                <div class="ml-5 mt-2 pl-1">
-                    <ul class="list-disc space-y-1 text-negative-600">
-                        <li>{{ $status }}</li>
-                    </ul>
-                </div>
-            </div>
+        @if ($statusString === 'Okay')
+            <livewire:master.status-successful />
+        @elseif($statusString === 'Disconnected')
+            <livewire:master.status-disconnected />
+        @elseif($statusString === 'Warning')
+            <livewire:master.status-warning :missingCourses="$missingCourses" :missingAssessments="$missingAssessments" />
+        @elseif($statusString === 'NoSeed')
+            <livewire:master.status-no-seed :master="$master" />
         @endif
     </div>
     <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
@@ -97,14 +79,10 @@ new class extends Component {
                 <div class="flex w-full items-center justify-end gap-4">
                     <x-select multiselect searchable class="max-w-md" wire:model="connectedCourses"
                         placeholder="No connected courses" :options="$availableCourses" />
-                    <div>
-                        @error('title')
-                            <span class="error">{{ $message }}</span>
-                        @enderror
-                    </div>
+
                     <x-button disabled positive spinner class="min-w-24 bg-slate-300 hover:bg-slate-300"
                         wire:dirty.attr.remove="disabled" wire:dirty.class.remove="bg-slate-300 hover:bg-slate-300"
-                        wire:click="save">
+                        wire:click="saveConnectedCourses">
                         Save
                     </x-button>
                 </div>

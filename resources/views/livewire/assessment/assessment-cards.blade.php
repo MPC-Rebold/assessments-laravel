@@ -24,7 +24,7 @@ new class extends Component {
                                 {{ $assessment->title }}
                             </div>
                             <div class="text-sm text-gray-500">
-                                {{ Master::find($assessment->master_id)->title }}
+                                {{ Course::find($assessment->pivot->course_id)->title }}
                             </div>
                         </div>
                     </a>

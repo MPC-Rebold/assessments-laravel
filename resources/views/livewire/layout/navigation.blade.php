@@ -53,10 +53,11 @@ new class extends Component {
                     <x-dropdown align="left">
                         <x-slot name="trigger" class="h-full">
                             <div class="h-full">
-                                <x-nav-link :active="request()->routeIs('course.index', 'course.show', 'assessment')" class="h-full">
+                                <x-nav-link :active="request()->routeIs('course.index', 'course.show', 'assessment')" class="group h-full">
                                     {{ __('Courses') }}
                                     <div :class="{ 'rotate-180': coursesOpen }" class="transition-all ease-in-out">
-                                        <x-icon name="chevron-down" class="h-5" solid />
+                                        <x-icon name="chevron-down"
+                                            class="h-5 w-5 transition-all ease-in-out group-hover:scale-125" solid />
                                     </div>
                                 </x-nav-link>
                             </div>
@@ -102,11 +103,12 @@ new class extends Component {
                 <x-dropdown align="right" class="w-48">
                     <x-slot name="trigger">
                         <button
-                            class="inline-flex h-full items-center rounded-md border border-transparent bg-[#6f0834] px-3 py-2 text-sm font-medium leading-4 text-slate-200 transition duration-150 ease-in-out hover:text-white focus:outline-none">
+                            class="group inline-flex h-full items-center rounded-md border border-transparent bg-[#6f0834] px-3 py-2 text-sm font-medium leading-4 text-slate-200 transition duration-150 ease-in-out hover:text-white focus:outline-none">
                             <div>{{ auth()->user()->name }}</div>
                             <x-avatar sm :src="auth()->user()->avatar" class="ml-2" />
                             <div :class="{ 'rotate-180': profileOpen }" class="ms-1 transition-all ease-in-out">
-                                <x-icon name="chevron-down" class="h-5" solid />
+                                <x-icon name="chevron-down"
+                                    class="h-5 w-5 transition-all ease-in-out group-hover:scale-125" solid />
                             </div>
                         </button>
                     </x-slot>

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('title')->unique();
-            $table->json('valid_students');
-            $table->json('valid_assessments');
+            $table->json('valid_students')->default('[]');
+            $table->json('valid_assessments')->default('[]');
             $table->foreignId('master_id')->nullable()->constrained()->cascadeOnDelete();
         });
 

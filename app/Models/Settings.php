@@ -10,5 +10,6 @@ class Settings extends Model
         'specification_grading',
         'specification_grading_threshold',
         'last_synced_at',
+        'is_syncing',
     ];
 }

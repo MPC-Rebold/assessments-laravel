@@ -9,8 +9,9 @@ use App\Models\Master;
 use App\Models\Question;
 use App\Models\Settings;
 use App\Models\Status;
+use App\Models\User;
 use App\Services\CanvasService;
-use App\Services\SeedReaderService;
+use App\Services\SeedService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -25,12 +26,29 @@ class Sync extends Component
 
     public function sync(): void
     {
+        $settings = Settings::firstOrNew();
+
+        if ($settings->is_syncing) {
+            $this->notification()->warning(
+                'Scheduled syncing already in progress, please wait.',
+            );
+
+            return;
+        }
+
+        $settings->update([
+            'is_syncing' => true,
+        ]);
+
         $this->createMasters();
+        $this->checkMasterSeeds();
         $this->syncCourses();
         $this->syncAssessmentCourses();
+        $this->connectUserCourses();
 
-        Settings::firstOrNew()->update([
-            'last_synced_at' => Carbon::now('PST'),
+        $settings->update([
+            'last_synced_at' => Carbon::now(),
+            'is_syncing' => false,
         ]);
 
         $this->mount();
@@ -63,6 +81,24 @@ class Sync extends Component
         $this->checkMastersCourses($canvasCourses);
     }
 
+    public function checkMasterSeeds(): void
+    {
+        $masters = SeedService::getMasters();
+        $dbMasters = Master::all()->pluck('title')->toArray();
+
+        $diff = array_diff($dbMasters, $masters);
+
+        foreach ($diff as $master) {
+            $masterModel = Master::where('title', $master)->first();
+            $status = Status::firstOrCreate([
+                'master_id' => $masterModel->id,
+            ]);
+            $status->update([
+                'has_seed' => false,
+            ]);
+        }
+    }
+
     /**
      * Removes courses that are no longer in the Canvas and are not associated with any master
      *
@@ -75,7 +111,7 @@ class Sync extends Component
         $courses = Course::all();
 
         foreach ($courses as $course) {
-            if (! in_array($course->id, $canvasCoursesIds) && ! $course->master){
+            if (! in_array($course->id, $canvasCoursesIds) && ! $course->master) {
                 $course->delete();
             }
         }
@@ -86,13 +122,13 @@ class Sync extends Component
         $masters = Master::all();
         foreach ($masters as $master) {
             $masterCoursesIds = $master->courses->pluck('id')->toArray();
+
             $canvasCoursesIds = array_column($courses, 'id');
 
             foreach ($masterCoursesIds as $masterCourseId) {
                 if (! in_array($masterCourseId, $canvasCoursesIds)) {
-                    $master->status->update([
-                        'missing_courses' => array_merge($master->status->missing_courses, [$masterCourseId]),
-                    ]);
+                    $status = Status::where('master_id', $master->id)->first();
+                    $status->missing_courses()->attach($masterCourseId);
                 }
             }
         }
@@ -126,20 +162,20 @@ class Sync extends Component
 
     public function createMasters(): void
     {
-        $masters = SeedReaderService::getMasters();
+        $masters = SeedService::getMasters();
 
         foreach ($masters as $master) {
             $masterModel = Master::firstOrCreate(
                 ['title' => $master]
             );
 
-            Status::updateOrCreate(
-                ['master_id' => $masterModel->id],
-                [
-                    'missing_assessments' => [],
-                    'missing_courses' => [],
-                ]
+            $status = Status::firstOrCreate(
+                ['master_id' => $masterModel->id]
             );
+
+            // clear missing statuses
+            $status->missing_courses()->sync([]);
+            $status->missing_assessments()->sync([]);
 
             $this->createAssessments($masterModel);
         }
@@ -147,14 +183,14 @@ class Sync extends Component
 
     public function createAssessments(Master $master): void
     {
-        $assessments = SeedReaderService::getAssessments($master->title);
+        $assessments = SeedService::getAssessments($master->title);
 
         foreach ($assessments as $assessment) {
             $assessmentModel = Assessment::updateOrCreate(
                 ['title' => $assessment, 'master_id' => $master->id]
             );
 
-            $questions = SeedReaderService::getQuestions($master->title, $assessment);
+            $questions = SeedService::getQuestions($master->title, $assessment);
 
             foreach ($questions as $question) {
                 Question::updateOrCreate(
@@ -192,9 +228,9 @@ class Sync extends Component
                     }
 
                     if ($assessment_canvas_id === -1) {
-                        $master->status->update([
-                            'missing_assessments' => array_merge($master->status->missing_assessments, [$course->id => $assessment->id]),
-                        ]);
+                        $status = Status::where('master_id', $master->id)->first();
+                        $status->missing_assessments()->attach($assessment->id, ['course_id' => $course->id]);
+                        $status->save();
                     }
 
                     AssessmentCourse::updateOrCreate(
@@ -206,6 +242,15 @@ class Sync extends Component
                     );
                 }
             }
+        }
+    }
+
+    public function connectUserCourses(): void
+    {
+        $users = User::all();
+
+        foreach ($users as $user) {
+            $user->connectCourses();
         }
     }
 
