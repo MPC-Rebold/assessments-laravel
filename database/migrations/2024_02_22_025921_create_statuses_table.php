@@ -22,15 +22,15 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId('status_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('course_id')->constrained();
+            $table->foreignId('course_id')->constrained()->cascadeOnDelete();
         });
 
         Schema::create('status_assessments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->foreignId('status_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('course_id')->constrained();
-            $table->foreignId('assessment_id')->constrained();
+            $table->foreignId('course_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('assessment_id')->constrained()->cascadeOnDelete();
         });
     }
 
