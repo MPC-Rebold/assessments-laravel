@@ -20,10 +20,13 @@ new class extends Component {
         <h2 class="flex items-center space-x-2 overflow-auto text-xl font-semibold leading-tight">
             @foreach ($routes as $route)
                 <div
-                    class="{{ $route['title'] == 'Admin' ? 'text-red-500 hover:text-red-400' : 'text-slate-800 hover:text-slate-500 ' }}">
-                    <a class="text-nowrap hover:underline" href="{{ $route['href'] }}" wire:navigate>
+                    class="{{ $route['title'] == 'Admin' ? 'text-red-500 hover:text-red-400' : 'text-slate-800 hover:text-slate-500' }} group transition-all">
+                    <a class="text-nowrap" href="{{ $route['href'] }}" wire:navigate>
                         {{ __($route['title']) }}
                     </a>
+                    <span
+                        class="block h-0.5 max-w-0 bg-slate-500 transition-all duration-200 group-hover:max-w-full"></span>
+
                 </div>
                 @if (!$loop->last)
                     <x-icon name="chevron-right" class="h-5 min-h-5 w-5 min-w-5" solid />

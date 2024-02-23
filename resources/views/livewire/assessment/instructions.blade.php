@@ -10,9 +10,11 @@ new class extends Component {
     <button @click="open = !open" class="group w-full bg-white p-4 shadow sm:rounded-lg sm:px-6 sm:py-4">
         <div class="flex items-center justify-between">
             <div class="flex flex-nowrap items-center">
-                <x-icon name="information-circle" class="me-1 h-6 w-6 text-gray-500" />
-                <h2 class="text-lg font-semibold group-hover:underline">
+                <x-icon name="information-circle" class="me-1 h-6 w-6 text-slate-800" />
+                <h2 class="-mt-0.5 text-lg font-semibold text-slate-800 group-hover:text-slate-500">
                     Instructions
+                    <span
+                        class="-mt-1 block h-0.5 max-w-0 bg-slate-500 transition-all duration-200 group-hover:max-w-full"></span>
                 </h2>
             </div>
             <div :class="{ 'rotate-180': open }" class="transition-transform ease-in-out">

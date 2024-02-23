@@ -23,4 +23,19 @@ class AssessmentCourse extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    public function gradeForUser(User $user): array
+    {
+        $points = QuestionUser::where([
+            'user_id' => $user->id,
+            'assessment_id' => $this->assessment->id,
+            'course_id' => $this->course->id,
+            'is_correct' => true,
+        ])->count();
+
+        return [
+            'points' => $points,
+            'max_points' => $this->assessment->questionCount,
+        ];
+    }
 }

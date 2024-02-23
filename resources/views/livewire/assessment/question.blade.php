@@ -34,7 +34,7 @@ new class extends Component {
             'course_id' => $this->course->id,
         ]);
 
-        $this->dueAt = $assessmentCourse->due_at;
+        $this->dueAt = Carbon::parse($assessmentCourse->due_at)->timestamp;
     }
 
     public function submit(): void
@@ -44,7 +44,8 @@ new class extends Component {
             return;
         }
 
-        if ($this->dueAt < Carbon::now()->getPreciseTimestamp(3)) {
+        // Add grace-period of 1 minute
+        if ($this->dueAt + 60 < Carbon::now()->timestamp) {
             $this->notification()->error('You cannot submit after the due date');
             return;
         }
@@ -80,8 +81,8 @@ new class extends Component {
             <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <div class="grow">
                     <x-input class="w-full font-mono sm:text-base" spellcheck="false" onpaste="return false;"
-                        ondrop="return false;" autocomplete="off" maxlength="{{ $maxAnswerLength }}"
-                        wire:model="answer" />
+                        ondrop="return false;" autocomplete="off" maxlength="{{ $maxAnswerLength }}" wire:model="answer"
+                        placeholder="Answer" />
                 </div>
 
                 <div class="flex w-full flex-nowrap items-center justify-between space-x-4 md:w-auto">
@@ -96,9 +97,14 @@ new class extends Component {
                                 Submit
                             </x-button>
                         @elseif ($guessesLeft > 0)
-                            <x-button secondary spinner disabled class="min-w-28" wire:click="submit"
+                            <x-button secondary disabled class="group min-w-28" wire:click="submit"
                                 wire:dirty.attr.remove="disabled">
-                                Submit
+                                <div class="-me-5 transition-all ease-in-out" wire:dirty.class="group-hover:-me-1">
+                                    Submit
+                                </div>
+                                <x-icon class="invisible -me-2 h-5 w-5 scale-0 transition-all ease-in-out"
+                                    wire:dirty.class="group-hover:visible group-hover:scale-100" name="chevron-right"
+                                    solid />
                             </x-button>
                         @else
                             <x-button secondary disabled class="min-w-28" wire:click="submit">
