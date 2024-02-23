@@ -25,7 +25,7 @@ new class extends Component {
                         {{ __($route['title']) }}
                     </a>
                     <span
-                        class="block h-0.5 max-w-0 bg-slate-500 transition-all duration-200 group-hover:max-w-full"></span>
+                        class="{{ $route['title'] == 'Admin' ? 'bg-red-400' : 'bg-slate-500' }} block h-0.5 max-w-0 transition-all duration-200 group-hover:max-w-full"></span>
 
                 </div>
                 @if (!$loop->last)

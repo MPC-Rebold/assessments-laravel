@@ -14,7 +14,7 @@ new class extends Component {
                 <h2 class="-mt-0.5 text-lg font-semibold text-slate-800 group-hover:text-slate-500">
                     Instructions
                     <span
-                        class="-mt-1 block h-0.5 max-w-0 bg-slate-500 transition-all duration-200 group-hover:max-w-full"></span>
+                        class="-mt-1 block h-0.5 max-w-0 bg-slate-500 transition-all duration-100 group-hover:max-w-full"></span>
                 </h2>
             </div>
             <div :class="{ 'rotate-180': open }" class="transition-transform ease-in-out">
@@ -27,12 +27,30 @@ new class extends Component {
             <ul class="list-disc space-y-1 pl-5">
                 <li>You have ten (10) guesses for each question</li>
                 <li>Feedback for your answer will be given after each attempt</li>
-                {{--                <ul class="list-inside list-disc"> --}}
-                {{--                    <li>Correct letters will be green</li> --}}
-                {{--                    <li>Incorrect letters will have a strikethrough</li> --}}
-                {{--                    <li>Missing letters will be an underscore</li> --}}
-                {{--                </ul> --}}
+                <ul class="list-inside list-disc pl-1">
+                    <li>Correct letters will be green</li>
+                    <li>Incorrect letters will have a strikethrough</li>
+                    <li>Missing letters will be underscores</li>
+                    <li>
+                        Example: if the correct answer is <b>example</b>
+                        and you entered <b>exa123pl</b>, the feedback would be
+                        <div
+                            class="ml-5 mt-1 w-fit overflow-auto text-nowrap rounded-md bg-slate-200 px-2 py-1 tracking-widest">
+                            <keep__>e</keep__>
+                            <keep__>x</keep__>
+                            <keep__>a</keep__>
+                            <delete__>1</delete__>
+                            <delete__>2</delete__>
+                            <delete__>3</delete__>
+                            _
+                            <keep__>p</keep__>
+                            <keep__>l</keep__>
+                            _
+                        </div>
+                    </li>
+                </ul>
                 <li>Submit your work to upload your grade to Canvas</li>
+                <li>You can submit multiple times up to the due date</li>
             </ul>
         </div>
     </div>

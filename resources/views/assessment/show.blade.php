@@ -18,7 +18,7 @@ $questions = $assessment->questions->sortBy('number');
 if ($assessmentCourse->due_at) {
     $dueAt = Carbon::parse($assessmentCourse->due_at)
         ->setTimezone('PST')
-        ->format('M d g:i A T');
+        ->format('M j, g:i A T');
 } else {
     $dueAt = null;
 }
@@ -36,15 +36,15 @@ if ($assessmentCourse->due_at) {
         ],
     ]" />
 
-    <div class="py-10">
+    <div class="pb-20 pt-10">
         <div class="mx-auto max-w-7xl space-y-4 sm:px-6 lg:px-8">
             <div class="sm: space-y-4 px-2">
-                <span class="flex flex-wrap items-baseline justify-between gap-2 text-nowrap">
+                <div class="flex flex-wrap items-baseline justify-between gap-2 text-nowrap">
                     <h1 class="text-2xl">{{ $assessment->title }}</h1>
-                    <div class="flex items-baseline text-gray-500">
+                    <div class="flex items-baseline text-slate-800">
                         Due at: {{ $dueAt ?? 'N/A' }}
                     </div>
-                </span>
+                </div>
                 <hr class="border-2">
             </div>
 

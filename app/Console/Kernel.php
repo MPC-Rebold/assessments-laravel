@@ -2,13 +2,13 @@
 
 namespace App\Console;
 
+use App\Livewire\Admin\Sync;
+use App\Services\SeedService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Services\SeedService;
 
 class Kernel extends ConsoleKernel
 {
-
     /**
      * Define the application's command schedule.
      */
@@ -16,8 +16,16 @@ class Kernel extends ConsoleKernel
     {
         $schedule->call(function () {
             SeedService::backupDatabase();
-        })->everyTenMinutes();
+        })->everyFifteenMinutes();
 
+        $schedule->call(function () {
+            $sync = new Sync();
+            $sync->sync();
+        })->everyTwoMinutes();
+
+        $schedule->call(function () {
+            //
+        })->dailyAt('00:05'); // 12:05 AM
     }
 
     /**

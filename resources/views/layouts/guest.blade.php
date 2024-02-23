@@ -30,7 +30,7 @@
     </div>
     <div class="absolute bottom-4 w-full text-center text-slate-300">
         <div class="group sm:absolute sm:bottom-0 sm:right-4">
-            <a href="https://github.com/MPC-Rebold/Rebold" target="_blank">
+            <a href="https://github.com/MPC-Rebold/assessments-laravel" target="_blank">
                 <x-icon-github
                     class="inline-block h-6 w-6 text-slate-300 transition-all ease-in-out group-hover:scale-125 group-hover:text-slate-200" />
             </a>

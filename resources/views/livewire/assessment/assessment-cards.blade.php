@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
 use App\Models\Assessment;
 use App\Models\Course;
 use App\Models\Master;
@@ -29,7 +30,19 @@ new class extends Component {
                         </div>
                     </a>
 
-                    <div class="flex space-x-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-slate-500" wire:poll.keep-alive wire:poll.15s>
+                            @if ($assessment->pivot->due_at)
+                                @php($diff = Carbon::now()->diff(Carbon::parse($assessment->pivot->due_at)))
+                                Due in:
+                                @if ($diff->d)
+                                    {{ $diff->d }} days
+                                @endif
+                                {{ $diff->h }} hours
+                            @else
+                                No due date
+                            @endif
+                        </div>
                         <x-canvas-button class="h-10 w-10" :href="'/courses/' .
                             $assessment->pivot->course_id .
                             '/assignments/' .
@@ -43,7 +56,6 @@ new class extends Component {
                                 class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"
                                 name="arrow-right" />
                         </x-button>
-
                     </div>
                 </div>
             </div>

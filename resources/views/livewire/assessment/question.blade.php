@@ -39,6 +39,10 @@ new class extends Component {
 
     public function submit(): void
     {
+        if ($this->answer === '') {
+            return;
+        }
+
         if ($this->question->getGuessesLeft(auth()->user(), $this->course) <= 0) {
             $this->notification()->error('You have no more guesses left');
             return;
