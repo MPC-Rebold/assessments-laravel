@@ -2,7 +2,7 @@
 
 use App\Models\Course;
 
-$course = Course::find(last(request()->segments()));
+$course = Course::find(request()->route('courseId'));
 if (!$course) {
     abort(404);
 }

@@ -34,7 +34,10 @@ class Master extends Model
         if (! $this->status) {
             return [];
         }
-        if (! $this->status->has_seed) {
+
+        $hasMissingAssessmentSeeds = $this->status->missing_assessment_seeds->isNotEmpty();
+
+        if (! $this->status->has_seed or $hasMissingAssessmentSeeds) {
             $statusStrings[] = 'NoSeed';
         }
 

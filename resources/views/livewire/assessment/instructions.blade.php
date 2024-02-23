@@ -23,9 +23,14 @@ new class extends Component {
     <div class="overflow-hidden transition-all duration-500" :class="{ 'max-h-0 invisible': !open, 'max-h-96': open }">
         <div class="px-6 py-4">
             <ul class="list-disc space-y-1 pl-5">
-                <li>You have ten (10) guesses for each question.</li>
-                <li>Feedback for your answer will be given after each attempt.</li>
-                <li>Submit your work to upload your grade to Canvas.</li>
+                <li>You have ten (10) guesses for each question</li>
+                <li>Feedback for your answer will be given after each attempt</li>
+                {{--                <ul class="list-inside list-disc"> --}}
+                {{--                    <li>Correct letters will be green</li> --}}
+                {{--                    <li>Incorrect letters will have a strikethrough</li> --}}
+                {{--                    <li>Missing letters will be an underscore</li> --}}
+                {{--                </ul> --}}
+                <li>Submit your work to upload your grade to Canvas</li>
             </ul>
         </div>
     </div>

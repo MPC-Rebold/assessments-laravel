@@ -39,10 +39,4 @@ class Assessment extends Model
     {
         return $this->questions()->count();
     }
-
-    public function canvasLinkForCourse(Course $course): string
-    {
-        $assessmentCanvasId = $this->assessmentCourses()->where('course_id', $course->id)->first()->assessment_canvas_id;
-        return config('canvas.host') . "/courses/$course->id/assignments/$assessmentCanvasId";
-    }
 }

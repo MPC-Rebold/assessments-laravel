@@ -3,7 +3,7 @@
 use App\Models\Assessment;
 use App\Models\AssessmentCourse;
 
-$assessment_canvas_id = last(request()->segments());
+$assessment_canvas_id = request()->route('assessmentId');
 $assessmentCourse = AssessmentCourse::firstWhere('assessment_canvas_id', $assessment_canvas_id);
 
 if (!$assessmentCourse) {
@@ -12,6 +12,7 @@ if (!$assessmentCourse) {
 
 $assessment = $assessmentCourse->assessment;
 $course = $assessmentCourse->course;
+$questions = $assessment->questions;
 
 ?>
 
@@ -29,8 +30,11 @@ $course = $assessmentCourse->course;
 
     <div class="py-10">
         <div class="mx-auto max-w-7xl space-y-4 sm:px-6 lg:px-8">
-            <livewire:layout.section-header :header="__($assessment->title)" />
+            <livewire:layout.section-header :header="$assessment->title" />
             <livewire:assessment.instructions :assessment="$assessment" />
+            @foreach ($questions as $question)
+                <livewire:assessment.question :question="$question" :course="$course" :key="$question->id" />
+            @endforeach
         </div>
     </div>
 </x-app-layout>

@@ -32,6 +32,13 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained()->cascadeOnDelete();
             $table->foreignId('assessment_id')->constrained()->cascadeOnDelete();
         });
+
+        Schema::create('status_assessments_seeds', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->foreignId('status_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('assessment_id')->constrained()->cascadeOnDelete();
+        });
     }
 
     /**

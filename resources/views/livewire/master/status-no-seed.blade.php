@@ -13,7 +13,13 @@ new class extends Component {
     use Actions;
 
     public Master $master;
+    public Collection $missingAssessmentSeeds;
     public bool $deleteModalOpen = false;
+
+    public function mount(): void
+    {
+        $this->missingAssessmentSeeds = $this->master->status->missing_assessment_seeds;
+    }
 
     public function restore(): void
     {
@@ -51,6 +57,15 @@ new class extends Component {
             <li>
                 No seed found for
                 <b>{{ $master->title }}</b>
+                @if ($missingAssessmentSeeds->isNotEmpty())
+                    or its assessments
+                    @foreach ($missingAssessmentSeeds as $assessment)
+                        <b>{{ $assessment->title }}</b>
+                        @if (!$loop->last)
+                            ,&nbsp;
+                        @endif
+                    @endforeach
+                @endif
             </li>
         </ul>
         <div class="space-x-2">

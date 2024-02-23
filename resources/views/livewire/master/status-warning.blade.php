@@ -30,8 +30,8 @@ new class extends Component {
                 <li>
                     <div>
                         The assessment <b>{{ $assessment->title }}</b> of course
-                        <b>{{ Course::find($assessment->pivot->course_id)->title }}</b> was not found in Canvas. It will
-                        not be available to students
+                        <b>{{ Course::find($assessment->pivot->course_id)->title }}</b>
+                        was not found in Canvas. It will not be available to students.
                     </div>
                 </li>
             @endforeach

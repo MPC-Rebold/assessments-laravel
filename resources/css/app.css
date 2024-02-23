@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+keep__ {
+    @apply text-positive-500 font-extrabold;
+}
+
+delete__ {
+    @apply line-through text-slate-400;
+}

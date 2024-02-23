@@ -28,4 +28,9 @@ class Status extends Model
         return $this->belongsToMany(Assessment::class, 'status_assessments')
             ->withPivot('course_id');
     }
+
+    public function missing_assessment_seeds(): BelongsToMany
+    {
+        return $this->belongsToMany(Assessment::class, 'status_assessments_seeds');
+    }
 }

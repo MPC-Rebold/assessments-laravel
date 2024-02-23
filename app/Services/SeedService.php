@@ -85,11 +85,14 @@ class SeedService
      */
     public static function restore(Master $master): void
     {
-        if (self::isValidMaster($master->title)) {
-            return;
+        if (!is_dir(database_path('seed'))) {
+            mkdir(database_path('seed'));
         }
 
-        mkdir(database_path('seed/' . $master->title));
+        if (!is_dir(database_path('seed/' . $master->title))) {
+            mkdir(database_path('seed/' . $master->title));
+        }
+
         foreach ($master->assessments as $assessment) {
             self::writeAssessment($assessment);
         }
@@ -127,5 +130,37 @@ class SeedService
         $admins = explode("\n", $admins);
 
         return array_filter(array_map('trim', $admins));
+    }
+
+    /**
+     * Makes a backup of the current sqlite database from /database/database.sqlite to /storage/backups
+     * Deletes the oldest backup if the total size of all backups exceeds 100MB.
+     *
+     * @return void
+     */
+    public static function backupDatabase(): void
+    {
+        $backupPath = storage_path('backups');
+
+        if (! is_dir($backupPath)) {
+            mkdir($backupPath);
+        }
+
+        $totalBackupSize = 0;
+        $files = glob($backupPath . '/*.sqlite');
+        foreach ($files as $file) {
+            $totalBackupSize += filesize($file);
+        }
+
+        $maxSize = 100000000;
+
+        if ($totalBackupSize > $maxSize && count($files) > 0) {
+            unlink($files[0]);
+        }
+
+        $backupName = date('Y-m-d-H-i-s') . '.sqlite';
+        $backupFile = $backupPath . '/' . $backupName;
+
+        copy(database_path('database.sqlite'), $backupFile);
     }
 }

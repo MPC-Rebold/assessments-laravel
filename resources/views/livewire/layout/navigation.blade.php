@@ -53,7 +53,7 @@ new class extends Component {
                     <x-dropdown align="left">
                         <x-slot name="trigger" class="h-full">
                             <div class="h-full">
-                                <x-nav-link :active="request()->routeIs('course.index', 'course.show', 'assessment')" class="group h-full">
+                                <x-nav-link :active="request()->routeIs('course.index', 'course.show', 'assessment.show')" class="group h-full">
                                     {{ __('Courses') }}
                                     <div :class="{ 'rotate-180': coursesOpen }" class="transition-all ease-in-out">
                                         <x-icon name="chevron-down"
@@ -146,7 +146,8 @@ new class extends Component {
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{ 'block': open, 'hidden': !open }" class="absolute w-full bg-[#6f0834] pb-2">
+    <div :class="{ 'block max-h-96': open, 'hidden max-h-0': !open }"
+        class="absolute w-full overflow-hidden bg-[#6f0834] pb-2 transition-all">
         <div class="space-y-1 pb-3 pt-2">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
@@ -154,7 +155,7 @@ new class extends Component {
         </div>
         <!-- Courses -->
         <div class="space-y-1 pb-3 pt-2">
-            <x-responsive-nav-link :href="route('course.index')" :active="request()->routeIs('course.index', 'course.show', 'assessment')" wire:navigate>
+            <x-responsive-nav-link :href="route('course.index')" :active="request()->routeIs('course.index', 'course.show', 'assessment.show')" wire:navigate>
                 {{ __('Courses') }}
             </x-responsive-nav-link>
         </div>
@@ -168,11 +169,9 @@ new class extends Component {
         <!-- Responsive Settings Options -->
         <div class="border-t border-gray-200 pb-1 pt-4">
             <div class="px-4">
-                <div class="text-base font-medium text-gray-200" x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name"
-                    x-on:profile-updated.window="name = $event.detail.name"></div>
+                <div class="text-base font-medium text-gray-200" x-data="{{ json_encode(['name' => auth()->user()->name]) }}"></div>
                 <div class="text-sm font-medium text-gray-400">{{ auth()->user()->email }}</div>
             </div>
-
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile')" wire:navigate class="flex items-center space-x-1">
                     <x-icon name="user" class="h-5" />

@@ -56,6 +56,7 @@ class Sync extends Component
                 'Sync Failed',
                 $e->getMessage(),
             );
+
             return;
         }
 
@@ -69,6 +70,28 @@ class Sync extends Component
         $this->notification()->success(
             'Sync Complete',
         );
+    }
+
+    public function createMasters(): void
+    {
+        $masters = SeedService::getMasters();
+
+        foreach ($masters as $master) {
+            $masterModel = Master::firstOrCreate(
+                ['title' => $master]
+            );
+
+            $status = Status::firstOrCreate(
+                ['master_id' => $masterModel->id]
+            );
+
+            // clear missing statuses
+            $status->missing_courses()->sync([]);
+            $status->missing_assessments()->sync([]);
+            $status->missing_assessment_seeds()->sync([]);
+
+            $this->createAssessments($masterModel);
+        }
     }
 
     public function syncCourses(): void
@@ -109,6 +132,25 @@ class Sync extends Component
             $status->update([
                 'has_seed' => false,
             ]);
+        }
+
+        $this->checkAssessmentSeeds();
+    }
+
+    public function checkAssessmentSeeds(): void
+    {
+        $masters = Master::all();
+        foreach ($masters as $master) {
+            $assessments = SeedService::getAssessments($master->title);
+            $dbAssessments = $master->assessments->pluck('title')->toArray();
+
+            $diff = array_diff($dbAssessments, $assessments);
+
+            foreach ($diff as $assessment) {
+                $assessmentModel = Assessment::where('title', $assessment)->first();
+                $status = Status::where('master_id', $master->id)->first();
+                $status->missing_assessment_seeds()->attach($assessmentModel->id);
+            }
         }
     }
 
@@ -173,27 +215,6 @@ class Sync extends Component
         return $validAssessments;
     }
 
-    public function createMasters(): void
-    {
-        $masters = SeedService::getMasters();
-
-        foreach ($masters as $master) {
-            $masterModel = Master::firstOrCreate(
-                ['title' => $master]
-            );
-
-            $status = Status::firstOrCreate(
-                ['master_id' => $masterModel->id]
-            );
-
-            // clear missing statuses
-            $status->missing_courses()->sync([]);
-            $status->missing_assessments()->sync([]);
-
-            $this->createAssessments($masterModel);
-        }
-    }
-
     public function createAssessments(Master $master): void
     {
         $assessments = SeedService::getAssessments($master->title);
@@ -243,7 +264,6 @@ class Sync extends Component
                     if ($assessment_canvas_id === -1) {
                         $status = Status::where('master_id', $master->id)->first();
                         $status->missing_assessments()->attach($assessment->id, ['course_id' => $course->id]);
-                        $status->save();
                     }
 
                     AssessmentCourse::updateOrCreate(
