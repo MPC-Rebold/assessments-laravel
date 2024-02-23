@@ -32,7 +32,7 @@ use App\Models\Course;
                     @endif
                 </div>
             </div>
-            <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
+            <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
                 @if (auth()->user()->is_admin)
                     <div class="space-y-2">
                         <div class="flex">
@@ -58,7 +58,6 @@ use App\Models\Course;
                     </div>
                 @else
                     <div class="flex">
-
                         <h2 class="font-bold text-gray-800">Your Courses:</h2>
                         <div class="ms-1">
                             @if (auth()->user()->courses->count() > 0)

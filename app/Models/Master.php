@@ -27,26 +27,33 @@ class Master extends Model
         return $this->hasOne(Status::class);
     }
 
-    public function statusString(): string
+    public function statusStrings(): array
     {
+        $statusStrings = [];
+
         if (! $this->status) {
-            return '';
+            return [];
         }
         if (! $this->status->has_seed) {
-            return 'NoSeed';
+            $statusStrings[] = 'NoSeed';
         }
+
         if ($this->courses->isEmpty()) {
-            return 'Disconnected';
+            $statusStrings[] = 'Disconnected';
         }
 
         $hasMissingCourses = $this->status->missing_courses->isNotEmpty();
         $hasMissingAssessments = $this->status->missing_assessments->isNotEmpty();
 
-        if (! $hasMissingCourses && ! $hasMissingAssessments) {
-            return 'Okay';
-        } else {
-            return 'Warning';
+        if ($hasMissingCourses or $hasMissingAssessments) {
+            $statusStrings[] = 'Warning';
         }
+
+        if (!$statusStrings) {
+            $statusStrings[] = 'Okay';
+        }
+
+        return $statusStrings;
     }
 
     public function courseForUser(User $user): Course

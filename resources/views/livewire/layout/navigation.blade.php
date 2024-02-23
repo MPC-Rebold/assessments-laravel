@@ -76,7 +76,7 @@ new class extends Component {
                                 </x-dropdown.item>
                             @endfor
                         @else
-                            <x-dropdown.item :href="route('dashboard')" wire:navigate>
+                            <x-dropdown.item>
                                 <div class="flex w-full items-center justify-between">
                                     <div class="text-lg font-bold">
                                         - No Courses -

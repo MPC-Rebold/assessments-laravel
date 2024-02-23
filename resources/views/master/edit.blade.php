@@ -17,7 +17,7 @@ $master = Master::find(last(request()->segments()));
     <div class="py-10">
         <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
             <livewire:layout.section-header :header="$master->title" />
-            <livewire:master.connected-courses :master="$master" />
+            <livewire:master.connect-courses :master="$master" />
         </div>
     </div>
 </x-app-layout>

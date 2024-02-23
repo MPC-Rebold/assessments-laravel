@@ -9,33 +9,33 @@ new class extends Component {
     public Master $masterCourse;
     public Collection $connectedCourses;
     public array $allAvailableCourses;
-    public string $status;
+    public array $statusStrings;
 
     public function mount(): void
     {
         $this->allAvailableCourses = Course::all()->whereNull('master_id')->pluck('title')->toArray();
         $this->connectedCourses = $this->masterCourse->courses;
-        $this->status = $this->masterCourse->statusString();
+        $this->statusStrings = $this->masterCourse->statusStrings();
     }
 }; ?>
 
 <div class="flex flex-row items-center">
-    <div class="min-w-16 basis-1/12">
-        @if ($status === 'Okay')
-            <x-button.circle positive icon="check" />
-        @elseif ($status === 'Disconnected')
-            <x-button.circle slate icon="ban" />
-        @elseif($status === 'Warning')
-            <x-button.circle warning icon="exclamation" class="animate-pulse" />
-        @elseif($status === 'NoSeed')
+    <div class="min-w-16 basis-1/12 space-y-4">
+        @if (in_array('NoSeed', $statusStrings))
             <x-button.circle negative icon="exclamation" class="animate-pulse" />
+        @elseif(in_array('Warning', $statusStrings))
+            <x-button.circle warning icon="exclamation" class="animate-pulse" />
+        @elseif (in_array('Disconnected', $statusStrings))
+            <x-button.circle slate icon="ban" />
+        @elseif (in_array('Okay', $statusStrings))
+            <x-button.circle positive icon="check" />
         @endif
     </div>
     <div class="min-w-24 basis-2/12">
         {{ $masterCourse->title }}
     </div>
     <div class="grow overflow-hidden text-ellipsis pe-4 text-gray-500">
-        @if ($status === 'NoSeed')
+        @if (in_array('NoSeed', $statusStrings))
             <div class="text-red-500">
                 No seed course detected
             </div>

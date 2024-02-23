@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Services\CanvasService;
 use App\Services\SeedService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
@@ -40,11 +41,23 @@ class Sync extends Component
             'is_syncing' => true,
         ]);
 
-        $this->createMasters();
-        $this->checkMasterSeeds();
-        $this->syncCourses();
-        $this->syncAssessmentCourses();
-        $this->connectUserCourses();
+        try {
+            $this->createMasters();
+            $this->checkMasterSeeds();
+            $this->syncCourses();
+            $this->syncAssessmentCourses();
+            $this->connectUserCourses();
+        } catch (Exception $e) {
+            $settings->update([
+                'is_syncing' => false,
+            ]);
+
+            $this->notification()->error(
+                'Sync Failed',
+                $e->getMessage(),
+            );
+            return;
+        }
 
         $settings->update([
             'last_synced_at' => Carbon::now(),

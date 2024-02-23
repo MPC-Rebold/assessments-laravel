@@ -93,8 +93,16 @@ class SeedService
         foreach ($master->assessments as $assessment) {
             self::writeAssessment($assessment);
         }
+
+        $master->status->update(['has_seed' => true]);
     }
 
+    /**
+     * Writes the assessment and its questions to the seed directory
+     *
+     * @param Assessment $assessment
+     * @return void
+     */
     public static function writeAssessment(Assessment $assessment): void
     {
         $questionsText = '';
@@ -106,5 +114,18 @@ class SeedService
 
         $assessmentPath = database_path('seed/' . $assessment->master->title . '/' . $assessment->title . '.txt');
         file_put_contents($assessmentPath, $questionsText);
+    }
+
+    /**
+     * Returns the emails of all admins
+     *
+     * @return array
+     */
+    public static function getAdmins(): array
+    {
+        $admins = file_get_contents(database_path('seed/admins.txt'));
+        $admins = explode("\n", $admins);
+
+        return array_filter(array_map('trim', $admins));
     }
 }

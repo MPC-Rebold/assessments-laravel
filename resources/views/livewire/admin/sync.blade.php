@@ -41,7 +41,7 @@ use App\Models\Settings;
                 </div>
             @else
                 @foreach ($masterCourses as $masterCourse)
-                    <livewire:admin.course-status :masterCourse="$masterCourse" :key="$masterCourse->id" />
+                    <livewire:admin.course-status :masterCourse="$masterCourse" key="{{ now() }}" />
                     @if (!$loop->last)
                         <hr />
                     @endif
