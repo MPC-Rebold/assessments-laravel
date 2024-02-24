@@ -24,7 +24,12 @@ new class extends Component {
 
         if ($this->dueAt) {
             $diff = Carbon::now()->diff(Carbon::parse($this->dueAt));
-            $this->dueInString = $diff->d === 1 ? '1 day' : ($diff->d > 1 ? $diff->d . ' days' : '') . ($diff->h ? ($diff->h === 1 ? '1 hour' : $diff->h . ' hours') : ($diff->i === 1 ? $diff->i . ' minute' : $diff->i . ' minutes'));
+            // check if due date is in the past
+            if ($diff->invert) {
+                $this->dueInString = '';
+            } else {
+                $this->dueInString = $diff->d === 1 ? '1 day' : ($diff->d > 1 ? $diff->d . ' days' : '') . ($diff->h ? ($diff->h === 1 ? '1 hour' : $diff->h . ' hours') : ($diff->i === 1 ? $diff->i . ' minute' : $diff->i . ' minutes'));
+            }
         } else {
             $this->dueInString = 'No due date';
         }
