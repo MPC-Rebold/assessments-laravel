@@ -24,7 +24,6 @@ new class extends Component {
 
         if ($this->dueAt) {
             $diff = Carbon::now()->diff(Carbon::parse($this->dueAt));
-            // check if due date is in the past
             if ($diff->invert) {
                 $this->dueInString = '';
             } else {

@@ -18,9 +18,15 @@ if (!$course) {
     ]" />
 
     <div class="py-10">
-        <div class="mx-auto max-w-7xl space-y-4 sm:px-6 lg:px-8">
-            <livewire:layout.section-header :header="__('Current Assessments')" />
-            <livewire:assessment.upcoming-assessments :courseId="$course->id" />
+        <div class="mx-auto max-w-7xl space-y-8 sm:px-6 lg:px-8">
+            <div class="space-y-4">
+                <livewire:layout.section-header :header="__('Current Assessments')" />
+                <livewire:assessment.upcoming-assessments :courseId="$course->id" />
+            </div>
+            <div class="space-y-4">
+                <livewire:layout.section-header :header="__('Past Assessments')" />
+                <livewire:assessment.past-assessments :courseId="$course->id" />
+            </div>
         </div>
     </div>
 </x-app-layout>
