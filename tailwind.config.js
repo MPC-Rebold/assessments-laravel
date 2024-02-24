@@ -1,7 +1,7 @@
 import defaultTheme from "tailwindcss/defaultTheme";
 import forms from "@tailwindcss/forms";
 
-/** @type {import('tailwindcss').Config} */
+/** @type {import("tailwindcss").Config} */
 export default {
     presets: [require("./vendor/wireui/wireui/tailwind.config.js")],
     content: [
@@ -20,8 +20,17 @@ export default {
             },
             colors: {
                 primary: {
+                    50: "#7C083E",
+                    100: "#7C083E",
+                    200: "#77083C",
+                    300: "#73083A",
+                    400: "#6E0737",
                     500: "#680735",
-                    600: "#560304",
+                    600: "#510529",
+                    700: "#3E041F",
+                    800: "#2B0316",
+                    900: "#13010A",
+                    950: "#0A0105",
                 },
                 secondary: {
                     50: "#f6f7f9",
