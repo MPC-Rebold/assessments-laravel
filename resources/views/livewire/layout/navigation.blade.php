@@ -146,8 +146,7 @@ new class extends Component {
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{ 'block max-h-96': open, 'hidden max-h-0': !open }"
-        class="absolute w-full overflow-hidden bg-[#6f0834] pb-2 transition-all">
+    <div :class="{ 'hidden': !open }" class="bg-[#6f0834] pb-2">
         <div class="space-y-1 pb-3 pt-2">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}

@@ -32,7 +32,7 @@ new class extends Component {
                     <li>Missing letters will be underscores</li>
                     <li>
                         Example: if the correct answer is <b>example</b>
-                        and you entered <b>exa123pl</b>, the feedback would be
+                        and you entered <b>exa123pl</b>
                         <div
                             class="ml-5 mt-1 w-fit overflow-auto text-nowrap rounded-md bg-slate-200 px-2 py-1 tracking-widest">
                             <keep__>e</keep__>
@@ -48,8 +48,22 @@ new class extends Component {
                         </div>
                     </li>
                 </ul>
-                <li>Submit your work to upload your grade to Canvas</li>
-                <li>You can submit multiple times up to the due date</li>
+                <br>
+                <li>
+                    <div class="flex items-center">
+                        <div>Press</div>
+                        <div
+                            class="mx-1 w-fit overflow-auto text-nowrap rounded-md bg-positive-500 px-2 py-1 text-white">
+                            Submit to Canvas
+                        </div>
+                        <div>
+                            to upload your grade to Canvas
+                        </div>
+                    </div>
+                </li>
+                <ul class="list-inside list-disc pl-1">
+                    <li>You can submit multiple times up to the due date</li>
+                </ul>
             </ul>
         </div>
     </div>

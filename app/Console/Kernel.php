@@ -21,11 +21,11 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $sync = new Sync();
             $sync->sync();
-        })->everyTwoMinutes();
+        })->everyFiveMinutes();
 
         $schedule->call(function () {
             //
-        })->dailyAt('00:05'); // 12:05 AM
+        })->dailyAt();
     }
 
     /**

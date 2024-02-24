@@ -36,22 +36,37 @@ if ($assessmentCourse->due_at) {
         ],
     ]" />
 
-    <div class="pb-20 pt-10">
-        <div class="mx-auto max-w-7xl space-y-4 sm:px-6 lg:px-8">
-            <div class="sm: space-y-4 px-2">
-                <div class="flex flex-wrap items-baseline justify-between gap-2 text-nowrap">
-                    <h1 class="text-2xl">{{ $assessment->title }}</h1>
-                    <div class="flex items-baseline text-slate-800">
-                        Due at: {{ $dueAt ?? 'N/A' }}
-                    </div>
+    <div class="mx-auto max-w-7xl space-y-6 pb-20 pt-10 sm:px-6 lg:px-8">
+        <div class="sm: space-y-4 px-2">
+            <div class="flex flex-wrap items-baseline justify-between gap-2 text-nowrap">
+                <h1 class="text-2xl">{{ $assessment->title }}</h1>
+                <div class="flex items-baseline text-slate-800">
+                    Due at: {{ $dueAt ?? 'N/A' }}
                 </div>
-                <hr class="border-2">
             </div>
+            <hr class="border-2">
+        </div>
 
-            <livewire:assessment.instructions />
-            @foreach ($questions as $question)
-                <livewire:assessment.question :question="$question" :course="$course" :key="$question->id" />
-            @endforeach
+        <livewire:assessment.instructions />
+        @foreach ($questions as $question)
+            <livewire:assessment.question :question="$question" :course="$course" :key="$question->id" />
+        @endforeach
+
+        <div class="mt-1 flex items-center justify-between px-2 sm:px-0">
+            <div>
+                <x-canvas-button class="h-10 w-fit" :href="'/courses/' . $course->id . '/assignments/' . $assessmentCourse->assessment_canvas_id">
+                    <div class="ms-2 text-nowrap text-base font-extrabold">
+                        Canvas
+                    </div>
+                </x-canvas-button>
+            </div>
+            <div>
+                <x-button positive>
+                    <p class="text-base">
+                        Submit to Canvas
+                    </p>
+                </x-button>
+            </div>
         </div>
     </div>
 
