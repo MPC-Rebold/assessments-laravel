@@ -76,7 +76,18 @@ new class extends Component {
 }; ?>
 
 <div>
-    <x-card title="Question {{ $question->number }}">
+    <x-card>
+        <x-slot name="header">
+            <div class="flex items-center justify-between border-b-2 border-gray-300 px-4 py-2 font-bold text-slate-800">
+                <div>Question {{ $question->number }}</div>
+                @if ($isCorrect)
+                    <div>1 / 1</div>
+                @else
+                    <div>0 / 1</div>
+                @endif
+
+            </div>
+        </x-slot>
         <div class="overflow-auto px-4 font-mono text-black md:px-2">
             <p class="select-none overflow-auto whitespace-pre-wrap">{{ $question->question }}</p>
             <div class="mt-4 w-fit overflow-auto text-nowrap rounded-md bg-slate-200 px-2 py-1 tracking-widest">

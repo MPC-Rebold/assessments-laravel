@@ -21,12 +21,13 @@ new class extends Component {
             </div>
         </div>
     </button>
-    <div class="overflow-hidden transition-all duration-500" :class="{ 'max-h-0 invisible': !open, 'max-h-96': open }">
+    <div class="overflow-hidden transition-all duration-500"
+        :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
         <div class="px-6 py-4">
             <ul class="list-disc space-y-1 pl-5">
                 <li>You have ten (10) guesses for each question</li>
                 <li>Feedback for your answer will be given after each attempt</li>
-                <ul class="list-inside list-disc pl-1">
+                <ul class="list-disc pl-1 sm:list-inside">
                     <li>Correct letters will be green</li>
                     <li>Incorrect letters will have a strikethrough</li>
                     <li>Missing letters will be underscores</li>
@@ -50,18 +51,18 @@ new class extends Component {
                 </ul>
                 <br>
                 <li>
-                    <div class="flex items-center">
-                        <div>Press</div>
+                    <div class="flex flex-wrap items-center">
+                        <div> To upload your grade to Canvas press
+                        </div>
                         <div
-                            class="mx-1 w-fit overflow-auto text-nowrap rounded-md bg-positive-500 px-2 py-1 text-white">
+                            class="mx-1 w-fit min-w-fit overflow-auto text-nowrap rounded-md bg-positive-500 px-2 py-1 text-white">
                             Submit to Canvas
                         </div>
                         <div>
-                            to upload your grade to Canvas
                         </div>
                     </div>
                 </li>
-                <ul class="list-inside list-disc pl-1">
+                <ul class="list-disc pl-1 sm:list-inside">
                     <li>You can submit multiple times up to the due date</li>
                 </ul>
             </ul>

@@ -12,6 +12,7 @@ new class extends Component {
     public int $assessmentCanvasId;
     public string|null $dueAt;
 
+    public bool $isPastDue;
     public string $assessmentRoute;
     public string $dueInString;
     public string $courseTitle;
@@ -39,6 +40,7 @@ new class extends Component {
         ]);
 
         $this->percentage = ($assessmentCourse->pointsForUser(auth()->user()) / $this->assessment->questionCount()) * 100;
+        $this->isPastDue = $this->dueAt && Carbon::parse($this->dueAt)->isPast();
     }
 }; ?>
 
@@ -68,11 +70,19 @@ new class extends Component {
 
             <x-canvas-button class="h-10 min-h-10 w-10 min-w-10" :href="'/courses/' . $courseId . '/assignments/' . $assessmentCanvasId" />
 
-            <x-button secondary :href="$assessmentRoute" wire:navigate class="relative">
-                <span class="transition-transform duration-300">Go</span>
-                <x-icon class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"
-                    name="arrow-right" />
-            </x-button>
+            @if (!$isPastDue)
+                <x-button positive :href="$assessmentRoute" wire:navigate class="relative">
+                    <span class="transition-transform duration-300">Go</span>
+                    <x-icon class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"
+                        name="arrow-right" />
+                </x-button>
+            @else
+                <x-button secondary :href="$assessmentRoute" wire:navigate class="relative">
+                    <span class="transition-transform duration-300">Practice</span>
+                    <x-icon class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"
+                        name="arrow-right" />
+                </x-button>
+            @endif
         </div>
     </div>
 </div>

@@ -1,5 +1,4 @@
 <div {{ $attributes->merge(['class' => 'relative']) }}>
-
     <div class="outer">
         <div class="inner text-sm text-slate-600">
             {{ $percentage }}%
