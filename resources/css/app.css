@@ -9,3 +9,32 @@ keep__ {
 delete__ {
     @apply line-through text-slate-400;
 }
+
+.skill {
+    position: relative;
+}
+
+.outer {
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    @apply bg-slate-200 flex shadow items-center justify-center;
+
+}
+
+.inner {
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+
+    @apply bg-white shadow-inner flex items-center justify-center;
+}
+
+circle {
+    fill: none;
+    stroke-width: 12.5%;
+    stroke-dasharray: 472;
+    stroke-dashoffset: 472;
+    stroke: #47695b;
+    animation: anim 0.5s ease-out forwards;
+}
