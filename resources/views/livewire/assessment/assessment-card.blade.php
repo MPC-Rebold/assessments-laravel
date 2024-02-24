@@ -3,6 +3,7 @@
 use Livewire\Volt\Component;
 use App\Models\Assessment;
 use App\Models\Course;
+use App\Models\AssessmentCourse;
 use Carbon\Carbon;
 
 new class extends Component {
@@ -14,6 +15,7 @@ new class extends Component {
     public string $assessmentRoute;
     public string $dueInString;
     public string $courseTitle;
+    public int $percentage;
 
     public function mount(Assessment $assessment): void
     {
@@ -26,13 +28,20 @@ new class extends Component {
         } else {
             $this->dueInString = 'No due date';
         }
+
+        $assessmentCourse = AssessmentCourse::firstWhere([
+            'assessment_id' => $this->assessment->id,
+            'course_id' => $this->courseId,
+        ]);
+
+        $this->percentage = ($assessmentCourse->pointsForUser(auth()->user()) / $this->assessment->questionCount()) * 100;
     }
 }; ?>
 
 <div class="overflow-hidden bg-white px-6 py-2 text-gray-900 shadow-sm transition-all hover:scale-[1.007] sm:rounded-lg">
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-4">
-            <x-progress-circle class="hidden h-14 w-14 sm:block" :percentge="0" />
+            <x-progress-circle class="hidden h-14 w-14 sm:block" :percentage="$percentage" :key="$percentage" />
 
             <div class="flex items-center space-x-4 py-2">
                 <a class="hover:underline" href="{{ $assessmentRoute }}" wire:navigate>
