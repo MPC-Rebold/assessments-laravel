@@ -11,10 +11,9 @@ new class extends Component {
         <div class="flex items-center justify-between">
             <div class="flex flex-nowrap items-center">
                 <x-icon name="information-circle" class="me-1 h-6 w-6 text-slate-800" />
-                <h2 class="-mt-0.5 text-lg font-semibold text-slate-800 group-hover:text-slate-500">
+                <h2
+                    class="-mt-0.5 text-lg font-semibold text-slate-800 group-hover:text-slate-500 group-hover:underline">
                     Instructions
-                    <span
-                        class="-mt-1 block h-0.5 max-w-0 bg-slate-500 transition-all duration-100 group-hover:max-w-full"></span>
                 </h2>
             </div>
             <div :class="{ 'rotate-180': open }" class="transition-transform ease-in-out">

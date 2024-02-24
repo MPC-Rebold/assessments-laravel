@@ -1,7 +1,7 @@
 <div {{ $attributes->merge(['class' => 'skill']) }}>
 
     <div class="outer">
-        <div class="inner">
+        <div class="inner text-sm text-slate-600">
             {{ $percentge }}%
         </div>
     </div>
