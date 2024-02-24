@@ -65,6 +65,8 @@ new class extends Component {
         $this->feedback = $questionUser->calculateFeedback();
         $this->isCorrect = $this->question->isCorrect(auth()->user(), $this->course);
         $this->guessesLeft = $this->question->getGuessesLeft(auth()->user(), $this->course);
+
+        $this->dispatch('refreshFooter');
     }
 
     public function practiceSubmit(): void
