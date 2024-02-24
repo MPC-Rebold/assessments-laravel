@@ -20,6 +20,7 @@ new class extends Component {
     public string $feedback;
     public int $maxAnswerLength;
     public int $guessesLeft;
+    public bool $isPastDue;
     public int $dueAt;
 
     public function mount(): void
@@ -34,7 +35,9 @@ new class extends Component {
             'course_id' => $this->course->id,
         ]);
 
-        $this->dueAt = Carbon::parse($assessmentCourse->due_at)->timestamp;
+        $this->isPastDue = Carbon::parse($assessmentCourse->due_at)
+            ->addSeconds(60)
+            ->isPast();
     }
 
     public function submit(): void
@@ -49,7 +52,7 @@ new class extends Component {
         }
 
         // Add grace-period of 1 minute
-        if ($this->dueAt + 60 < Carbon::now()->timestamp) {
+        if ($this->isPastDue) {
             $this->notification()->error('You cannot submit after the due date');
             return;
         }
@@ -75,7 +78,7 @@ new class extends Component {
     }
 }; ?>
 
-<div>
+<div wire:poll.15s>
     <x-card>
         <x-slot name="header">
             <div class="flex items-center justify-between border-b-2 border-gray-300 px-4 py-2 font-bold text-slate-800">
@@ -108,7 +111,11 @@ new class extends Component {
                             class="{{ $guessesLeft <= 0 ? 'text-negative-500' : '' }}">{{ $guessesLeft }}</b>
                     </div>
                     <div>
-                        @if ($isCorrect)
+                        @if ($isPastDue)
+                            <x-button positive class="min-w-28">
+                                Check
+                            </x-button>
+                        @elseif ($isCorrect)
                             <x-button positive class="min-w-28" wire:click="practiceSubmit">
                                 <x-icon class="h-5 w-5" name="check" solid />
                                 Submit

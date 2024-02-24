@@ -16,6 +16,7 @@ new class extends Component {
     public Collection $questions;
 
     public string|null $dueAt;
+    public bool $isPastDue;
 
     public int $percentage;
     public int $points;
@@ -41,6 +42,8 @@ new class extends Component {
 
         $this->points = $this->assessmentCourse->pointsForUser(auth()->user());
         $this->percentage = ($this->points / $this->assessmentCourse->assessment->questionCount()) * 100;
+
+        $this->isPastDue = Carbon::parse($this->assessmentCourse->due_at)->isPast();
     }
 
     #[On('refreshFooter')]
@@ -89,32 +92,42 @@ new class extends Component {
                     </div>
                 </x-canvas-button>
             </div>
-            <div>
-                <x-button positive>
-                    <p class="text-base">
-                        Submit to Canvas
-                    </p>
-                </x-button>
-            </div>
+            @if (!$isPastDue)
+                <div>
+                    <x-button positive>
+                        <p class="text-base">
+                            Submit to Canvas
+                        </p>
+                    </x-button>
+                </div>
+            @endif
         </div>
     </div>
-
-    <footer class="fixed bottom-0 mx-auto w-full bg-slate-200 px-4 py-2 shadow-inner sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between pl-2">
-            <div class="h-2.5 w-full rounded-full bg-white dark:bg-gray-700">
-                <div class="h-2.5 rounded-full bg-positive-500 transition-all ease-out"
-                    style="width: {{ $percentage }}%">
+    @if (!$isPastDue)
+        <footer class="fixed bottom-0 mx-auto w-full bg-slate-200 px-4 py-2 shadow-inner sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between pl-2">
+                <div class="h-2.5 w-full rounded-full bg-white dark:bg-gray-700">
+                    <div class="h-2.5 rounded-full bg-positive-500 transition-all ease-out"
+                        style="width: {{ $percentage }}%">
+                    </div>
                 </div>
+                <button class="ml-4 min-w-20 text-xl font-extrabold transition-all ease-in-out hover:scale-125"
+                    x-data="{ percentage: false }" @click="percentage = ! percentage">
+                    <div :class="{ 'hidden': !percentage }">
+                        {{ $percentage }}%
+                    </div>
+                    <div :class="{ 'hidden': percentage }">
+                        {{ $points }} / {{ $assessmentCourse->assessment->questionCount() }}
+                    </div>
+                </button>
             </div>
-            <button class="ml-4 min-w-20 text-xl font-extrabold transition-all ease-in-out hover:scale-125"
-                x-data="{ percentage: false }" @click="percentage = ! percentage">
-                <div :class="{ 'hidden': !percentage }">
-                    {{ $percentage }}%
-                </div>
-                <div :class="{ 'hidden': percentage }">
-                    {{ $points }} / {{ $assessmentCourse->assessment->questionCount() }}
-                </div>
-            </button>
-        </div>
-    </footer>
+
+        </footer>
+    @else
+        <footer class="fixed bottom-0 mx-auto w-full bg-positive-400 px-4 py-0 shadow-inner sm:px-6 lg:px-8">
+            <div class="flex justify-center text-white">
+                Practice Mode
+            </div>
+        </footer>
+    @endif
 </div>
