@@ -112,7 +112,7 @@ new class extends Component {
                     </div>
                     <div>
                         @if ($isPastDue)
-                            <x-button positive class="min-w-28">
+                            <x-button positive class="min-w-28" wire:click="practiceSubmit">
                                 Check
                             </x-button>
                         @elseif ($isCorrect)
