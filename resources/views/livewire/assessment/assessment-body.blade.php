@@ -7,8 +7,11 @@ use App\Models\Course;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
 use Livewire\Attributes\On;
+use WireUi\Traits\Actions;
 
 new class extends Component {
+    use Actions;
+
     public AssessmentCourse $assessmentCourse;
 
     public Assessment $assessment;
@@ -43,7 +46,7 @@ new class extends Component {
         $this->points = $this->assessmentCourse->pointsForUser(auth()->user());
         $this->percentage = ($this->points / $this->assessmentCourse->assessment->questionCount()) * 100;
 
-        $this->isPastDue = Carbon::parse($this->assessmentCourse->due_at)->isPast();
+        $this->isPastDue = $this->assessmentCourse->due_at !== null && Carbon::parse($this->assessmentCourse->due_at)->isPast();
     }
 
     #[On('refreshFooter')]
@@ -51,6 +54,11 @@ new class extends Component {
     {
         $this->points = $this->assessmentCourse->pointsForUser(auth()->user());
         $this->percentage = ($this->points / $this->assessmentCourse->assessment->questionCount()) * 100;
+    }
+
+    public function submitToCanvas(): void
+    {
+        $this->notification()->success('Submitted to Canvas');
     }
 };
 
@@ -84,7 +92,7 @@ new class extends Component {
             <livewire:assessment.question :question="$question" :course="$course" :key="$question->id" />
         @endforeach
 
-        <div class="mt-1 flex items-center justify-between px-2 sm:px-0">
+        <div class="flex flex-wrap items-center justify-between gap-2 px-2 sm:px-0">
             <div>
                 <x-canvas-button class="h-10 w-fit" :href="'/courses/' . $course->id . '/assignments/' . $assessmentCourse->assessment_canvas_id">
                     <div class="ms-2 text-nowrap text-base font-extrabold">
@@ -94,7 +102,7 @@ new class extends Component {
             </div>
             @if (!$isPastDue)
                 <div>
-                    <x-button positive>
+                    <x-button positive spinner class="min-w-48" wire:click="submitToCanvas">
                         <p class="text-base">
                             Submit to Canvas
                         </p>
@@ -124,7 +132,7 @@ new class extends Component {
 
         </footer>
     @else
-        <footer class="fixed bottom-0 mx-auto w-full bg-positive-400 px-4 py-0 shadow-inner sm:px-6 lg:px-8">
+        <footer class="fixed bottom-0 mx-auto w-full bg-positive-500 px-4 py-0 shadow-inner sm:px-6 lg:px-8">
             <div class="flex justify-center text-white">
                 Practice Mode
             </div>

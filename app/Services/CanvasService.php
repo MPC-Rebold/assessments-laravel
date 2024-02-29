@@ -98,4 +98,9 @@ class CanvasService
     {
         return self::put("courses/$courseId/assignments/$assignmentId", ['assignment' => $data]);
     }
+
+    public static function gradeAssignment(int $courseId, int $assignmentId, int $studentId, array $data): Response
+    {
+        return self::put("courses/$courseId/assignments/$assignmentId/submissions/$studentId", ['submission' => $data]);
+    }
 }

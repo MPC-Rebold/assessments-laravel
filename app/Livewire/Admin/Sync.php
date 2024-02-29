@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Services\CanvasService;
 use App\Services\SeedService;
 use Carbon\Carbon;
+use DB;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -27,6 +28,8 @@ class Sync extends Component
 
     public function sync(): void
     {
+        DB::beginTransaction();
+
         $settings = Settings::firstOrNew();
 
         if ($settings->is_syncing) {
@@ -47,10 +50,18 @@ class Sync extends Component
             $this->syncCourses();
             $this->syncAssessmentCourses();
             $this->connectUserCourses();
+
+            $settings->update([
+                'last_synced_at' => Carbon::now(),
+                'is_syncing' => false,
+            ]);
+
         } catch (Exception $e) {
             $settings->update([
                 'is_syncing' => false,
             ]);
+
+            DB::rollBack();
 
             $this->notification()->error(
                 'Sync Failed',
@@ -60,10 +71,7 @@ class Sync extends Component
             return;
         }
 
-        $settings->update([
-            'last_synced_at' => Carbon::now(),
-            'is_syncing' => false,
-        ]);
+        DB::commit();
 
         $this->mount();
 
