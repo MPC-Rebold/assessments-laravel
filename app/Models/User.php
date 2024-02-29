@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -55,6 +56,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Question::class)->withPivot('answer', 'is_correct');
     }
 
+    public function canvas(): HasOne
+    {
+        return $this->hasOne(UserCanvas::class, 'user_email', 'email');
+    }
+
     public function connectCourses(): void
     {
         if ($this->is_admin) {
@@ -84,4 +90,6 @@ class User extends Authenticatable
 
         return $this->courses->map->assessments->sortBy('due_at')->flatten();
     }
+
+
 }
