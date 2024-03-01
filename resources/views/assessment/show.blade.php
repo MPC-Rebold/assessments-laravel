@@ -10,7 +10,7 @@ use Carbon\Carbon;
 $assessment_canvas_id = request()->route('assessmentId');
 $assessmentCourse = AssessmentCourse::firstWhere('assessment_canvas_id', $assessment_canvas_id);
 
-if (!$assessmentCourse->exists()) {
+if ($assessmentCourse === null) {
     abort(404);
 }
 ?>

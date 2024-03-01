@@ -2,7 +2,11 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\AssessmentCourse;
 use App\Models\Settings;
+use App\Services\CanvasService;
+use DB;
+use Exception;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 use WireUi\Traits\Actions;
@@ -36,16 +40,70 @@ class SpecificationSetting extends Component
             $specification_grading_threshold = -1;
         }
 
-        Settings::sole()->update([
-            'specification_grading' => $specification_grading,
-            'specification_grading_threshold' => $specification_grading_threshold,
-        ]);
+        DB::beginTransaction();
+        try {
+            Settings::sole()->update([
+                'specification_grading' => $specification_grading,
+                'specification_grading_threshold' => $specification_grading_threshold,
+            ]);
 
-        $this->specification_grading = Settings::sole()->specification_grading;
+            $this->regradeAssessments();
+
+            $this->specification_grading = Settings::sole()->specification_grading;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->notification()->error(
+                'Failed to update specification grading with error ' . $e->getMessage(),
+            );
+
+            return;
+        }
 
         $this->notification()->success(
             'Specification Grading Turned ' . ($specification_grading ? 'On' : 'Off'),
         );
+
+        DB::commit();
+    }
+
+    public function regradeAssessments(): void
+    {
+        $assessmentCourses = AssessmentCourse::all();
+
+        foreach ($assessmentCourses as $assessmentCourse) {
+            $this->regradeAssessmentCourse($assessmentCourse);
+        }
+    }
+
+    public function regradeAssessmentCourse(AssessmentCourse $assessmentCourse): void
+    {
+        $is_specification = Settings::sole()->specification_grading;
+        $threshold = Settings::sole()->specification_grading_threshold;
+
+        $assessment = $assessmentCourse->assessment;
+        $course = $assessmentCourse->course;
+        $assessment_canvas_id = $assessmentCourse->assessment_canvas_id;
+
+        if ($is_specification) {
+            $pointsPossible = 1;
+        } else {
+            $pointsPossible = $assessment->questionCount();
+        }
+        CanvasService::editAssignment($course->id, $assessment_canvas_id,
+            ['points_possible' => $pointsPossible]
+        );
+
+        $users = $course->users;
+        foreach ($users as $user) {
+            $grade = $assessmentCourse->gradeForUser($user);
+
+            if ($is_specification) {
+                $grade = $grade >= $threshold ? 1 : 0;
+            }
+
+            CanvasService::gradeAssignment($course->id, $assessment_canvas_id, $user->canvas->canvas_id, $grade);
+        }
     }
 
     public function render(): View

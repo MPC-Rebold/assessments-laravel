@@ -291,16 +291,6 @@ class Sync extends Component
                     if ($assessment_canvas_id === -1) {
                         $status = Status::where('master_id', $master->id)->first();
                         $status->missing_assessments()->attach($assessment->id, ['course_id' => $course->id]);
-                    } else {
-                        $settings = Settings::firstOrNew();
-                        if ($settings->specification_grading) {
-                            $pointsPossible = 1;
-                        } else {
-                            $pointsPossible = $assessment->questionCount();
-                        }
-                        CanvasService::editAssignment($course->id, $assessment_canvas_id,
-                            ['points_possible' => $pointsPossible]
-                        );
                     }
 
                     AssessmentCourse::updateOrCreate(

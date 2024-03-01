@@ -99,14 +99,17 @@ class CanvasService
         return self::put("courses/$courseId/assignments/$assignmentId", ['assignment' => $data]);
     }
 
-    public static function gradeAssignment(int $courseId, int $assignmentId, int $studentId, string|float|int $grade): Response
+    public static function gradeAssignment(int $courseId, int $assignmentId, int $userId, string|float|int|null $grade): Response
     {
+        if ($grade === null) {
+            $grade = 0;
+        }
         if (is_float($grade)) {
             $grade = round($grade, 3);
         }
 
         return self::put(
-            "courses/$courseId/assignments/$assignmentId/submissions/$studentId",
+            "courses/$courseId/assignments/$assignmentId/submissions/$userId",
             ['submission' => [
                 'posted_grade' => $grade,
             ]]
