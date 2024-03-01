@@ -29,6 +29,15 @@ Route::view('admin', 'admin')
     ->middleware(['auth', 'admin'])
     ->name('admin');
 
+Route::view('admin/masters/{masterId}', 'master.edit')
+    ->middleware(['auth', 'admin'])
+    ->name('master.edit');
+
+Route::view('admin/masters/{masterId}/courses/{courseId}/edit', 'course.edit')
+    ->middleware(['auth', 'admin'])
+    ->name('course.edit');
+
+
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
@@ -48,5 +57,9 @@ Route::view('courses/{courseId}/assessment/{assessmentId}', 'assessment.show')
 Route::view('admin/masters/{masterId}', 'master.edit')
     ->middleware(['auth', 'admin'])
     ->name('master.edit');
+
+Route::view('admin/students', 'student.index')
+    ->middleware(['auth', 'admin'])
+    ->name('student.index');
 
 require __DIR__.'/auth.php';

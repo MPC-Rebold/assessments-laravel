@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Models\AssessmentCourse;
 use App\Models\Settings;
 use App\Services\CanvasService;
+use Carbon\Carbon;
 use DB;
 use Exception;
 use Illuminate\Contracts\View\View;
@@ -18,6 +19,13 @@ class SpecificationSetting extends Component
     public bool $specification_grading;
 
     public string $specification_grading_threshold;
+
+    public bool $modalOpen = false;
+
+    public function openModal(): void
+    {
+        $this->modalOpen = true;
+    }
 
     public function mount(): void
     {
@@ -65,6 +73,8 @@ class SpecificationSetting extends Component
         );
 
         DB::commit();
+
+        $this->modalOpen = false;
     }
 
     public function regradeAssessments(): void
@@ -72,6 +82,14 @@ class SpecificationSetting extends Component
         $assessmentCourses = AssessmentCourse::all();
 
         foreach ($assessmentCourses as $assessmentCourse) {
+            if (! $assessmentCourse->assessment_canvas_id || ! $assessmentCourse->course->master_id) {
+                continue;
+            }
+
+            if ($assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast()) {
+                continue;
+            }
+
             $this->regradeAssessmentCourse($assessmentCourse);
         }
     }
@@ -100,6 +118,10 @@ class SpecificationSetting extends Component
 
             if ($is_specification) {
                 $grade = $grade >= $threshold ? 1 : 0;
+            }
+
+            if ($grade == 0) {
+                continue;
             }
 
             CanvasService::gradeAssignment($course->id, $assessment_canvas_id, $user->canvas->canvas_id, $grade);

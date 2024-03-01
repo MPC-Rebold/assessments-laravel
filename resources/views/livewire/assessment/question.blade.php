@@ -30,6 +30,11 @@ new class extends Component {
         $this->feedback = str_repeat('_', strlen($this->question->answer));
         $this->maxAnswerLength = strlen($this->question->answer) * 2;
 
+        $this->checkPastDue();
+    }
+
+    private function checkPastDue(): void
+    {
         $assessmentCourse = AssessmentCourse::firstWhere([
             'assessment_id' => $this->question->assessment_id,
             'course_id' => $this->course->id,
@@ -50,6 +55,8 @@ new class extends Component {
             $this->notification()->error('You have no more guesses left');
             return;
         }
+
+        $this->checkPastDue();
 
         // Add grace-period of 1 minute
         if ($this->isPastDue) {
@@ -78,7 +85,7 @@ new class extends Component {
     }
 }; ?>
 
-<div wire:poll.15s>
+<div>
     <x-card>
         <x-slot name="header">
             <div class="flex items-center justify-between border-b-2 border-gray-300 px-4 py-2 font-bold text-slate-800">
@@ -123,10 +130,10 @@ new class extends Component {
                         @elseif ($guessesLeft > 0)
                             <x-button secondary disabled class="group min-w-28" wire:click="submit"
                                 wire:dirty.attr.remove="disabled">
-                                <div class="-me-5 transition-all ease-in-out" wire:dirty.class="group-hover:-me-1">
+                                <div class="-me-4 transition-all ease-in-out" wire:dirty.class="group-hover:-me-1">
                                     Submit
                                 </div>
-                                <x-icon class="invisible -me-2 h-5 w-5 scale-0 transition-all ease-in-out"
+                                <x-icon class="invisible -me-3 h-5 w-5 scale-0 transition-all ease-in-out"
                                     wire:dirty.class="group-hover:visible group-hover:scale-100" name="chevron-right"
                                     solid />
                             </x-button>

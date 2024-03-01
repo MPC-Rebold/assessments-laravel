@@ -26,6 +26,8 @@ class ConnectCourses extends Component
 
     public array $statusStrings;
 
+    public Collection $connectedCourseModels;
+
     public Collection $missingCourses;
 
     public Collection $missingAssessments;
@@ -34,6 +36,7 @@ class ConnectCourses extends Component
     public function mount(): void
     {
         $this->statusStrings = $this->master->statusStrings();
+        $this->connectedCourseModels = $this->master->courses;
         $this->connectedCourses = $this->master->courses->pluck('title')->toArray();
         $this->availableCourses = Course::whereNull('master_id')
             ->orWhere('master_id', $this->master->id)
