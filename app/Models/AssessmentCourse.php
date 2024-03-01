@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -25,6 +24,22 @@ class AssessmentCourse extends Model
         return $this->belongsTo(Course::class);
     }
 
+    /***
+     * Returns either the points for the user
+     * or the percentage if specification grading is on
+     *
+     * @param User $user
+     * @return int|float the points or percentage for the user
+     */
+    public function gradeForUser(User $user): int|float
+    {
+        if (Settings::sole()->specification_grading) {
+            return $this->percentageForUser($user);
+        } else {
+            return $this->pointsForUser($user);
+        }
+    }
+
     public function pointsForUser(User $user): int
     {
         return QuestionUser::where([
@@ -34,5 +49,13 @@ class AssessmentCourse extends Model
         ])->whereHas('question', function ($query) {
             $query->where('assessment_id', $this->assessment->id);
         })->count();
+    }
+
+    public function percentageForUser(User $user): float
+    {
+        $totalQuestions = $this->assessment->questions->count();
+        $points = $this->pointsForUser($user);
+
+        return $totalQuestions > 0 ? ($points / $totalQuestions) : 0;
     }
 }

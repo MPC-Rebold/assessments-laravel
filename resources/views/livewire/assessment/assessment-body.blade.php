@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Carbon\Carbon;
 use Livewire\Attributes\On;
 use WireUi\Traits\Actions;
+use App\Services\CanvasService;
 
 new class extends Component {
     use Actions;
@@ -58,6 +59,9 @@ new class extends Component {
 
     public function submitToCanvas(): void
     {
+        $grade = $this->assessmentCourse->gradeForUser(auth()->user());
+
+        CanvasService::gradeAssignment($this->course->id, $this->assessmentCourse->assessment_canvas_id, auth()->user()->canvas->canvas_id, $grade);
         $this->notification()->success('Submitted to Canvas');
     }
 };
@@ -112,7 +116,7 @@ new class extends Component {
         </div>
     </div>
     @if (!$isPastDue)
-        <footer class="fixed bottom-0 mx-auto w-full bg-slate-200 px-4 py-2 shadow-inner sm:px-6 lg:px-8">
+        <footer class="fixed bottom-0 mx-auto w-full bg-slate-300 px-4 py-0.5 shadow-inner sm:px-6 lg:px-8">
             <div class="flex items-center justify-between pl-2">
                 <div class="h-2.5 w-full rounded-full bg-white dark:bg-gray-700">
                     <div class="h-2.5 rounded-full bg-positive-500 transition-all ease-out"

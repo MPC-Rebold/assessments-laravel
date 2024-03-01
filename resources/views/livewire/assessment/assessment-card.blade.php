@@ -39,7 +39,7 @@ new class extends Component {
             'course_id' => $this->courseId,
         ]);
 
-        $this->percentage = ($assessmentCourse->pointsForUser(auth()->user()) / $this->assessment->questionCount()) * 100;
+        $this->percentage = $assessmentCourse->percentageForUser(auth()->user()) * 100;
         $this->isPastDue = $this->dueAt && Carbon::parse($this->dueAt)->isPast();
     }
 }; ?>
