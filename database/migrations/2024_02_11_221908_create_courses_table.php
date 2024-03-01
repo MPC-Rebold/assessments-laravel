@@ -18,6 +18,7 @@ return new class extends Migration
             $table->json('valid_students')->default('[]');
             $table->json('valid_assessments')->default('[]');
             $table->foreignId('master_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->dateTime('marked_for_deletion')->nullable()->default(null);
         });
 
         Schema::create('course_user', function (Blueprint $table) {

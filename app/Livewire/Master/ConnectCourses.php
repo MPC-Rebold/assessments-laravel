@@ -6,6 +6,8 @@ use App\Livewire\Admin\Sync;
 use App\Models\Course;
 use App\Models\Master;
 use App\Models\User;
+use DB;
+use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\On;
@@ -45,14 +47,25 @@ class ConnectCourses extends Component
 
     public function saveConnectedCourses(): void
     {
-        $this->master->courses()->update(['master_id' => null]);
+        try {
+            DB::beginTransaction();
 
-        $courses = Course::whereIn('title', $this->connectedCourses);
-        $courses->update(['master_id' => $this->master->id]);
+            $this->master->courses()->update(['master_id' => null]);
 
-        $users = User::all();
-        foreach ($users as $user) {
-            $user->connectCourses();
+            $courses = Course::whereIn('title', $this->connectedCourses);
+            $courses->update(['master_id' => $this->master->id]);
+
+            $users = User::all();
+            foreach ($users as $user) {
+                $user->connectCourses();
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->notification()->error('Course connections failed with error ' . $e->getMessage());
+
+            return;
         }
 
         $sync = new Sync();
@@ -64,7 +77,7 @@ class ConnectCourses extends Component
             in_array('Disconnected', $this->master->statusStrings())) {
             $this->notification()->success('Course connections saved');
         } else {
-            $this->notification()->error('Course connections saved with errors');
+            $this->notification()->error('Course connections saved with warnings');
         }
     }
 

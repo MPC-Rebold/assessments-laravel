@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_canvases', function (Blueprint $table) {
-            $table->id();  // canvas_id
             $table->timestamps();
-            $table->foreign('user_email')->references('email')->on('users');
+            $table->unsignedInteger('canvas_id');
+            $table->string('user_email')->unique();
         });
     }
 

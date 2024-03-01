@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UserCanvas extends Model
 {
     protected $fillable = [
-        'id',
+        'canvas_id',
         'user_email',
     ];
 

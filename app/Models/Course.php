@@ -13,6 +13,7 @@ class Course extends Model
         'title',
         'valid_students',
         'valid_assessments',
+        'marked_for_deletion',
     ];
 
     protected $casts = [

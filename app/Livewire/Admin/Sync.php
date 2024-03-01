@@ -10,6 +10,7 @@ use App\Models\Question;
 use App\Models\Settings;
 use App\Models\Status;
 use App\Models\User;
+use App\Models\UserCanvas;
 use App\Services\CanvasService;
 use App\Services\SeedService;
 use Carbon\Carbon;
@@ -18,6 +19,7 @@ use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
+use Log;
 use WireUi\Traits\Actions;
 
 class Sync extends Component
@@ -175,7 +177,15 @@ class Sync extends Component
 
         foreach ($courses as $course) {
             if (! in_array($course->id, $canvasCoursesIds) && ! $course->master) {
-                $course->delete();
+                // if the course is not already marked for deletion (null), mark it for deletion
+                if ($course->marked_for_deletion === null) {
+                    $course->update(['marked_for_deletion' => Carbon::now()]);
+                } else {
+                    // if the course has been marked for deletion for more than 180 days, delete it
+                    if ($course->marked_for_deletion->diffInDays(Carbon::now()) > 180) {
+                        $course->delete();
+                    }
+                }
             }
         }
     }
@@ -203,6 +213,11 @@ class Sync extends Component
         $validStudents = [];
         foreach ($enrolled as $enrollment) {
             $validStudents[] = $enrollment['user']['login_id'];
+            Log::info($enrollment['user']['login_id']);
+            UserCanvas::updateOrCreate(
+                ['user_email' => $enrollment['user']['login_id']],
+                ['canvas_id' => $enrollment['user']['id']]
+            );
         }
 
         return $validStudents;

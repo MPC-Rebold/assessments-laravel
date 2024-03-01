@@ -9,13 +9,12 @@ use App\Models\Course;
 
 <x-app-layout>
     <livewire:layout.header :routes="[['title' => 'Profile', 'href' => route('profile')]]" />
-
     <div class="py-10">
         <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
             <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
                 <div class="flex justify-between align-middle">
-                    <div class="flex justify-between">
-                        <x-avatar xl :src="auth()->user()->avatar" class="mx-auto" />
+                    <div class="flex items-center justify-between">
+                        <x-avatar xl :src="auth()->user()->avatar" class="mx-auto h-fit" />
                         <div class="ms-4">
                             <h1 class="text-xl font-bold text-gray-800">{{ auth()->user()->name }}</h1>
                             <p class="text-gray-600">{{ auth()->user()->email }}</p>
@@ -33,6 +32,8 @@ use App\Models\Course;
                 </div>
             </div>
             <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
+                <p class="mb-2"><b>Canvas ID:</b>
+                    {{ auth()->user()->canvas ? auth()->user()->canvas->canvas_id : 'N/A' }}</p>
                 @if (auth()->user()->is_admin)
                     <div class="space-y-2">
                         <div class="flex">
