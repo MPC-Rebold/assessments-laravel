@@ -1,10 +1,7 @@
 <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
     <div class="flex min-h-10 items-center justify-between space-x-4">
-        <div>
-            <div class="text-lg font-bold">
-                Specification Grading
-            </div>
-
+        <div class="text-lg font-bold">
+            Specification Grading
         </div>
         <div class="flex flex-wrap items-center gap-4">
             <div class="w-28">

@@ -51,7 +51,11 @@ new class extends Component {
                                 </p>
                             </div>
                             <div class="hidden text-gray-500 sm:flex">
-                                {{ $enrolledStudent->name }}
+                                <p>{{ $enrolledStudent->name }}
+                                    @if ($enrolledStudent->is_admin)
+                                        <span class="text-sm text-negative-600">(ADMIN)</span>
+                                    @endif
+                                </p>
                             </div>
                         </div>
                         <x-button secondary class="min-w-24 !p-[3px]" :href="route('user.show', auth()->user()->id)" wire:navigate>

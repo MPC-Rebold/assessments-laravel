@@ -23,7 +23,7 @@
 
 <body class="font-sans text-gray-900 antialiased">
     <div class="flex min-h-screen flex-col items-center justify-center bg-slate-400 pb-16">
-        <x-application-logo-full class="w-80 select-none fill-current text-gray-500" />
+        <x-application-logo-full class="w-80 select-none fill-current" />
         <div class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-sm sm:rounded-lg">
             {{ $slot }}
         </div>
