@@ -15,8 +15,10 @@ new class extends Component {
 <div class="space-y-4">
     @if ($assessments->isNotEmpty())
         @foreach ($assessments as $assessment)
-            <livewire:assessment.assessment-card :assessment="$assessment" :courseId="$assessment->pivot->course_id" :assessmentCanvasId="$assessment->pivot->assessment_canvas_id" :dueAt="$assessment->pivot->due_at"
-                :key="$assessment->id" />
+            @if ($assessment->pivot->assessment_canvas_id != -1)
+                <livewire:assessment.assessment-card :assessment="$assessment" :courseId="$assessment->pivot->course_id" :assessmentCanvasId="$assessment->pivot->assessment_canvas_id"
+                    :dueAt="$assessment->pivot->due_at" :key="$assessment->id" />
+            @endif
         @endforeach
     @else
         <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">

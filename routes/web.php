@@ -51,15 +51,19 @@ Route::view('courses/{courseId}', 'course.show')
     ->name('course.show');
 
 Route::view('courses/{courseId}/assessment/{assessmentId}', 'assessment.show')
-    ->middleware(['auth', 'enrolled'])
+    ->middleware(['auth', 'enrolled', 'exists'])
     ->name('assessment.show');
 
 Route::view('admin/masters/{masterId}', 'master.edit')
     ->middleware(['auth', 'admin'])
     ->name('master.edit');
 
-Route::view('admin/students', 'student.index')
+Route::view('admin/users', 'user.index')
     ->middleware(['auth', 'admin'])
-    ->name('student.index');
+    ->name('user.index');
+
+Route::view('admin/users/{userId}', 'user.show')
+    ->middleware(['auth', 'admin'])
+    ->name('user.show');
 
 require __DIR__.'/auth.php';
