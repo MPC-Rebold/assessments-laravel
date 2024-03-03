@@ -80,7 +80,7 @@ new class extends Component {
 
         $this->feedback = $questionUser->calculateFeedback();
 
-        if (!str_contains($this->feedback, '<delete__>')) {
+        if (!str_contains($this->feedback, '<delete__>') && !str_contains($this->feedback, '<missing__>')) {
             $questionUser->update(['is_correct' => true]);
         }
 
@@ -119,14 +119,14 @@ new class extends Component {
             <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <div class="grow">
                     <x-input class="w-full font-mono sm:text-base" spellcheck="false" onpaste="return false;"
-                        oncopy="return false;" ondrop="return false;" autocomplete="off"
-                        maxlength="{{ $maxAnswerLength }}" wire:model.defer="answer" placeholder="Answer" />
+                             oncopy="return false;" ondrop="return false;" autocomplete="off"
+                             maxlength="{{ $maxAnswerLength }}" wire:model.defer="answer" placeholder="Answer" />
                 </div>
 
                 <div class="flex w-full flex-nowrap items-center justify-between space-x-4 md:w-auto">
                     <div class="{{ $isCorrect ? 'invisible' : '' }} flex min-w-28 justify-end text-nowrap">
                         Guesses left:&nbsp;<b
-                            class="{{ $guessesLeft <= 0 ? 'text-negative-500' : '' }}">{{ $guessesLeft }}</b>
+                                class="{{ $guessesLeft <= 0 ? 'text-negative-500' : '' }}">{{ $guessesLeft }}</b>
                     </div>
                     <div>
                         @if ($isPastDue)
@@ -140,13 +140,14 @@ new class extends Component {
                             </x-button>
                         @elseif ($guessesLeft > 0)
                             <x-button secondary disabled class="group min-w-28" wire:click="submit"
-                                wire:dirty.attr.remove="disabled">
+                                      wire:dirty.attr.remove="disabled">
                                 <div class="-me-4 transition-all ease-in-out" wire:dirty.class="group-hover:-me-1">
                                     Submit
                                 </div>
                                 <x-icon class="invisible -me-3 h-5 w-5 scale-0 transition-all ease-in-out"
-                                    wire:dirty.class="group-hover:visible group-hover:scale-100" name="chevron-right"
-                                    solid />
+                                        wire:dirty.class="group-hover:visible group-hover:scale-100"
+                                        name="chevron-right"
+                                        solid />
                             </x-button>
                         @else
                             <x-button secondary disabled class="min-w-28" wire:click="submit">

@@ -53,7 +53,7 @@ class QuestionUser extends Model
      */
     public static function calculateFeedbackHelper(string $userAnswer, string $correctAnswer): string
     {
-        if (! $userAnswer) {
+        if (!$userAnswer) {
             return str_repeat('_', strlen($correctAnswer));
         }
 
@@ -98,15 +98,15 @@ class QuestionUser extends Model
                 $s2position--;
             } else { // insertion required
                 if ($string_1[$s1position - 1] !== ' ') {
-                    $result = '_' . $result;
+                    $result = self::delimitMissing('_') . $result;
                 }      // only indicate insertions for non-spaces
                 $s1position--;
             }
         }
         // take care of any leading mismatch errors
         if ($s2position == 0) {
-            for ($k = 0; $k < $s1position; $k++) {
-                $result = '_' . $result;
+            for ($k = $s1position; $k >= 0; $k--) {
+                $result = self::delimitMissing('_') . $result;
             }
         }
         if ($s1position == 0) {
@@ -128,5 +128,10 @@ class QuestionUser extends Model
     private static function delimitDelete(string $string): string
     {
         return strrev('</delete__>') . "$string" . strrev('<delete__>');
+    }
+
+    private static function delimitMissing(string $string): string
+    {
+        return strrev('</missing__>') . "$string" . strrev('<missing__>');
     }
 }
