@@ -90,14 +90,17 @@ class SpecificationSetting extends Component
                 continue;
             }
 
-            $this->regradeAssessmentCourse($assessmentCourse);
+            $this->regradeAssessmentCourse($assessmentCourse, false);
         }
     }
 
-    public function regradeAssessmentCourse(AssessmentCourse $assessmentCourse): void
+    public function setMaxPoints(AssessmentCourse $assessmentCourse): void
     {
+        if ($assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast()) {
+            return;
+        }
+
         $is_specification = Settings::sole()->specification_grading;
-        $threshold = Settings::sole()->specification_grading_threshold;
 
         $assessment = $assessmentCourse->assessment;
         $course = $assessmentCourse->course;
@@ -111,6 +114,21 @@ class SpecificationSetting extends Component
         CanvasService::editAssignment($course->id, $assessment_canvas_id,
             ['points_possible' => $pointsPossible]
         );
+    }
+
+    public function regradeAssessmentCourse(AssessmentCourse $assessmentCourse, bool $regradePastDue = true): void
+    {
+        if ($assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast() && ! $regradePastDue) {
+            return;
+        }
+
+        $is_specification = Settings::sole()->specification_grading;
+        $threshold = Settings::sole()->specification_grading_threshold;
+
+        $course = $assessmentCourse->course;
+        $assessment_canvas_id = $assessmentCourse->assessment_canvas_id;
+
+        $this->setMaxPoints($assessmentCourse);
 
         $users = $course->users;
         foreach ($users as $user) {
@@ -118,10 +136,6 @@ class SpecificationSetting extends Component
 
             if ($is_specification) {
                 $grade = $grade >= $threshold ? 1 : 0;
-            }
-
-            if ($grade == 0) {
-                continue;
             }
 
             CanvasService::gradeAssignment($course->id, $assessment_canvas_id, $user->canvas->canvas_id, $grade);

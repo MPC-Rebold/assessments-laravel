@@ -288,18 +288,22 @@ class Sync extends Component
                         }
                     }
 
-                    if ($assessment_canvas_id === -1) {
-                        $status = Status::where('master_id', $master->id)->first();
-                        $status->missing_assessments()->attach($assessment->id, ['course_id' => $course->id]);
-                    }
-
-                    AssessmentCourse::updateOrCreate(
+                    $assessmentCourse = AssessmentCourse::updateOrCreate(
                         ['assessment_id' => $assessment->id, 'course_id' => $course->id],
                         [
                             'assessment_canvas_id' => $assessment_canvas_id,
                             'due_at' => $due_at,
                         ]
                     );
+
+                    if ($assessment_canvas_id === -1) {
+                        $status = Status::where('master_id', $master->id)->first();
+                        $status->missing_assessments()->attach($assessment->id, ['course_id' => $course->id]);
+                    } else {
+                        $specification = new SpecificationSetting();
+                        $specification->setMaxPoints($assessmentCourse);
+                    }
+
                 }
             }
         }

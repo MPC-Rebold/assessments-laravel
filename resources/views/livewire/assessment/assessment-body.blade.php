@@ -61,6 +61,10 @@ new class extends Component {
     {
         $grade = $this->assessmentCourse->gradeForUser(auth()->user());
 
+        if (!$grade) {
+            return;
+        }
+
         CanvasService::gradeAssignment($this->course->id, $this->assessmentCourse->assessment_canvas_id, auth()->user()->canvas->canvas_id, $grade);
         $this->notification()->success('Submitted to Canvas');
     }
