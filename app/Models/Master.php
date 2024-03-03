@@ -52,7 +52,7 @@ class Master extends Model
             $statusStrings[] = 'Warning';
         }
 
-        if (!$statusStrings) {
+        if (! $statusStrings) {
             $statusStrings[] = 'Okay';
         }
 

@@ -65,7 +65,7 @@ new class extends Component {
     }
 }; ?>
 
-<div class='border border-negative-600 bg-negative-50 p-4 sm:rounded-lg'>
+<div class='border-y border-negative-600 bg-negative-50 p-4 sm:rounded-lg sm:border-x'>
     <div class="flex items-center border-b-2 border-negative-200 pb-3">
         <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
         <span class="ml-1 text-lg font-semibold text-negative-600">

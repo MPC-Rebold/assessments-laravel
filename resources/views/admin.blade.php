@@ -7,7 +7,6 @@
             <livewire:admin.sync />
             <hr>
             <livewire:admin.specification-setting />
-            <hr>
             <livewire:admin.manage-students />
         </div>
     </div>

@@ -182,7 +182,7 @@ class Sync extends Component
                     $course->update(['marked_for_deletion' => Carbon::now()]);
                 } else {
                     // if the course has been marked for deletion for more than 180 days, delete it
-                    if ($course->marked_for_deletion->diffInDays(Carbon::now()) > 180) {
+                    if (Carbon::parse($course->marked_for_deletion)->diffInDays(Carbon::now()) > 180) {
                         $course->delete();
                     }
                 }

@@ -23,9 +23,9 @@ class Kernel extends ConsoleKernel
             $sync->sync();
         })->everyFiveMinutes();
 
-//        $schedule->call(function () {
-//            //
-//        })->dailyAt();
+        //        $schedule->call(function () {
+        //            //
+        //        })->dailyAt();
     }
 
     /**

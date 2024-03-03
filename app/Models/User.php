@@ -82,7 +82,7 @@ class User extends Authenticatable
      * @param int|null $courseId The course id, or null for all courses
      * @return Collection
      */
-    public function assessments(int $courseId = null): Collection
+    public function assessments(?int $courseId = null): Collection
     {
         if ($courseId) {
             return $this->courses->find($courseId)->assessments->sortBy('due_at');
@@ -90,6 +90,4 @@ class User extends Authenticatable
 
         return $this->courses->map->assessments->sortBy('due_at')->flatten();
     }
-
-
 }

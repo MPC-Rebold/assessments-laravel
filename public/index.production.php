@@ -49,7 +49,6 @@ if (config('app.env') === 'production') {
 |
 */
 
-
 if (config('app.env') === 'production') {
     /** @noinspection PhpIncludeInspection */
     $app = require_once __DIR__ . '/../Rebold/bootstrap/app.php';

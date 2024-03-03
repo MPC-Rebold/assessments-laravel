@@ -75,10 +75,15 @@ new class extends Component {
             'user_id' => auth()->id(),
             'course_id' => $this->course->id,
             'answer' => $this->answer,
-            'is_correct' => $this->answer === $this->question->answer,
+            'is_correct' => false,
         ]);
 
         $this->feedback = $questionUser->calculateFeedback();
+
+        if (!str_contains($this->feedback, '<delete__>')) {
+            $questionUser->update(['is_correct' => true]);
+        }
+
         $this->isCorrect = $this->question->isCorrect(auth()->user(), $this->course);
         $this->guessesLeft = $this->question->getGuessesLeft(auth()->user(), $this->course);
 
@@ -114,8 +119,8 @@ new class extends Component {
             <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <div class="grow">
                     <x-input class="w-full font-mono sm:text-base" spellcheck="false" onpaste="return false;"
-                        ondrop="return false;" autocomplete="off" maxlength="{{ $maxAnswerLength }}"
-                        wire:model.defer="answer" placeholder="Answer" />
+                        oncopy="return false;" ondrop="return false;" autocomplete="off"
+                        maxlength="{{ $maxAnswerLength }}" wire:model.defer="answer" placeholder="Answer" />
                 </div>
 
                 <div class="flex w-full flex-nowrap items-center justify-between space-x-4 md:w-auto">

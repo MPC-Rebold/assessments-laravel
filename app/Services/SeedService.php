@@ -85,11 +85,11 @@ class SeedService
      */
     public static function restore(Master $master): void
     {
-        if (!is_dir(database_path('seed'))) {
+        if (! is_dir(database_path('seed'))) {
             mkdir(database_path('seed'));
         }
 
-        if (!is_dir(database_path('seed/' . $master->title))) {
+        if (! is_dir(database_path('seed/' . $master->title))) {
             mkdir(database_path('seed/' . $master->title));
         }
 

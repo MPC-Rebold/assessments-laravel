@@ -18,7 +18,7 @@ $course = Course::find(request()->route('courseId'));
     <div class="py-10">
         <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
             <livewire:layout.section-header :header="$course->title . ' (' . $master->title . ')'" />
-            {{--            <livewire:course.students :course="$course" /> --}}
+            <livewire:course.assessments-stats :course="$course" />
             <livewire:user.all-users :course="$course" />
         </div>
     </div>

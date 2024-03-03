@@ -33,10 +33,13 @@ Route::view('admin/masters/{masterId}', 'master.edit')
     ->middleware(['auth', 'admin'])
     ->name('master.edit');
 
-Route::view('admin/masters/{masterId}/courses/{courseId}/edit', 'course.edit')
+Route::view('admin/masters/{masterId}/courses/{courseId}', 'course.edit')
     ->middleware(['auth', 'admin'])
     ->name('course.edit');
 
+Route::view('admin/masters/{masterId}/assessments/{assessmentId}/', 'assessment.edit')
+    ->middleware(['auth', 'admin'])
+    ->name('assessment.edit');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])

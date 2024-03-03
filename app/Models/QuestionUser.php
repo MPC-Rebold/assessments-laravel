@@ -116,6 +116,7 @@ class QuestionUser extends Model
         }
 
         error_log(strrev($result) . "\n");
+
         return strrev($result);
     }
 

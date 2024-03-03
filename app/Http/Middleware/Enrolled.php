@@ -19,6 +19,7 @@ class Enrolled
         if (auth()->user()->isEnrolled($courseId)) {
             return $next($request);
         }
+
         return redirect('dashboard');
     }
 }

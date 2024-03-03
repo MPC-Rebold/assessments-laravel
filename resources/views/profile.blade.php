@@ -71,17 +71,20 @@ use App\Models\Course;
 
                 @endif
             </div>
-            <div class="relative w-full">
-                <div class="absolute right-0">
-                    <div class="flex space-x-4">
-                        @if (auth()->user()->is_admin)
-                            <x-button red class="w-28 shadow" icon="cog" :href="route('admin')">
-                                Admin
-                            </x-button>
-                        @endif
-                        <div class="w-28 shadow">
-                            <livewire:profile.logout-button />
-                        </div>
+            <div class="flex w-full justify-between">
+                <div>
+                    <x-button positive icon="chat" href="https://forms.gle/TGGKXGZMpfUi5JGVA" target="_blank">
+                        Feedback
+                    </x-button>
+                </div>
+                <div class="flex space-x-4">
+                    @if (auth()->user()->is_admin)
+                        <x-button red class="w-28 shadow" icon="cog" :href="route('admin')" wire:navigate>
+                            Admin
+                        </x-button>
+                    @endif
+                    <div class="w-28 shadow">
+                        <livewire:profile.logout-button />
                     </div>
                 </div>
             </div>

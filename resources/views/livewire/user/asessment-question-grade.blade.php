@@ -15,6 +15,7 @@ new class extends Component {
 
     public Collection $attempts;
     public bool $isCorrect;
+    public int $guessesLeft;
 
     public function mount(User $user, Question $question, AssessmentCourse $assessment): void
     {
@@ -34,15 +35,20 @@ new class extends Component {
             ->sortByDesc('created_at');
 
         $this->isCorrect = $this->attempts->where('is_correct', true)->isNotEmpty();
+        $this->guessesLeft = $this->question->getGuessesLeft($this->user, $this->assessment->course);
     }
 }; ?>
 
-<div x-data="{ open: false }" @click="open = !open">
+<div x-data="{ open: false }">
     <div class="bg-slate-100 shadow sm:rounded-lg">
-        <button class="group w-full bg-white p-4 sm:rounded-lg sm:px-6 sm:py-4" :class="{ 'shadow': open }">
+        <button class="group w-full bg-white p-4 sm:rounded-lg sm:px-6 sm:py-4" :class="{ 'shadow': open }"
+            @click="open = !open">
             <div class="flex items-center justify-between">
-                <div class="font-bold group-hover:underline">
-                    Question {{ $question->number }}
+                <div class="flex space-x-4">
+                    <div class="font-bold group-hover:underline"> Question {{ $question->number }}</div>
+                    <div class="hidden text-gray-500 sm:flex">
+                        Guesses left: {{ $guessesLeft }}
+                    </div>
                 </div>
                 <div class="flex items-center space-x-2">
                     @if ($isCorrect)

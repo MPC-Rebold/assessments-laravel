@@ -16,15 +16,15 @@
     </div>
 
     <div class="bg-slate-100 shadow sm:rounded-lg">
-        <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
+        <div class="bg-white p-4 shadow sm:rounded-lg sm:px-6">
             <form>
-                <div class="flex flex-wrap items-center justify-between gap-x-16 gap-y-4 sm:flex-nowrap">
+                <div class="flex flex-wrap items-center justify-between gap-x-16 gap-y-4 md:flex-nowrap">
                     <h2 class="min-w-60 text-lg font-bold text-gray-800">
                         Connected Canvas Courses
                     </h2>
-                    <div class="flex w-full items-center justify-end gap-4">
+                    <div class="flex w-full items-center justify-between gap-4 md:justify-end">
                         <x-select multiselect searchable class="max-w-md" wire:model="connectedCourses"
-                            placeholder="No connected courses" :options="$availableCourses" />
+                            placeholder="No connected courses" :options="$availableCourses" empty-message="No available courses" />
 
                         <x-button disabled positive spinner class="min-w-24 bg-slate-300 hover:bg-slate-300"
                             wire:dirty.attr.remove="disabled" wire:dirty.class.remove="bg-slate-300 hover:bg-slate-300"

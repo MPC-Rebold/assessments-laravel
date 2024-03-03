@@ -58,4 +58,18 @@ class AssessmentCourse extends Model
 
         return $totalQuestions > 0 ? ($points / $totalQuestions) : 0;
     }
+
+    public function getAverageGrade(): float
+    {
+        $totalQuestions = $this->assessment->questions->count() * $this->course->users->count();
+
+        $totalPoints = QuestionUser::where([
+            'course_id' => $this->course->id,
+            'is_correct' => true,
+        ])->whereHas('question', function ($query) {
+            $query->where('assessment_id', $this->assessment->id);
+        })->count();
+
+        return $totalQuestions > 0 ? ($totalPoints / $totalQuestions) : 0;
+    }
 }
