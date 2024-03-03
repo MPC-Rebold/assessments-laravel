@@ -6,7 +6,7 @@ $user = User::find(request()->route('userId'));
 
 ?>
 
-@section('title', 'Users')
+@section('title', 'Users - ' . $user->name)
 
 <x-app-layout>
     <livewire:layout.header :routes="[

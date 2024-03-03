@@ -9,25 +9,23 @@ use Illuminate\Support\Collection;
 new class extends Component {
     public User $user;
 
-    public string $assessmentSelect;
-    public string $courseSelect;
-    public Collection $assessmentOptions;
+    public string|null $courseSelect;
+    public Course $courseShow;
     public Collection $courseOptions;
+
+    public Collection $assessments;
 
     public function mount(User $user): void
     {
         $this->user = $user;
         $this->courseOptions = $user->courses;
-        //        $this->assessmentOptions = $user->courses->flatMap->assessments;
     }
 
-    public function populateAssessmentOptions(): void
+    public function fetchGrades(): void
     {
-        if (isset($this->courseSelect)) {
-            $this->assessmentOptions = Course::find($this->courseSelect)->assessments;
-        } else {
-            $this->assessmentOptions = collect();
-        }
+        $this->assessments = AssessmentCourse::where('course_id', $this->courseSelect)->get();
+        $this->courseShow = Course::find($this->courseSelect);
+        $this->courseSelect = null;
     }
 }; ?>
 
@@ -67,20 +65,59 @@ new class extends Component {
         </div>
     </div>
     <div class="bg-slate-100 shadow sm:rounded-lg">
-
-        <div class="flex flex-wrap items-center justify-between space-y-2 bg-white p-4 sm:rounded-lg sm:p-6">
+        <div
+            class="{{ isset($assessments) ? 'shadow' : '' }} flex flex-wrap items-center justify-between gap-2 bg-white p-4 sm:rounded-lg sm:p-6">
             <p class="text-lg font-bold">
-                View Grade For:
+                View Grades For: @if (isset($assessments))
+                    <span class="text-gray-500">{{ $courseShow->title }}</span>
+                @endif
             </p>
-            <div wire:click="populateAssessmentOptions" class="block">
-                <x-select placeholder="Course" :options="$courseOptions" class="w-96" wire:model.defer="courseSelect"
-                    :option-value="'id'" :option-label="'title'" />
-            </div>
-            <x-select placeholder="Assessment" :options="$assessmentOptions" class="w-96" wire:model.defer="assessmentSelect"
-                :option-value="'id'" :option-label="'title'" />
+            <form class="flex flex-wrap items-center gap-4">
+                <div class="w-60 sm:w-80">
+                    <x-select placeholder="Course" :options="$courseOptions" wire:model.defer="courseSelect" :option-value="'id'"
+                        :option-label="'title'" />
+                </div>
+                <x-button secondary spinner class="min-w-24" wire:click="fetchGrades" disabled
+                    wire:dirty.attr.remove="disabled">
+                    View
+                </x-button>
+            </form>
         </div>
         <div
-            class="{{ isset($assessmentSelect) ? 'max-h-96' : 'invisible max-h-0' }} overflow-hidden transition-all ease-in-out">
+            class="{{ isset($assessments) ? 'max-h-[999vh]' : 'invisible max-h-0' }} overflow-hidden transition-all duration-500 ease-in-out">
+            @if (isset($assessments))
+                @if ($assessments->count() === 0)
+                    <div class="p-4 text-center">
+                        <p class="text-lg font-bold text-gray-400">
+                            No assessments found
+                        </p>
+                    </div>
+                @else
+                    <div class="space-y-4 p-4 sm:px-6 sm:py-4">
+                        @foreach ($assessments as $assessment)
+                            <div class="flex items-center justify-between">
+                                <div>{{ $assessment->assessment->title }}</div>
+                                <div class="flex items-center gap-6">
+                                    <div>{{ $assessment->pointsForUser($user) }} /
+                                        {{ $assessment->assessment->questionCount() }}</div>
+                                    <x-button secondary class="min-w-28 !p-[3px]" :href="route('user.grade.show', [$user->id, $assessment->id])" wire:navigate>
+                                        <div class="group flex items-center space-x-2">
+                                            <div>View More</div>
+                                            <div>
+                                                <x-icon name="chevron-right"
+                                                    class="h-4 w-4 transition-all ease-in-out group-hover:translate-x-1" />
+                                            </div>
+                                        </div>
+                                    </x-button>
+                                </div>
+                            </div>
+                            @if (!$loop->last)
+                                <hr />
+                            @endif
+                        @endforeach
+                    </div>
+                @endif
+            @endif
         </div>
     </div>
 </div>

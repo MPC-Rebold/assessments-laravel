@@ -6,34 +6,40 @@ use App\Models\User;
 use Illuminate\Support\Collection;
 
 new class extends Component {
-    public Course $course;
+    public Course|null $course;
 
     public Collection $students;
+    public Collection $courses;
     public array $notEnrolledStudents;
     public array $validStudents;
     public string $search = '';
 
-    public function mount(Course $course): void
+    public function mount(): void
     {
-        $this->course = $course;
-        $this->students = $course->users->sortBy('name');
-        $this->validStudents = $course->valid_students;
-        $this->notEnrolledStudents = array_diff($this->validStudents, $this->students->pluck('email')->toArray());
-    }
+        if (!isset($this->course)) {
+            $this->courses = Course::all();
+        } else {
+            $this->courses = collect([$this->course]);
+        }
 
-    public function updateSearch(): void
-    {
-        $this->students = $this->course->users
+        $this->students = $this->courses->flatMap->users
             ->filter(function ($student) {
                 return str_contains(strtolower($student->email), strtolower($this->search)) || str_contains(strtolower($student->name), strtolower($this->search));
             })
             ->sortBy('name');
 
-        $this->validStudents = array_filter($this->course->valid_students, function ($student) {
-            return str_contains(strtolower($student), strtolower($this->search));
-        });
+        $this->validStudents = array_unique(
+            array_filter($this->courses->flatMap->valid_students->toArray(), function ($student) {
+                return str_contains(strtolower($student), strtolower($this->search));
+            }),
+        );
 
         $this->notEnrolledStudents = array_diff($this->validStudents, $this->students->pluck('email')->toArray());
+    }
+
+    public function updateSearch(): void
+    {
+        $this->mount();
     }
 }; ?>
 
@@ -42,13 +48,18 @@ new class extends Component {
         <div class="text-lg font-bold">
             Students
         </div>
-        <div class="w-64">
-            <x-input right-icon="search" placeholder="Search" wire:model.live="search" wire:change="updateSearch" />
+        <div class="flex items-center justify-between space-x-4">
+            <div class="w-64">
+                <x-input right-icon="search" placeholder="Search" wire:model.defer="search" />
+            </div>
+            <x-button secondary wire:click="updateSearch">
+                Search
+            </x-button>
         </div>
     </div>
 
     <div class="p-4 sm:px-6 sm:py-4">
-        @if ($students->isEmpty())
+        @if ($students->isEmpty() && empty($notEnrolledStudents))
             <div class="text-center">
                 <p class="text-lg font-bold text-gray-400">
                     No Students
@@ -83,7 +94,9 @@ new class extends Component {
                             </div>
                         </x-button>
                     </div>
-                    <hr />
+                    @if (!empty($notEnrolledStudents))
+                        <hr />
+                    @endif
                 @endforeach
                 @foreach ($notEnrolledStudents as $notEnrolledStudent)
                     <div class="flex items-center justify-between">
