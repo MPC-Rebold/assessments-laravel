@@ -47,28 +47,36 @@ class QuestionUser extends Model
     /**
      * Helper function for calculateFeedback using explicit parameters
      *
-     * @param string $user_answer
-     * @param string $correct_answer
+     * @param string $userAnswer
+     * @param string $correctAnswer
      * @return string
      */
-    public static function calculateFeedbackHelper(string $user_answer, string $correct_answer): string
+    public static function calculateFeedbackHelper(string $userAnswer, string $correctAnswer): string
     {
-        if (! $user_answer) {
-            return str_repeat('_', strlen($correct_answer));
+        if (! $userAnswer) {
+            return str_repeat('_', strlen($correctAnswer));
         }
 
-        $string_1 = strrev($correct_answer);
-        $string_2 = strrev($user_answer);
+        $string_1 = strrev($correctAnswer);
+        $string_2 = strrev($userAnswer);
         $string_1_length = strlen($string_1);
         $string_2_length = strlen($string_2);
 
-        $num = array_fill(0, $string_1_length + 1, array_fill(0, $string_2_length + 1, 0));
+        $num = [];
 
-        // Fill the table with the best path scores
+        // Initialize the num scores table to assume there are no similarities
+        for ($i = 0; $i < $string_1_length + 1; $i++) {
+            $num[$i] = [];
+            for ($j = 0; $j < $string_2_length + 1; $j++) {
+                $num[$i][$j] = 0;
+            }
+        }
+
+        // fill the table with the best path scores
         for ($i = 1; $i <= $string_1_length; $i++) {
             for ($j = 1; $j <= $string_2_length; $j++) {
                 // Check every combination of characters
-                if ($string_1[$i - 1] == $string_2[$j - 1] || ($string_1[$i - 1] == '_' && $string_2[$j - 1] == ' ')) {
+                if ($string_1[$i - 1] === $string_2[$j - 1] || $string_1[$i - 1] === '_' && $string_2[$j - 1] == ' ') {
                     $num[$i][$j] = 1 + $num[$i - 1][$j - 1];
                 } else {
                     $num[$i][$j] = max($num[$i][$j - 1], $num[$i - 1][$j]);
@@ -76,41 +84,38 @@ class QuestionUser extends Model
             }
         }
 
-        $s1_position = $string_1_length;
-        $s2_position = $string_2_length;
+        $s1position = $string_1_length;
+        $s2position = $string_2_length;
         $result = '';
-        while ($s1_position != 0 && $s2_position != 0) {
-            if ($string_1[$s1_position - 1] == $string_2[$s2_position - 1] || ($string_1[$s1_position - 1] == '_' && $string_2[$s2_position - 1] == ' ')) {
-                $keep_char = $string_2[$s2_position - 1];
-                $result = self::delimitKeep($keep_char) . $result;
-                $s1_position--;
-                $s2_position--;
-            } elseif ($num[$s1_position][$s2_position - 1] >= $num[$s1_position][$s2_position]) {
-                $delete_char = $string_2[$s2_position - 1];
-                $result = self::delimitDelete($delete_char) . $result;
-                $s2_position--;
-            } else {
-                if ($string_1[$s1_position - 1] != ' ') {
+        while ($s1position != 0 && $s2position != 0) {
+            if ($string_1[$s1position - 1] === $string_2[$s2position - 1]
+                || $string_1[$s1position - 1] === '_' && $string_2[$s2position - 1] === ' ') {  // characters match
+                $result = self::delimitKeep($string_2[$s2position - 1]) . $result;
+                $s1position--;
+                $s2position--;
+            } elseif ($num[$s1position][$s2position - 1] >= $num[$s1position][$s2position]) { // deletion required
+                $result = self::delimitDelete($string_2[$s2position - 1]) . $result;
+                $s2position--;
+            } else { // insertion required
+                if ($string_1[$s1position - 1] !== ' ') {
                     $result = '_' . $result;
-                }
-                $s1_position--;
+                }      // only indicate insertions for non-spaces
+                $s1position--;
             }
         }
-
-        // Take care of any leading mismatch errors
-        if ($s2_position == 0) {
-            for ($_ = 0; $_ < $s1_position; $_++) {
+        // take care of any leading mismatch errors
+        if ($s2position == 0) {
+            for ($k = 0; $k < $s1position; $k++) {
                 $result = '_' . $result;
             }
         }
-        if ($s1_position == 0) {
-            for ($_ = 0; $_ < $s2_position; $_++) {
-                $deleted_char = $string_2[$s2_position - 1];
-                $result = self::delimitDelete($deleted_char) . $result;
-                $s2_position--;
+        if ($s1position == 0) {
+            for ($k = $s2position - 1; $k >= 0; $k--) {
+                $result = self::delimitDelete($string_2[$k]) . $result;
             }
         }
 
+        error_log(strrev($result) . "\n");
         return strrev($result);
     }
 

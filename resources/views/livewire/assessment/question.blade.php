@@ -48,6 +48,12 @@ new class extends Component {
     public function submit(): void
     {
         if ($this->answer === '') {
+            $this->notification()->warning('Answer cannot be empty');
+            return;
+        }
+
+        if (strlen($this->answer) > $this->maxAnswerLength) {
+            $this->notification()->error('Character limit exceeded');
             return;
         }
 
@@ -108,8 +114,8 @@ new class extends Component {
             <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <div class="grow">
                     <x-input class="w-full font-mono sm:text-base" spellcheck="false" onpaste="return false;"
-                        ondrop="return false;" autocomplete="off" maxlength="{{ $maxAnswerLength }}" wire:model="answer"
-                        placeholder="Answer" />
+                        ondrop="return false;" autocomplete="off" maxlength="{{ $maxAnswerLength }}"
+                        wire:model.defer="answer" placeholder="Answer" />
                 </div>
 
                 <div class="flex w-full flex-nowrap items-center justify-between space-x-4 md:w-auto">
