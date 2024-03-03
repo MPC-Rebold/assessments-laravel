@@ -53,7 +53,7 @@ class QuestionUser extends Model
      */
     public static function calculateFeedbackHelper(string $userAnswer, string $correctAnswer): string
     {
-        if (!$userAnswer) {
+        if (! $userAnswer) {
             return str_repeat('_', strlen($correctAnswer));
         }
 
@@ -105,7 +105,7 @@ class QuestionUser extends Model
         }
         // take care of any leading mismatch errors
         if ($s2position == 0) {
-            for ($k = $s1position; $k >= 0; $k--) {
+            for ($k = 0; $k < $s1position; $k++) {
                 $result = self::delimitMissing('_') . $result;
             }
         }
@@ -114,8 +114,6 @@ class QuestionUser extends Model
                 $result = self::delimitDelete($string_2[$k]) . $result;
             }
         }
-
-        error_log(strrev($result) . "\n");
 
         return strrev($result);
     }
