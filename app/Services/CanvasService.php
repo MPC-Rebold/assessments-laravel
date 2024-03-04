@@ -54,6 +54,11 @@ class CanvasService
             ])->put(self::$apiUrl . '/api/v1/' . $path, $data);
     }
 
+    public static function getSelf(): Response
+    {
+        return self::get('users/self');
+    }
+
     /**
      * Get all the courses from Canvas where the user is a teacher
      *
