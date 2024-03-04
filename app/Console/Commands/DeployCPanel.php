@@ -34,6 +34,7 @@ class DeployCPanel extends Command
         $this->copyPublic();
         //        $this->refreshDatabase();
         $this->call('route:clear');
+        $this->call('view:clear');
         $this->info('Deployment complete');
         $this->warn('Do not forget to migrate and seed the database');
     }
