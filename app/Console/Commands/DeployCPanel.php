@@ -35,6 +35,7 @@ class DeployCPanel extends Command
         //        $this->refreshDatabase();
         $this->call('route:clear');
         $this->info('Deployment complete');
+        $this->warn('Do not forget to migrate and seed the database');
     }
 
     private function refreshCache(): void
