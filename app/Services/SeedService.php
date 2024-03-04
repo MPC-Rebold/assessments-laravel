@@ -14,7 +14,7 @@ class SeedService
      */
     public static function getMasters(): array
     {
-        return array_map('basename', glob(database_path('seed') . '\*', GLOB_ONLYDIR));
+        return array_map('basename', glob(database_path('seed') . '/*', GLOB_ONLYDIR));
     }
 
     /**
@@ -27,7 +27,7 @@ class SeedService
     {
         return array_map(function ($file) {
             return pathinfo($file, PATHINFO_FILENAME);
-        }, glob(database_path('seed/' . $masterTitle) . '\*.txt'));
+        }, glob(database_path('seed/' . $masterTitle) . '/*.txt'));
     }
 
     /**
