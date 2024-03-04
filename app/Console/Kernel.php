@@ -20,15 +20,18 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->call(function () {
+            Log::info('Backing up database');
             SeedService::backupDatabase();
         })->everyFifteenMinutes();
 
         $schedule->call(function () {
+            Log::info('Syncing with Canvas');
             $sync = new Sync();
             $sync->sync();
         })->everyFiveMinutes();
 
         $schedule->call(function () {
+            Log::info('Posting final grades');
             $this->postFinalGrades();
         })->dailyAt('01:00');
 
