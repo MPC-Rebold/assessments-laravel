@@ -161,11 +161,11 @@ class DeployCPanel extends Command
 
 
         $appName = basename(base_path());
-        $newDirectory = realpath(base_path() . '/../public_html/' . $newDirectory);
+        $fullPath = realpath(base_path() . '/../public_html/' . $newDirectory);
         $upCount = 1;
 
-        while (basename(dirname($newDirectory)) != 'public_html') {
-            $newDirectory = realpath($newDirectory . '/../');
+        while (basename(dirname($fullPath)) != 'public_html') {
+            $fullPath = realpath($fullPath . '/../');
             $upCount++;
             sleep(1);
         }
