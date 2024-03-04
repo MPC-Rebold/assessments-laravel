@@ -9,6 +9,8 @@ use App\Services\SeedService;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Log;
+use function Laravel\Prompts\error;
 
 class Kernel extends ConsoleKernel
 {
@@ -29,6 +31,11 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $this->postFinalGrades();
         })->dailyAt('01:00');
+
+        $schedule->call(function () {
+            error_log('This is a test');
+            Log::info('This is a test');
+        })->everySecond();
     }
 
     public function postFinalGrades(): void

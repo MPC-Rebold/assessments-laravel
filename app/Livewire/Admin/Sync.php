@@ -213,7 +213,7 @@ class Sync extends Component
         $validStudents = [];
         foreach ($enrolled as $enrollment) {
             $validStudents[] = $enrollment['user']['login_id'];
-            Log::info($enrollment['user']['login_id']);
+
             UserCanvas::updateOrCreate(
                 ['user_email' => $enrollment['user']['login_id']],
                 ['canvas_id' => $enrollment['user']['id']]
