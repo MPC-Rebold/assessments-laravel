@@ -66,7 +66,11 @@ class User extends Authenticatable
         if ($this->is_admin) {
             $courses = Course::all();
         } else {
-            $courses = Course::whereJsonContains('valid_students', $this->email)->get();
+            //            $courses = Course::whereJsonContains('valid_students', $this->email)->get();
+            $courses = Course::all();
+            $courses = $courses->filter(function ($course) {
+                return in_array($this->email, $course->valid_students);
+            });
         }
         $this->courses()->sync($courses);
     }
