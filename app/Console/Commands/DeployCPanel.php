@@ -192,7 +192,7 @@ class DeployCPanel extends Command
     {
         if (! is_file(database_path() . '/database.sqlite') || $this->confirm('Do you want to refresh the database?')) {
             $this->info('Refreshing database...');
-            $this->call('migrate --force');
+            $this->call('migrate', ['--force' => true]);
             $this->call('db:seed');
             $this->info('Database refreshed');
         } else {
