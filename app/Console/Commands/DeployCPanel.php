@@ -32,7 +32,7 @@ class DeployCPanel extends Command
         $this->checkPublicHtml();
         $this->checkBuild();
         $this->copyPublic();
-        $this->refreshDatabase();
+        //        $this->refreshDatabase();
         $this->call('route:clear');
         $this->info('Deployment complete');
     }
@@ -159,7 +159,6 @@ class DeployCPanel extends Command
 
         $this->info('Copying public files to public_html/' . $newDirectory);
 
-
         $appName = basename(base_path());
         $fullPath = realpath(base_path() . '/../public_html/' . $newDirectory);
         $upCount = 1;
@@ -182,18 +181,18 @@ class DeployCPanel extends Command
         $this->info('Public files copied');
     }
 
-    private function refreshDatabase(): void
-    {
-        if (! is_file(database_path() . '/database.sqlite') || $this->confirm('Do you want to refresh the database?')) {
-            $this->info('Refreshing database...');
-            $this->call('migrate', ['--force' => true]);
-            $this->call('db:seed');
-            $this->info('Database refreshed');
-        } else {
-            $this->info('Database refresh skipped');
-        }
-
-    }
+    //    private function refreshDatabase(): void
+    //    {
+    //        if (! is_file(database_path() . '/database.sqlite') || $this->confirm('Do you want to refresh the database?')) {
+    //            $this->info('Refreshing database...');
+    //            $this->call('migrate', ['--force' => true]);
+    //            $this->call('db:seed');
+    //            $this->info('Database refreshed');
+    //        } else {
+    //            $this->info('Database refresh skipped');
+    //        }
+    //
+    //    }
 
     private function copyDirectory(string $source, string $destination): void
     {
