@@ -1,4 +1,0 @@
-{
-    "autoload": "/../vendor/autoload.php",
-    "bootstrap":  "/../bootstrap/app.php"
-}
