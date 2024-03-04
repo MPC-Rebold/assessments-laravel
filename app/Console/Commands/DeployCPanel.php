@@ -33,7 +33,7 @@ class DeployCPanel extends Command
         $this->checkBuild();
         $this->copyPublic();
         $this->refreshDatabase();
-        $this->refreshCache();
+        $this->call('route:clear');
         $this->info('Deployment complete');
     }
 
