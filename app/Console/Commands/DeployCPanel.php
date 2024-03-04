@@ -27,21 +27,14 @@ class DeployCPanel extends Command
      */
     public function handle(): void
     {
-        //        $this->installDependencies();
         $this->refreshCache();
         $this->checkEnvironment();
         $this->checkPublicHtml();
         $this->checkBuild();
         $this->copyPublic();
         $this->refreshDatabase();
+        $this->refreshCache();
         $this->info('Deployment complete');
-    }
-
-    private function installDependencies(): void
-    {
-        $this->info('Installing composer dependencies...');
-        exec('composer install');
-        $this->info('Composer dependencies installed');
     }
 
     private function refreshCache(): void
