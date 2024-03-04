@@ -159,7 +159,6 @@ class DeployCPanel extends Command
 
         $this->info('Copying public files to public_html/' . $newDirectory);
 
-        $this->copyDirectory(base_path() . '/public', base_path() . '/../public_html/' . $newDirectory);
 
         $appName = basename(base_path());
         $newDirectory = realpath(base_path() . '/../public_html/' . $newDirectory);
@@ -177,6 +176,8 @@ class DeployCPanel extends Command
             'autoload' => $vendorAutoloadPath,
             'bootstrap' => $bootstrapPath,
         ]));
+
+        $this->copyDirectory(base_path() . '/public', base_path() . '/../public_html/' . $newDirectory);
 
         $this->info('Public files copied');
     }
