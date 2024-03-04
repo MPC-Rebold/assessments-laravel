@@ -1,6 +1,19 @@
-# Rebold
+# MPC Rebold
+
+> CS Focused Education Software for Monterey Peninsula College
+<div align="center">
+<p>Built WIth:</p>
+<img src=https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white alt="PHP">
+<img src=https://img.shields.io/badge/laravel-%23FF2D20.svg?style=for-the-badge&logo=laravel&logoColor=white alt="Laravel">
+<img src=https://img.shields.io/badge/Livewire-edf2f7?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEUAAABFCAMAAAArU9sbAAAAY1BMVEXt8vf/////7/bv9fnu7fX23uzi5/H4zOHM0OX0vdn4rc61t9j6mMHpmMr7hramq9L7ea/8cKn7bqjmc7DzY6iMj8DPZqHnU6jiSqVtdLaVXqBbYKpNVaZHTJZDQn0kKIgCBXX2ZCZ8AAAC90lEQVR42u2Y6Y6rIBiGQTZBahHHOm217f1f5WGHk5GuvyaZN62BiA/vt0iagj/9biGEAMBGdvQuAhMmhHQSjOA3QAgQLvtBew16UJIT8CqHCIsYnHS4KvESB2HeB0QprQ3neQyRfv8NTs+ehfC+ZPxvytjBz0GULgjKKGXGSWD0CkQPvWCkaQiTquBogV+B9LyBQUQo7RjafsSj6rAMkQQWYkWyNL8fE8lrpTHSdi1Kdnrnxl6+xvsFFzmcBtLz9XZd24gpbM47fM+KGoIUgXRd95PhJAx3abGor/lOTFim3QSE05WamK63c6Q0MpsZ62aYKuKBq30cGzM0xTTEzMx3zIjSCr7ax7sypCbl/ut7xI8LxCBE683l5XajMErEltHzzLbNID5EKdtu081rgUnMQRzle1cJSSYrvaXQq4Ncu0whjmEx1ZBwn9sWWrWrhexhlusE7RMzE3S3WXSgQNxNewr/p/jMaF2pEmJDlO7htvJGX7XE8ILSbCBidn1IhrJZIlvG3P+b4mmJrlBAQRn4NsVWMXzmWKS6Fy1raUmqUEBJUWyLIrKVR17q+WUq3XYRgVqNdDrq5Q8M6aMVI1tpUO2XzCmP3fLg1eGl/t5Ve7cMSgmS/DRMunvh4igc1d8j7UwHTi85Y4wL2WdGbLqZoUcNk0BG7lIyQokIqCQmnYiZk5XRPi2Pzjp9OMR9tR4PY8y5H/uA6gdv7KrT5XJyy/34cgg2RjM+xW4hNQpR4cF1WU7e1+FiJufRd2JnKItFzjGgupnRLF08RqvJTCKSt2ZikMlKPTO656ux4lcrPl1Wj9SDxK2bnMaQlTqGC0LPi6O0XDA0rYtTJzhGrZ+cdjv28CcqPQYKMtovgYIQQK3nH6mZPFKmAFBQQEEB4DdREJ3i2k+8oM4t3oO3KFnd8Xzc0x+UGOsEnhKi1DB+UoBzeWwReE0lxWGmaTKQDykIYPN9mdJlyrtyZUnN84n2ZwvpwGfC3XScOgw+FaYY/f0r8Cenf+cJc9Lv4fO5AAAAAElFTkSuQmCC&logoColor=fff alt="AlpineJS">
+<img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
+<img src=https://img.shields.io/badge/AlpineJS-FFFFFF?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAABBCAMAAABb9SIOAAAALVBMVEVHcEywvsOKmZ9UV16jydKdxtBGSlGVxNE6PUePwc82PEWNwc+JwNKGwdQuNEBw7EKcAAAADHRSTlMABhouPml4osnY2vBA0YtbAAAA5UlEQVR42u3WQQ6DMAxE0dgFQsHk/setcKlGqkUMcqVu/HdsngavUrIsy/4XPag4MfvKtEyOMzwru0prbaK+skllVzGOUTZ1HMU6Vtm2yr4CxyqijO5xFDhW2Q0NjlV6Dv7oqLKvwLEKHF+BAwUI7myUjgPF7HEVOFAQnI4CB4pmHU+Bg+siex+em+eMoohN1qF8engOURX52iP6sY5UrjuFqmWg3HKAHKJAubkHYUvAwZaoo0rEkbdS0G1HZFdElZCje1SJONgSdLAl5EAJOESjKq6znDUfTrkS8XmUb6Usy7Jf9wL3ezLd1yv0xQAAAABJRU5ErkJggg==&logoColor=fff alt="AlpineJS">
+<img src="https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
+</div>
 
 ---
+
+
 
 ## Getting started
 
@@ -9,10 +22,19 @@ Requirements: ```php >= 8.2``` ```node >= 18.0``` ```composer >= 2.0```
 Copy ```.env.example``` to ```.env``` and set the environment variables
 
 Run:
+
 ```bash
 npm install
 composer install
 php artisan key:generate
 php artisan migrate --force
 php artisan db:seed
+```
+
+### For deployment on CPanel servers
+
+Run:
+
+```bash
+php artisan deploy:cpanel
 ```
