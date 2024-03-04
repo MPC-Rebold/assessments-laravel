@@ -170,7 +170,7 @@ class DeployCPanel extends Command
 
         $appName = basename(base_path());
         $newDirectory = realpath(base_path() . '/../public_html/' . $newDirectory);
-        $upCount = 0;
+        $upCount = 1;
 
         while (basename(dirname($newDirectory)) != 'public_html') {
             $newDirectory = realpath($newDirectory . '/../');
@@ -192,7 +192,7 @@ class DeployCPanel extends Command
     {
         if (! is_file(database_path() . '/database.sqlite') || $this->confirm('Do you want to refresh the database?')) {
             $this->info('Refreshing database...');
-            $this->call('migrate');
+            $this->call('migrate --force');
             $this->call('db:seed');
             $this->info('Database refreshed');
         } else {
