@@ -2,7 +2,7 @@
 
 use App\Models\Master;
 
-$master = Master::find(last(request()->segments()));
+$master = Master::find(request()->route('masterId'));
 
 if (!$master) {
     abort(404);

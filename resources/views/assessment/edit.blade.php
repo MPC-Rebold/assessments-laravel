@@ -21,9 +21,8 @@ if (!$master || !$assessment) {
         ['title' => $assessment->title, 'href' => route('assessment.show', [$master->id, $assessment->id])],
     ]" />
 
-    <div class="py-10">
-        <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-            <livewire:layout.section-header header="Edit {{ $assessment->title }}" />
-        </div>
-    </div>
+    <x-slot:content>
+        <livewire:layout.section-header header="Edit {{ $assessment->title }}" />
+        <livewire:assessment.edit-questions :assessment="$assessment" />
+    </x-slot:content>
 </x-app-layout>

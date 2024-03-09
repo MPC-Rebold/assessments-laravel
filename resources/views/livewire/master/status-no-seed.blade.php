@@ -108,7 +108,7 @@ new class extends Component {
                 <div class="flex items-center border-b-2 border-negative-200 pb-3">
                     <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
                     <span class="ml-1 flex text-lg text-negative-600">
-                        You are about to delete&nbsp;<p class="font-bold">{{ $master->title }}</p>
+                        You are about to delete&nbsp;<b>{{ $master->title }}</b>
                     </span>
                 </div>
                 <div class="ml-5 mt-2 flex items-center justify-between pl-1">

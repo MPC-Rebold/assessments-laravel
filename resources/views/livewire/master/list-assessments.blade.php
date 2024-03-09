@@ -33,10 +33,17 @@ new class extends Component {
             <div class="space-y-4">
                 @foreach ($assessments as $assessment)
                     <div class="flex items-center justify-between">
-                        <div>
-                            {{ $assessment->title }}
+                        <div class="flex items-center space-x-4">
+                            <div>
+                                {{ $assessment->title }}
+                            </div>
+                            <div>
+                                <span class="text-gray-500">
+                                    Questions: {{ $assessment->questions->count() }}
+                                </span>
+                            </div>
                         </div>
-                        <x-button secondary icon="pencil" :href="route('assessment.edit', [$master->id, $assessment->id])">
+                        <x-button secondary icon="pencil" :href="route('assessment.edit', [$master->id, $assessment->id])" wire:navigate>
                             Edit
                         </x-button>
                     </div>

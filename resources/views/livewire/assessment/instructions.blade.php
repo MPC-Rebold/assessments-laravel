@@ -35,7 +35,7 @@ new class extends Component {
                         Example: if the correct answer is <b>example</b>
                         and you entered <b>exa123pl</b>
                         <div
-                            class="ml-5 mt-1 w-fit overflow-auto text-nowrap rounded-md bg-slate-200 px-2 py-1 tracking-widest">
+                            class="mt-1 w-fit overflow-auto text-nowrap rounded-md bg-slate-200 px-2 py-1 tracking-widest">
                             <keep__>e</keep__>
                             <keep__>x</keep__>
                             <keep__>a</keep__>

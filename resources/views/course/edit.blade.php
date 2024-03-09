@@ -19,11 +19,9 @@ if (!$master || !$course) {
         ['title' => $master->title, 'href' => route('master.edit', $master->id)],
         ['title' => $course->title, 'href' => route('course.edit', [$master->id, $course->id])],
     ]" />
-    <div class="py-10">
-        <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-            <livewire:layout.section-header :header="$course->title . ' (' . $master->title . ')'" />
-            <livewire:course.assessments-stats :course="$course" />
-            <livewire:user.all-users :course="$course" />
-        </div>
-    </div>
+    <x-slot:content>
+        <livewire:layout.section-header :header="$course->title . ' (' . $master->title . ')'" />
+        <livewire:course.assessments-stats :course="$course" />
+        <livewire:user.all-users :course="$course" />
+    </x-slot:content>
 </x-app-layout>

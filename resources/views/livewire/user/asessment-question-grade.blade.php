@@ -15,7 +15,6 @@ new class extends Component {
 
     public Collection $attempts;
     public bool $isCorrect;
-    public int $guessesLeft;
 
     public function mount(User $user, Question $question, AssessmentCourse $assessment): void
     {
@@ -35,19 +34,18 @@ new class extends Component {
             ->sortByDesc('created_at');
 
         $this->isCorrect = $this->attempts->where('is_correct', true)->isNotEmpty();
-        $this->guessesLeft = $this->question->getGuessesLeft($this->user, $this->assessment->course);
     }
 }; ?>
 
 <div x-data="{ open: false }">
     <div class="bg-slate-100 shadow sm:rounded-lg">
         <button class="group w-full bg-white p-4 sm:rounded-lg sm:px-6 sm:py-4" :class="{ 'shadow': open }"
-            @click="open = !open">
+                @click="open = !open">
             <div class="flex items-center justify-between">
                 <div class="flex space-x-4">
                     <div class="font-bold group-hover:underline"> Question {{ $question->number }}</div>
                     <div class="hidden text-gray-500 sm:flex">
-                        Guesses left: {{ $guessesLeft }}
+                        Attempts: {{ $attempts->count() }}
                     </div>
                 </div>
                 <div class="flex items-center space-x-2">
@@ -70,7 +68,7 @@ new class extends Component {
             </div>
         </button>
         <div :class="{ 'max-h-0 invisible': !open, 'max-h-[999vh] py-4': open }"
-            class="overflow-hidden transition-all duration-300 ease-in-out">
+             class="overflow-hidden transition-all duration-300 ease-in-out">
             <div class="space-y-2 px-4 sm:px-6">
                 @if ($attempts->isEmpty())
                     <div class="text-slate-500">

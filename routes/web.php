@@ -77,4 +77,4 @@ Route::view('admin/users/{userId}/grades/{assessmentId}', 'user.grade.show')
     ->middleware(['auth', 'admin'])
     ->name('user.grade.show');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

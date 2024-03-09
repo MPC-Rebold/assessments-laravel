@@ -17,9 +17,7 @@ if (!$user) {
         ['title' => 'Users', 'href' => route('user.index')],
         ['title' => $user->name, 'href' => route('user.show', $user->id)],
     ]" />
-    <div class="py-10">
-        <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-            <livewire:user.show-info :user="$user" />
-        </div>
-    </div>
+    <x-slot:content>
+        <livewire:user.show-info :user="$user" />
+    </x-slot:content>
 </x-app-layout>

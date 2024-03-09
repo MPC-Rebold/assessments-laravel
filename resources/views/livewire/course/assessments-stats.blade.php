@@ -30,16 +30,16 @@ new class extends Component {
         @foreach ($course->assessments as $assessment)
             @php($assessmentCourse = $assessmentCourses->firstWhere('assessment_id', $assessment->id))
             <div class="flex items-center justify-between">
-                <div class="flex space-x-4">
+                <div class="flex flex-wrap gap-4">
                     <div>
                         {{ $assessment->title }}
                     </div>
                     <div class="text-gray-500">
-                        Due at: {{ Carbon::parse($assessmentCourse->due_at)->tz('PST')->format('M j g:i A ') }}
+                        Due at: {{ Carbon::parse($assessmentCourse->due_at)->tz('PST')->format('M j, g:i A T') }}
                     </div>
                 </div>
                 <div class="flex items-center space-x-6">
-                    <div class="hidden md:block">
+                    <div class="hidden text-gray-500 md:block">
                         Avg Score:
                         {{ round($assessmentCourse->getAverageGrade() * 100, 1) }}%
                     </div>

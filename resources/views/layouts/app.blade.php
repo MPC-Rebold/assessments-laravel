@@ -40,6 +40,13 @@
         <!-- Page Content -->
         <main>
             {{ $slot }}
+            @if (isset($content))
+                <div class="py-10">
+                    <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
+                        {{ $content }}
+                    </div>
+                </div>
+            @endif
         </main>
     </div>
 </body>
