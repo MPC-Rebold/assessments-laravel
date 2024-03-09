@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Log;
-use function Laravel\Prompts\error;
 
 class Kernel extends ConsoleKernel
 {

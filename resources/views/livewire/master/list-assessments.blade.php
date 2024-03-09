@@ -23,7 +23,7 @@ new class extends Component {
     </div>
 
     <div class="p-4 sm:px-6 sm:py-4">
-        @if($assessments->isEmpty())
+        @if ($assessments->isEmpty())
             <div class="text-center">
                 <p class="text-lg font-bold text-gray-400">
                     No Assessments
@@ -31,16 +31,16 @@ new class extends Component {
             </div>
         @else
             <div class="space-y-4">
-                @foreach($assessments as $assessment)
-                    <div class="flex justify-between items-center">
+                @foreach ($assessments as $assessment)
+                    <div class="flex items-center justify-between">
                         <div>
-                            {{$assessment->title}}
+                            {{ $assessment->title }}
                         </div>
-                        <x-button secondary icon="pencil">
+                        <x-button secondary icon="pencil" :href="route('assessment.edit', [$master->id, $assessment->id])">
                             Edit
                         </x-button>
                     </div>
-                    @if(!$loop->last)
+                    @if (!$loop->last)
                         <hr>
                     @endif
                 @endforeach

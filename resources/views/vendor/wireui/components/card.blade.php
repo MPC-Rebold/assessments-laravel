@@ -3,7 +3,8 @@
         {{ $header }}
     @elseif ($title || $action)
         <div class="{{ $headerClasses }}">
-            <h3 class="font-medium whitespace-normal text-md text-secondary-700 dark:text-secondary-400">{{ $title }}</h3>
+            <h3 class="text-md whitespace-normal font-medium text-secondary-700 dark:text-secondary-400">
+                {{ $title }}</h3>
 
             @if ($action)
                 {{ $action }}
@@ -11,7 +12,8 @@
         </div>
     @endif
 
-    <div {{ $attributes->merge(['class' => "{$padding} text-secondary-700 rounded-b-xl grow dark:text-secondary-400"]) }}>
+    <div
+        {{ $attributes->merge(['class' => "{$padding} text-secondary-700 rounded-b-xl grow dark:text-secondary-400"]) }}>
         {{ $slot }}
     </div>
 

@@ -19,7 +19,6 @@ use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
-use Log;
 use WireUi\Traits\Actions;
 
 class Sync extends Component
