@@ -40,7 +40,7 @@
             @if (!$connectedCourses)
                 <div class="text-center">
                     <p class="text-lg font-bold text-gray-400">
-                        No courses found
+                        No connected courses found
                     </p>
                 </div>
             @else

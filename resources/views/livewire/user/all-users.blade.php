@@ -84,7 +84,7 @@ new class extends Component {
                                 </p>
                             </div>
                         </div>
-                        <x-button secondary class="min-w-24 !p-[3px]" :href="route('user.show', auth()->user()->id)" wire:navigate>
+                        <x-button secondary class="min-w-24 !p-[3px]" :href="route('user.show', $student->id)" wire:navigate>
                             <div class="group flex items-center space-x-2">
                                 <div>Manage</div>
                                 <div>
