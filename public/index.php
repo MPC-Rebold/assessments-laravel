@@ -31,14 +31,7 @@ if (file_exists($maintenance = __DIR__ . '/../storage/framework/maintenance.php'
 |
 */
 
-if (file_exists(__DIR__ . '/.production.json')) {
-    $productionData = json_decode(file_get_contents(__DIR__ . '/.production.json'), true);
-    require __DIR__ . $productionData['autoload'];
-    require_once __DIR__ . $productionData['bootstrap'];
-} else {
-    require __DIR__ . '/../vendor/autoload.php';
-    require_once __DIR__ . '/../bootstrap/app.php';
-}
+require __DIR__ . '/../vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +43,8 @@ if (file_exists(__DIR__ . '/.production.json')) {
 | to this client's browser, allowing them to enjoy our application.
 |
 */
+
+$app = require_once __DIR__ . '/../bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
 
