@@ -8,6 +8,12 @@
                 "tabWidth": 4,
                 "sortTailwindcssClasses": true
             }
+        },
+        {
+            "files": ["*.json"],
+            "options": {
+                "tabWidth": 2
+            }
         }
     ]
 }
