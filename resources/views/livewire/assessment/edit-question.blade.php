@@ -80,8 +80,7 @@ new class extends Component {
     </x-slot>
     @if ($isEditing)
         <div class="px-2">
-            <x-textarea wire:model="questionText" class="font-mono font-bold whitespace-nowrap	"
-                        :rows="$questionTextRows" />
+            <x-textarea wire:model="questionText" class="whitespace-nowrap font-mono font-bold" :rows="$questionTextRows" />
         </div>
     @else
         <div class="overflow-auto px-4 font-mono text-black md:px-2">

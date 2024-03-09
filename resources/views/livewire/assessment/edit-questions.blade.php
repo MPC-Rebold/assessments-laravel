@@ -24,7 +24,7 @@ new class extends Component {
 
 <div class="space-y-6">
     @foreach ($assessment->questions as $question)
-        @if($loop->first)
+        @if ($loop->first)
             <div class="absolute -ml-12 -mt-5">
                 <x-button.circle icon="plus" class="bg-white" />
             </div>
