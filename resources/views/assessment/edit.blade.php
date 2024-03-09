@@ -6,6 +6,10 @@ use App\Models\Assessment;
 $master = Master::find(request()->route('masterId'));
 $assessment = Assessment::find(request()->route('assessmentId'));
 
+if (!$master || !$assessment) {
+    abort(404);
+}
+
 ?>
 
 @section('title', 'Edit ' . $assessment->title)

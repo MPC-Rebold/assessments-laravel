@@ -5,6 +5,10 @@ use App\Models\Course;
 
 $master = Master::find(request()->route('masterId'));
 $course = Course::find(request()->route('courseId'));
+
+if (!$master || !$course) {
+    abort(404);
+}
 ?>
 
 @section('title', 'Edit Course')

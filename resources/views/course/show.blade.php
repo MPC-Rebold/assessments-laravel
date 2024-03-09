@@ -3,6 +3,7 @@
 use App\Models\Course;
 
 $course = Course::find(request()->route('courseId'));
+
 if (!$course) {
     abort(404);
 }

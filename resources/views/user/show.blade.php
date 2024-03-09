@@ -4,6 +4,9 @@ use App\Models\User;
 
 $user = User::find(request()->route('userId'));
 
+if (!$user) {
+    abort(404);
+}
 ?>
 
 @section('title', 'Users - ' . $user->name)

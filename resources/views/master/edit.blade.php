@@ -4,6 +4,10 @@ use App\Models\Master;
 
 $master = Master::find(last(request()->segments()));
 
+if (!$master) {
+    abort(404);
+}
+
 ?>
 
 @section('title', $master->title)
