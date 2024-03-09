@@ -4,6 +4,7 @@ use Livewire\Volt\Component;
 use App\Models\Course;
 use App\Models\AssessmentCourse;
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
 
 new class extends Component {
     public Course $course;
@@ -27,18 +28,24 @@ new class extends Component {
             </div>
         @endif
         @foreach ($course->assessments as $assessment)
+            @php($assessmentCourse = $assessmentCourses->firstWhere('assessment_id', $assessment->id))
             <div class="flex items-center justify-between">
-                <div>
-                    {{ $assessment->title }}
+                <div class="space-x-4 flex">
+                    <div>
+                        {{ $assessment->title }}
+                    </div>
+                    <div class="text-gray-500">
+                        Due at: {{Carbon::parse($assessmentCourse->due_at)->tz('PST')->format('M j g:i A ')}}
+                    </div>
                 </div>
                 <div class="flex items-center space-x-6">
-                    <div class="min-w-40 text-left">
-                        Average Score:
-                        {{ round($assessmentCourses->firstWhere('assessment_id', $assessment->id)->getAverageGrade() * 100, 1) }}%
+                    <div class="hidden md:block">
+                        Avg Score:
+                        {{ round($assessmentCourse->getAverageGrade() * 100, 1) }}%
                     </div>
-                    <div class="h-2.5 w-40 rounded-full bg-white shadow dark:bg-gray-700">
+                    <div class="h-2.5 w-40 rounded-full bg-white shadow dark:bg-gray-700 hidden md:block">
                         <div class="h-2.5 rounded-full bg-positive-500 transition-all ease-out"
-                            style="width: {{ round($assessmentCourses->firstWhere('assessment_id', $assessment->id)->getAverageGrade() * 100, 1) }}%">
+                             style="width: {{ round($assessmentCourses->firstWhere('assessment_id', $assessment->id)->getAverageGrade() * 100, 1) }}%">
                         </div>
                     </div>
                 </div>

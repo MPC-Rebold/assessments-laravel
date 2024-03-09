@@ -44,11 +44,11 @@ new class extends Component {
 }; ?>
 
 <div class="bg-slate-100 shadow sm:rounded-lg">
-    <div class="flex items-center justify-between bg-white p-4 shadow sm:rounded-lg sm:px-6 sm:py-4">
+    <div class="flex flex-wrap items-center gap-4 justify-between bg-white p-4 shadow sm:rounded-lg sm:px-6 sm:py-4">
         <div class="text-lg font-bold">
             Students
         </div>
-        <div class="flex items-center justify-between space-x-4">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
             <div class="w-64">
                 <x-input right-icon="search" placeholder="Search" wire:model.defer="search" />
             </div>
@@ -68,15 +68,13 @@ new class extends Component {
         @else
             <div class="space-y-4">
                 @foreach ($students as $enrolledStudent)
-                    <div class="flex items-center justify-between">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center space-x-2">
                             <x-avatar xs :src="$enrolledStudent->avatar" />
-                            <div class="min-w-80">
-                                <p class="overflow-hidden text-ellipsis">
-                                    {{ $enrolledStudent->email }}
-                                </p>
+                            <div class="md:w-72 break-all">
+                                {{ $enrolledStudent->email }}
                             </div>
-                            <div class="hidden text-gray-500 sm:flex">
+                            <div class="hidden text-gray-500 md:flex">
                                 <p>{{ $enrolledStudent->name }}
                                     @if ($enrolledStudent->is_admin)
                                         <span class="text-sm text-negative-600">(ADMIN)</span>
@@ -84,16 +82,18 @@ new class extends Component {
                                 </p>
                             </div>
                         </div>
-                        <x-button secondary class="min-w-24 !p-[3px]" :href="route('user.show', $enrolledStudent->id)" wire:navigate>
+                        <x-button secondary class="min-w-24 h-6" :href="route('user.show', $enrolledStudent->id)"
+                                  wire:navigate>
                             <div class="group flex items-center space-x-2">
                                 <div>Manage</div>
                                 <div>
                                     <x-icon name="chevron-right"
-                                        class="h-4 w-4 transition-all ease-in-out group-hover:translate-x-1" />
+                                            class="h-4 w-4 transition-all ease-in-out group-hover:translate-x-1" />
                                 </div>
                             </div>
                         </x-button>
                     </div>
+
                     @if (!empty($notEnrolledStudents))
                         <hr />
                     @endif
@@ -101,14 +101,11 @@ new class extends Component {
                 @foreach ($notEnrolledStudents as $notEnrolledStudent)
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
-
                             <x-badge.circle warning icon="exclamation" class="animate-pulse" />
-                            <div class="min-w-80">
-                                <p class="overflow-hidden text-ellipsis">
-                                    {{ $notEnrolledStudent }}
-                                </p>
+                            <div class="md:w-72 [overflow-wrap:anywhere]">
+                                {{ $notEnrolledStudent }}
                             </div>
-                            <div class="hidden text-warning-500 sm:flex">
+                            <div class="hidden text-warning-500 md:flex">
                                 Not Connected
                             </div>
                         </div>

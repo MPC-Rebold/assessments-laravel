@@ -104,7 +104,7 @@ new class extends Component {
                     <x-slot name="trigger">
                         <button
                             class="group inline-flex h-full items-center rounded-md border border-transparent bg-[#6f0834] px-3 py-2 text-sm font-medium leading-4 text-slate-200 transition duration-150 ease-in-out hover:text-white focus:outline-none">
-                            <div>{{ auth()->user()->name }}</div>
+                            <div class="overflow-hidden text-ellipsis break-all hidden md:block">{{ auth()->user()->name }}</div>
                             <x-avatar sm :src="auth()->user()->avatar" class="ml-2" />
                             <div :class="{ 'rotate-180': profileOpen }" class="ms-1 transition-all ease-in-out">
                                 <x-icon name="chevron-down"

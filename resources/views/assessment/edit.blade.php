@@ -13,6 +13,7 @@ if (!$master || !$assessment) {
 ?>
 
 @section('title', 'Edit ' . $assessment->title)
+
 <x-app-layout>
     <livewire:layout.header :routes="[
         ['title' => 'Admin', 'href' => route('admin')],
@@ -21,5 +22,4 @@ if (!$master || !$assessment) {
     ]" />
 
     <livewire:assessment.questions-edit :assessment="$assessment" />
-
 </x-app-layout>

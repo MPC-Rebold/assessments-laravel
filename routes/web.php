@@ -61,6 +61,10 @@ Route::view('admin/masters/{masterId}', 'master.edit')
     ->middleware(['auth', 'admin'])
     ->name('master.edit');
 
+Route::view('admin/masters/{masterId}/assessment/{assessmentId}', 'assessment.edit')
+    ->middleware(['auth', 'admin'])
+    ->name('assessment.edit');
+
 Route::view('admin/users', 'user.index')
     ->middleware(['auth', 'admin'])
     ->name('user.index');
