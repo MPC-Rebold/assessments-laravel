@@ -134,7 +134,7 @@ class SeedService
 
     /**
      * Makes a backup of the current sqlite database from /database/database.sqlite to /storage/backups
-     * Deletes the oldest backup if the total size of all backups exceeds 100MB.
+     * Deletes the oldest backup if the total size of all backups exceeds 500MB.
      *
      * @return void
      */
@@ -152,7 +152,7 @@ class SeedService
             $totalBackupSize += filesize($file);
         }
 
-        $maxSize = 100000000;
+        $maxSize = 500000000;
 
         if ($totalBackupSize > $maxSize && count($files) > 0) {
             unlink($files[0]);

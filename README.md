@@ -16,24 +16,17 @@
 
 ## Getting started
 
-Requirements: `php >= 8.2` `node >= 18.0` `composer >= 2.0`
+Requirements: `php >= 8.2` `composer >= 2.7`
 
-Copy `.env.example` to `.env` and set the environment variables
-
-Run:
+1. Clone this repository
+2. Copy `.env.example` to `.env` and set the environment variables
+3. Run the following:
 
 ```bash
-npm install
 composer install
 php artisan key:generate
 php artisan migrate --force
 php artisan db:seed
 ```
 
-### For deployment on CPanel servers
-
-Run:
-
-```bash
-php artisan deploy:cpanel
-```
+4. Ensure you have seed files in the `database/seed` directory
