@@ -120,4 +120,9 @@ class CanvasService
             ]]
         );
     }
+
+    public function assignmentGradingOption(int $courseId, int $assignmentId, string $option): Response
+    {
+        return self::put("courses/$courseId/assignments/$assignmentId", ['assignment' => ['grading_type' => $option]]);
+    }
 }
