@@ -33,7 +33,7 @@ class AssessmentCourse extends Model
      */
     public function gradeForUser(User $user): int|float
     {
-        if (Settings::sole()->specification_grading) {
+        if ($this->course->specification_grading) {
             return $this->percentageForUser($user);
         } else {
             return $this->pointsForUser($user);
@@ -56,7 +56,7 @@ class AssessmentCourse extends Model
         $totalQuestions = $this->assessment->questions->count();
         $points = $this->pointsForUser($user);
 
-        return $totalQuestions > 0 ? ($points / $totalQuestions) : 0;
+        return $totalQuestions > 0 ? round($points / $totalQuestions, 3) : 0;
     }
 
     public function getAverageGrade(): float

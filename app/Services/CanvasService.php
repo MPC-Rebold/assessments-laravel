@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\AssessmentCourse;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
@@ -54,6 +57,22 @@ class CanvasService
             ])->put(self::$apiUrl . '/api/v1/' . $path, $data);
     }
 
+    public static function post(string $path, array $data): Response
+    {
+        self::initialize();
+
+        return Http::withToken(self::$apiToken)
+            ->withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ])->post(self::$apiUrl . '/api/v1/' . $path, $data);
+    }
+
+    /**
+     * Get the API_TOKEN holder's information from Canvas
+     *
+     * @return Response
+     */
     public static function getSelf(): Response
     {
         return self::get('users/self');
@@ -104,20 +123,46 @@ class CanvasService
         return self::put("courses/$courseId/assignments/$assignmentId", ['assignment' => $data]);
     }
 
-    public static function gradeAssignment(int $courseId, int $assignmentId, int $userId, string|float|int|null $grade): Response
+    /**
+     * @throws Exception if the AssessmentCourse is not found
+     */
+    public static function gradeAssignment(int $courseId, int $assignmentId, ?int $userId): Response
     {
-        if ($grade === null) {
-            $grade = 0;
+        $assessmentCourse = AssessmentCourse::where('course_id', $courseId)->where('assessment_canvas_id', $assignmentId)->first();
+
+        if (! $assessmentCourse) {
+            throw new Exception("AssessmentCourse not found for course $courseId and assignment $assignmentId");
         }
-        if (is_float($grade)) {
-            $grade = round($grade, 3);
+
+        $is_specification = $assessmentCourse->course->specification_grading;
+        $threshold = $assessmentCourse->course->specification_grading_threshold;
+
+        if (isset($userId)) {
+            $user = User::find($userId);
+            $grade = $assessmentCourse->gradeForUser($user);
+
+            return self::put(
+                "courses/$courseId/assignments/$assignmentId/submissions/$userId",
+                ['submission' => [
+                    'posted_grade' => $grade,
+                ]]
+            );
+        }
+
+        $users = $assessmentCourse->course->users;
+        $gradeData = [];
+
+        foreach ($users as $user) {
+            $grade = $assessmentCourse->gradeForUser($user);
+
+            if ($is_specification) {
+                $grade = $grade >= $threshold ? 1 : 0;
+            }
         }
 
         return self::put(
-            "courses/$courseId/assignments/$assignmentId/submissions/$userId",
-            ['submission' => [
-                'posted_grade' => $grade,
-            ]]
+            "courses/$courseId/assignments/$assignmentId/submissions/update_grades",
+            ['grade_data' => $gradeData]
         );
     }
 

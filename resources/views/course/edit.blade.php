@@ -21,6 +21,7 @@ if (!$master || !$course) {
     ]" />
     <x-slot:content>
         <livewire:layout.section-header :header="$course->title . ' (' . $master->title . ')'" />
+        <livewire:admin.specification-setting :course="$course" />
         <livewire:course.assessments-stats :course="$course" />
         <livewire:user.all-users :course="$course" />
     </x-slot:content>

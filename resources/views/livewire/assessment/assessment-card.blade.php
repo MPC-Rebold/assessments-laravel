@@ -28,7 +28,7 @@ new class extends Component {
             if ($diff->invert) {
                 $this->dueInString = '';
             } else {
-                $this->dueInString = $diff->d === 1 ? '1 day' : ($diff->d > 1 ? $diff->d . ' days' : '') . ($diff->h ? ($diff->h === 1 ? '1 hour' : $diff->h . ' hours') : ($diff->i === 1 ? $diff->i . ' minute' : $diff->i . ' minutes'));
+                $this->dueInString = 'Due in ' . Carbon::parse($this->dueAt)->longAbsoluteDiffForHumans(parts: 2);
             }
         } else {
             $this->dueInString = 'No due date';
@@ -62,7 +62,7 @@ new class extends Component {
         </div>
 
         <div class="flex items-center space-x-6">
-            <div class="hidden text-slate-500 sm:block" wire:poll.keep-alive wire:poll.15s>
+            <div class="hidden text-slate-500 sm:block" wire:poll.keep-alive.10s>
                 {{ $dueInString }}
             </div>
 
@@ -72,13 +72,13 @@ new class extends Component {
                 <x-button positive :href="$assessmentRoute" wire:navigate class="relative">
                     <span class="transition-transform duration-300">Go</span>
                     <x-icon class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"
-                        name="arrow-right" />
+                            name="arrow-right" />
                 </x-button>
             @else
                 <x-button secondary :href="$assessmentRoute" wire:navigate class="relative">
                     <span class="transition-transform duration-300">Practice</span>
                     <x-icon class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"
-                        name="arrow-right" />
+                            name="arrow-right" />
                 </x-button>
             @endif
         </div>

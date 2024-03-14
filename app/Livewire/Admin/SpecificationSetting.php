@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\AssessmentCourse;
-use App\Models\Settings;
+use App\Models\Course;
 use App\Services\CanvasService;
 use Carbon\Carbon;
 use DB;
@@ -16,26 +16,30 @@ class SpecificationSetting extends Component
 {
     use Actions;
 
+    public Course $course;
+
     public bool $specification_grading;
 
     public string $specification_grading_threshold;
 
     public bool $modalOpen = false;
 
-    public function openModal(): void
+    public function mount(Course $course): void
     {
-        $this->modalOpen = true;
-    }
+        $this->course = $course;
 
-    public function mount(): void
-    {
-        $this->specification_grading = Settings::sole()->specification_grading;
+        $this->specification_grading = $this->course->specification_grading;
 
         if ($this->specification_grading) {
-            $this->specification_grading_threshold = Settings::sole()->specification_grading_threshold * 100 . '%';
+            $this->specification_grading_threshold = $this->course->specification_grading_threshold * 100 . '%';
         } else {
             $this->specification_grading_threshold = 'OFF';
         }
+    }
+
+    public function openModal(): void
+    {
+        $this->modalOpen = true;
     }
 
     public function updateSpecificationGrading(): void
@@ -50,14 +54,14 @@ class SpecificationSetting extends Component
 
         DB::beginTransaction();
         try {
-            Settings::sole()->update([
+            $this->course->update([
                 'specification_grading' => $specification_grading,
                 'specification_grading_threshold' => $specification_grading_threshold,
             ]);
 
             $this->regradeAssessments();
 
-            $this->specification_grading = Settings::sole()->specification_grading;
+            $this->specification_grading = $this->course->specification_grading;
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -100,19 +104,17 @@ class SpecificationSetting extends Component
             return;
         }
 
-        $is_specification = Settings::sole()->specification_grading;
+        $is_specification = $assessmentCourse->course->specification_grading;
 
         $assessment = $assessmentCourse->assessment;
         $course = $assessmentCourse->course;
         $assessment_canvas_id = $assessmentCourse->assessment_canvas_id;
 
-        if ($is_specification) {
-            $pointsPossible = 1;
-        } else {
-            $pointsPossible = $assessment->questionCount();
-        }
         CanvasService::editAssignment($course->id, $assessment_canvas_id,
-            ['points_possible' => $pointsPossible]
+            [
+                'points_possible' => $is_specification ? 0 : $assessment->questionCount(),
+                'grading_type' => $is_specification ? 'pass_fail' : 'points',
+            ]
         );
     }
 
@@ -122,24 +124,26 @@ class SpecificationSetting extends Component
             return;
         }
 
-        $is_specification = Settings::sole()->specification_grading;
-        $threshold = Settings::sole()->specification_grading_threshold;
+        $is_specification = $this->course->specification_grading;
+        $threshold = $this->course->specification_grading_threshold;
 
         $course = $assessmentCourse->course;
         $assessment_canvas_id = $assessmentCourse->assessment_canvas_id;
 
         $this->setMaxPoints($assessmentCourse);
 
-        $users = $course->users;
-        foreach ($users as $user) {
-            $grade = $assessmentCourse->gradeForUser($user);
+        //        $users = $course->users;
+        //        foreach ($users as $user) {
+        //            $grade = $assessmentCourse->gradeForUser($user);
+        //
+        //            if ($is_specification) {
+        //                $grade = $grade >= $threshold ? 1 : 0;
+        //            }
+        //
+        //            CanvasService::gradeAssignment($course->id, $assessment_canvas_id, $user->canvas->canvas_id, $grade);
+        //        }
 
-            if ($is_specification) {
-                $grade = $grade >= $threshold ? 1 : 0;
-            }
-
-            CanvasService::gradeAssignment($course->id, $assessment_canvas_id, $user->canvas->canvas_id, $grade);
-        }
+        CanvasService::gradeAssignment($course->id, $assessment_canvas_id);
     }
 
     public function render(): View
