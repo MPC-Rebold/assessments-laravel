@@ -46,12 +46,13 @@ php artisan db:seed
 
 
 5. Copy the following into the root directory of the server (`public_html`)
+    - `./public/build/**`
     - `./public/.htaccess`
     - `./public/index.php`
     - `./public/robots.txt`
 
 
-6. In `public_html/index.php` change the following lines:
+7. In `public_html/index.php` change the following lines:
 
 ```php
 require __DIR__.'/../vendor/autoload.php';
