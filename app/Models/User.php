@@ -63,11 +63,10 @@ class User extends Authenticatable
 
     public function connectCourses(): void
     {
-        if ($this->is_admin) {
-            $courses = Course::all();
-        } else {
+        $courses = Course::all();
+
+        if (! $this->is_admin) {
             //            $courses = Course::whereJsonContains('valid_students', $this->email)->get();
-            $courses = Course::all();
             $courses = $courses->filter(function ($course) {
                 return in_array($this->email, $course->valid_students);
             });

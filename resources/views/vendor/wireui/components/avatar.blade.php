@@ -11,7 +11,7 @@
             'rounded-sm' => $squared,
             'rounded-full' => !$squared,
             $size,
-        ]) src="{{ $src }}" />
+        ]) src="{{ $src }}" alt="avatar"/>
     @endif
 
     @if (!$src && !$label)

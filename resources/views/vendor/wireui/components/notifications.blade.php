@@ -36,7 +36,8 @@
                                 </template>
 
                                 <template x-if="notification.img">
-                                    <img class="h-10 w-10 rounded-full" :src="notification.img" />
+                                    <!--suppress RequiredAttributes, HtmlRequiredAltAttribute -->
+                                    <img class="h-10 w-10 rounded-full" :src="notification.img"/>
                                 </template>
                             </div>
                         </template>

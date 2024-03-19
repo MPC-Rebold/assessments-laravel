@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ProviderController extends Controller
 {
@@ -24,12 +25,12 @@ class ProviderController extends Controller
         return in_array($email, $admins);
     }
 
-    public function redirect($provider)
+    public function redirect($provider): RedirectResponse
     {
         return Socialite::driver($provider)->redirect();
     }
 
-    public function callback($provider)
+    public function callback($provider): RedirectResponse
     {
         $SocialUser = Socialite::driver($provider)->user();
 
