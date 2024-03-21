@@ -83,7 +83,7 @@ class SpecificationSetting extends Component
 
     public function regradeAssessments(): void
     {
-        $assessmentCourses = AssessmentCourse::all();
+        $assessmentCourses = AssessmentCourse::where('course_id', $this->course->id)->get();
 
         foreach ($assessmentCourses as $assessmentCourse) {
             if (! $assessmentCourse->assessment_canvas_id || ! $assessmentCourse->course->master_id) {
@@ -98,52 +98,21 @@ class SpecificationSetting extends Component
         }
     }
 
-    public function setMaxPoints(AssessmentCourse $assessmentCourse): void
-    {
-        if ($assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast()) {
-            return;
-        }
-
-        $is_specification = $assessmentCourse->course->specification_grading;
-
-        $assessment = $assessmentCourse->assessment;
-        $course = $assessmentCourse->course;
-        $assessment_canvas_id = $assessmentCourse->assessment_canvas_id;
-
-        CanvasService::editAssignment($course->id, $assessment_canvas_id,
-            [
-                'points_possible' => $is_specification ? 0 : $assessment->questionCount(),
-                'grading_type' => $is_specification ? 'pass_fail' : 'points',
-            ]
-        );
-    }
-
     public function regradeAssessmentCourse(AssessmentCourse $assessmentCourse, bool $regradePastDue = true): void
     {
         if ($assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast() && ! $regradePastDue) {
             return;
         }
 
-        $is_specification = $this->course->specification_grading;
-        $threshold = $this->course->specification_grading_threshold;
+        CanvasService::setMaxPoints($assessmentCourse);
+        $gradeAssessmentResponse = CanvasService::gradeAssessment($assessmentCourse);
 
-        $course = $assessmentCourse->course;
-        $assessment_canvas_id = $assessmentCourse->assessment_canvas_id;
-
-        $this->setMaxPoints($assessmentCourse);
-
-        //        $users = $course->users;
-        //        foreach ($users as $user) {
-        //            $grade = $assessmentCourse->gradeForUser($user);
-        //
-        //            if ($is_specification) {
-        //                $grade = $grade >= $threshold ? 1 : 0;
-        //            }
-        //
-        //            CanvasService::gradeAssignment($course->id, $assessment_canvas_id, $user->canvas->canvas_id, $grade);
-        //        }
-
-        CanvasService::gradeAssignment($course->id, $assessment_canvas_id);
+        if ($gradeAssessmentResponse->status() !== 200) {
+            $this->notification()->warning(
+                'Failed to regrade assessment ' . $assessmentCourse->assessment->title,
+                'Status: ' . $gradeAssessmentResponse->status()
+            );
+        }
     }
 
     public function render(): View

@@ -61,12 +61,14 @@ class User extends Authenticatable
         return $this->hasOne(UserCanvas::class, 'user_email', 'email');
     }
 
+    /**
+     * Connects the user to the courses they are enrolled in.
+     */
     public function connectCourses(): void
     {
         $courses = Course::all();
 
         if (! $this->is_admin) {
-            //            $courses = Course::whereJsonContains('valid_students', $this->email)->get();
             $courses = $courses->filter(function ($course) {
                 return in_array($this->email, $course->valid_students);
             });

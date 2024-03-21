@@ -29,17 +29,18 @@ class Sync extends Component
 
     public function sync(): void
     {
-        DB::beginTransaction();
 
         $settings = Settings::firstOrNew();
 
         if ($settings->is_syncing) {
             $this->notification()->warning(
-                'Scheduled syncing already in progress, please wait.',
+                'Syncing already in progress, please wait.',
             );
 
             return;
         }
+
+        DB::beginTransaction();
 
         $settings->update([
             'is_syncing' => true,
@@ -299,8 +300,7 @@ class Sync extends Component
                         $status = Status::where('master_id', $master->id)->first();
                         $status->missing_assessments()->attach($assessment->id, ['course_id' => $course->id]);
                     } else {
-                        $specification = new SpecificationSetting();
-                        $specification->setMaxPoints($assessmentCourse);
+                        CanvasService::setMaxPoints($assessmentCourse);
                     }
 
                 }

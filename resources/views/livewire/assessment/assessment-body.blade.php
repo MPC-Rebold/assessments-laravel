@@ -59,14 +59,17 @@ new class extends Component {
 
     public function submitToCanvas(): void
     {
-        $grade = $this->assessmentCourse->gradeForUser(auth()->user());
+        try {
+            $gradeResponse = CanvasService::gradeAssessmentForUser($this->assessmentCourse, auth()->user());
 
-        if (!$grade) {
+            if ($gradeResponse->status() !== 200) {
+                throw new Exception('Status: ' . $gradeResponse->status());
+            }
+        } catch (Exception $e) {
+            $this->notification()->error('Failed to submit to Canvas', $e->getMessage());
             return;
         }
-
-        CanvasService::gradeAssignment($this->course->id, $this->assessmentCourse->assessment_canvas_id, auth()->user()->canvas->canvas_id, $grade);
-        $this->notification()->success('Submitted to Canvas');
+        $this->notification()->success('Submitted to Canvas', 'Grade: ' . $gradeResponse->json('grade'));
     }
 };
 
@@ -122,7 +125,7 @@ new class extends Component {
     @if (!$isPastDue)
         <footer class="fixed bottom-0 mx-auto w-full bg-slate-300 px-4 py-0.5 shadow-inner sm:px-6 lg:px-8">
             <div class="flex items-center justify-between pl-2">
-                <div class="h-2.5 w-full rounded-full bg-white dark:bg-gray-700">
+                <div class="h-2.5 w-full rounded-full bg-white">
                     <div class="h-2.5 rounded-full bg-positive-500 transition-all ease-out"
                         style="width: {{ $percentage }}%">
                     </div>

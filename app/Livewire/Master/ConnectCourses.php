@@ -71,8 +71,7 @@ class ConnectCourses extends Component
             return;
         }
 
-        $sync = new Sync();
-        $sync->sync();
+        (new Sync())->sync();
 
         $this->mount();
 

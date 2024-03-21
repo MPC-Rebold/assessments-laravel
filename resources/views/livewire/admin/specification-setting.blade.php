@@ -5,28 +5,27 @@
         </div>
         <div class="flex flex-wrap items-center gap-4">
             <div class="w-28">
-                <x-select :searchable="false" :clearable="false"
-                          :options="['OFF', '65%', '70%', '75%', '80%', '85%', '90%', '95%']"
-                          wire:model="specification_grading_threshold" />
+                <x-select :searchable="false" :clearable="false" :options="['OFF', '65%', '70%', '75%', '80%', '85%', '90%', '95%']"
+                    wire:model="specification_grading_threshold" />
             </div>
 
             <x-button disabled positive spinner class="min-w-28 bg-slate-300 hover:bg-slate-300"
-                      wire:dirty.attr.remove="disabled" wire:dirty.class.remove="bg-slate-300 hover:bg-slate-300"
-                      wire:click="openModal">
+                wire:dirty.attr.remove="disabled" wire:dirty.class.remove="bg-slate-300 hover:bg-slate-300"
+                wire:click="openModal">
                 Save
             </x-button>
             <x-modal wire:model.defer="modalOpen">
                 <x-card title="Change Grading Option">
                     <div class='rounded-lg border border-warning-600 bg-warning-50 p-4'>
-                        <div class="flex items-center border-b-2 border-negative-200 pb-3">
-                            <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
-                            <span class="ml-1 flex text-lg text-negative-600">
-                                You are about to change the grading option for&nbsp;<b>{{$course->title}}</b>
+                        <div class="flex items-center border-b-2 border-warning-200 pb-3">
+                            <x-icon name="exclamation" class="h-6 w-6 text-warning-700" />
+                            <span class="ml-1 flex text-lg text-warning-700">
+                                You are about to change the grading option for&nbsp;<b>{{ $course->title }}</b>
                             </span>
                         </div>
                         <div class="ml-5 mt-2 flex items-center justify-between pl-1">
-                            <ul class="list-disc space-y-1 text-negative-600">
-                                <li>This will affect <b>all assessments</b> on <b>{{$course->title}}</b></li>
+                            <ul class="list-disc space-y-1 text-warning-700">
+                                <li>This will affect <b>all assessments</b> on <b>{{ $course->title }}</b></li>
                                 <li>Assessments already past due will not be affected</li>
                             </ul>
                         </div>

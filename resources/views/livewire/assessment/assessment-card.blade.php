@@ -72,13 +72,13 @@ new class extends Component {
                 <x-button positive :href="$assessmentRoute" wire:navigate class="relative">
                     <span class="transition-transform duration-300">Go</span>
                     <x-icon class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"
-                            name="arrow-right" />
+                        name="arrow-right" />
                 </x-button>
             @else
                 <x-button secondary :href="$assessmentRoute" wire:navigate class="relative">
                     <span class="transition-transform duration-300">Practice</span>
                     <x-icon class="h-5 w-5 translate-x-0 transform transition-transform group-hover:translate-x-1"
-                            name="arrow-right" />
+                        name="arrow-right" />
                 </x-button>
             @endif
         </div>

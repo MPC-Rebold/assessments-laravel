@@ -2,7 +2,6 @@
 
 > CS Focused Education Software for Monterey Peninsula College
 
-
 <!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
 <p>Built WIth:</p>
