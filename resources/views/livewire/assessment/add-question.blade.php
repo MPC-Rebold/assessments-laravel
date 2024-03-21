@@ -44,7 +44,7 @@ new class extends Component {
             return;
         }
 
-        if (str_contains($this->questionText, "@@") || str_contains($this->answer, "@@")) {
+        if (str_contains($this->questionText, '@@') || str_contains($this->answer, '@@')) {
             $this->notification()->error('Question and answer cannot contain the reserved charters "@@"');
             return;
         }
@@ -52,7 +52,11 @@ new class extends Component {
         DB::beginTransaction();
 
         try {
-            $questions = $this->assessment->questions()->where('number', '>', $this->number)->orderBy('number', 'desc')->get();
+            $questions = $this->assessment
+                ->questions()
+                ->where('number', '>', $this->number)
+                ->orderBy('number', 'desc')
+                ->get();
 
             foreach ($questions as $question) {
                 $question->update([
@@ -66,7 +70,6 @@ new class extends Component {
                 'question' => $this->questionText,
                 'answer' => $this->answer,
             ]);
-
 
             SeedService::writeAssessment($this->assessment);
         } catch (Exception $e) {
@@ -82,14 +85,13 @@ new class extends Component {
     }
 }; ?>
 
-
 <div>
-    @if($isAdding)
-        <div class="border-2 sm:rounded-lg border-positive-400">
+    @if ($isAdding)
+        <div class="border-2 border-positive-400 sm:rounded-lg">
             <x-card>
                 <x-slot name="header">
                     <div class="border-b border-gray-300 px-4 py-2 font-bold text-slate-800">
-                        Question {{ $number + 1}}
+                        Question {{ $number + 1 }}
                     </div>
                 </x-slot>
 
@@ -113,14 +115,14 @@ new class extends Component {
             </x-card>
         </div>
     @else
-        @if($disabled)
-            <x-button disabled spinner class="bg-white w-full h-8">
-                <x-icon name="plus" class="w-4 h-4" />
+        @if ($disabled)
+            <x-button disabled spinner class="h-8 w-full bg-white">
+                <x-icon name="plus" class="h-4 w-4" />
                 Add Question
             </x-button>
         @else
-            <x-button spinner class="bg-white w-full h-8" wire:click="addQuestion">
-                <x-icon name="plus" class="w-4 h-4" />
+            <x-button spinner class="h-8 w-full bg-white" wire:click="addQuestion">
+                <x-icon name="plus" class="h-4 w-4" />
                 Add Question
             </x-button>
         @endif

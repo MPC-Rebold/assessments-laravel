@@ -31,7 +31,8 @@
             {{ $prepend }}
         @endif
 
-        <input
+        <!--suppress HtmlFormInputWithoutLabel -->
+            <input
             {{ $attributes->class([$getInputClasses($hasError)])->merge([
                 'type' => 'text',
                 'autocomplete' => 'off',

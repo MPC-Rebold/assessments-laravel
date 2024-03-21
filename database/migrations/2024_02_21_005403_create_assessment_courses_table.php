@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained()->cascadeOnDelete();
             $table->integer('assessment_canvas_id');
             $table->dateTime('due_at')->nullable();
+            $table->boolean('is_active')->default(true);
 
             $table->unique(['assessment_id', 'course_id']);
         });

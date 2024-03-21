@@ -34,7 +34,8 @@
             {{ $prepend }}
         @endif
 
-        <textarea
+        <!--suppress HtmlFormInputWithoutLabel -->
+            <textarea
             {{ $attributes->class([$getInputClasses($hasError)])->merge([
                 'autocomplete' => 'off',
                 'rows' => 4,

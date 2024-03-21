@@ -13,6 +13,8 @@ class Course extends Model
         'title',
         'valid_students',
         'valid_assessments',
+        'specification_grading',
+        'specification_grading_threshold',
         'marked_for_deletion',
     ];
 

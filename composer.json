@@ -17,7 +17,8 @@
     "laravel/tinker": "^2.8",
     "livewire/livewire": "^3.0",
     "livewire/volt": "^1.0",
-    "wireui/wireui": "^1.18"
+    "wireui/wireui": "^1.18",
+    "ext-pdo": "*"
   },
   "require-dev": {
     "fakerphp/faker": "^1.9.1",

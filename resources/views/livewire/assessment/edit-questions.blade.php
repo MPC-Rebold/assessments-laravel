@@ -46,23 +46,15 @@ new class extends Component {
 
 <div class="space-y-4">
     @foreach ($assessment->questions as $question)
-        <livewire:assessment.add-question :number="$loop->index" key="{{ now() }}"
-                                          :isAdding="$loop->index === $incrementFrom"
-                                          :disabled="(isset($incrementFrom) && $loop->index !== $incrementFrom) || isset($editingQuestion)"
-                                          :assessment="$assessment" />
+        <livewire:assessment.add-question :number="$loop->index" key="{{ now() }}" :isAdding="$loop->index === $incrementFrom" :disabled="(isset($incrementFrom) && $loop->index !== $incrementFrom) || isset($editingQuestion)"
+            :assessment="$assessment" />
 
-        <livewire:assessment.edit-question :question="$question"
-                                           :increment="isset($incrementFrom) && $loop->index >= $incrementFrom"
-                                           :disabled="isset($incrementFrom) || (isset($editingQuestion) && $loop->index !== $editingQuestion)"
-                                           :isEditing="isset($editingQuestion) && $loop->index === $editingQuestion"
-                                           key="{{ now() }}" />
+        <livewire:assessment.edit-question :question="$question" :increment="isset($incrementFrom) && $loop->index >= $incrementFrom" :disabled="isset($incrementFrom) || (isset($editingQuestion) && $loop->index !== $editingQuestion)" :isEditing="isset($editingQuestion) && $loop->index === $editingQuestion"
+            key="{{ now() }}" />
 
         @if ($loop->last)
-            <livewire:assessment.add-question :number="$loop->index + 1" key="{{ now() }}"
-                                              :isAdding="$loop->index + 1 === $incrementFrom"
-                                              :disabled="(isset($incrementFrom) && $loop->index + 1 !== $incrementFrom) || isset($editingQuestion)"
-                                              :assessment="$assessment" />
-
+            <livewire:assessment.add-question :number="$loop->index + 1" key="{{ now() }}" :isAdding="$loop->index + 1 === $incrementFrom"
+                :disabled="(isset($incrementFrom) && $loop->index + 1 !== $incrementFrom) || isset($editingQuestion)" :assessment="$assessment" />
         @endif
     @endforeach
 </div>

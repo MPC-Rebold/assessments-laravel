@@ -3,7 +3,8 @@
         <x-dynamic-component :component="WireUi::component('label')" class="mb-1" :label="$label" :has-error="$errors->has($name)" :for="$id" />
     @endif
 
-    <select
+    <!--suppress HtmlFormInputWithoutLabel -->
+        <select
         {{ $attributes->class([
             $defaultClasses(),
             $errorClasses() => $errors->has($name),

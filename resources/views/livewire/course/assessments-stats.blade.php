@@ -27,25 +27,25 @@ new class extends Component {
                 No assessments found
             </div>
         @endif
-        @foreach ($course->assessments as $assessment)
-            @php($assessmentCourse = $assessmentCourses->firstWhere('assessment_id', $assessment->id))
+        @foreach ($assessmentCourses as $assessmentCourse)
             <div class="flex items-center justify-between">
                 <div class="flex flex-wrap gap-4">
                     <div>
-                        {{ $assessment->title }}
+                        {{ $assessmentCourse->assessment->title }}
                     </div>
                     <div class="text-gray-500">
                         Due at: {{ Carbon::parse($assessmentCourse->due_at)->tz('PST')->format('M j, g:i A T') }}
                     </div>
                 </div>
                 <div class="flex items-center space-x-6">
+                    @php($avgGrade = round($assessmentCourse->getAverageGrade() * 100, 1))
                     <div class="hidden text-gray-500 md:block">
-                        Avg Score:
-                        {{ round($assessmentCourse->getAverageGrade() * 100, 1) }}%
+                        Average:
+                        {{ $avgGrade }}%
                     </div>
                     <div class="hidden h-2.5 w-40 rounded-full bg-white shadow dark:bg-gray-700 md:block">
                         <div class="h-2.5 rounded-full bg-positive-500 transition-all ease-out"
-                            style="width: {{ round($assessmentCourses->firstWhere('assessment_id', $assessment->id)->getAverageGrade() * 100, 1) }}%">
+                            style="width: {{ $avgGrade }}%">
                         </div>
                     </div>
                 </div>

@@ -70,6 +70,7 @@
                     <button class="focus:underline focus:outline-none" x-text="monthNames[month]"
                         x-on:click="monthsPicker = !monthsPicker" type="button">
                     </button>
+                    <!--suppress HtmlFormInputWithoutLabel -->
                     <input
                         class="w-14 appearance-none border-none p-0 ring-0 focus:outline-none focus:ring-0 dark:bg-secondary-800"
                         x-model="year" x-on:input.debounce.500ms="fillPickerDates" type="number" />

@@ -17,7 +17,7 @@ new class extends Component {
     @if (count($courses) > 0)
         <div class="space-y-4">
             @foreach ($courses as $course)
-                <button class="group w-full transition-all hover:scale-[1.007] hover:shadow-md"
+                <button class="group w-full transition-all hover:scale-[1.007] hover:shadow-md sm:rounded-lg"
                     href="{{ route('course.show', $course->id) }}" wire:navigate>
                     <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div class="flex max-h-20 w-full items-center justify-between p-6 text-gray-900">
@@ -31,7 +31,6 @@ new class extends Component {
                             </div>
 
                             <div class="flex space-x-4">
-                                {{-- <x-canvas-button class="h-10 w-10" :href="'/courses/' . $course->id" /> --}}
                                 <x-button positive :href="route('course.show', $course->id)" wire:navigate class="relative">
                                     <span>Go</span>
                                     <x-icon

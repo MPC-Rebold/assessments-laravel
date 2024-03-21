@@ -1,7 +1,11 @@
 {
   "private": true,
   "type": "module",
+  "version": "0.1.0",
   "scripts": {
+    "reformat": "npm run reformat:prettier && npm run reformat:pint",
+    "reformat:prettier": "prettier --write .",
+    "reformat:pint": "php ./vendor/bin/pint",
     "dev": "vite",
     "build": "vite build"
   },

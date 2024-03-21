@@ -1,7 +1,8 @@
 # MPC Rebold
 
-> CS Focused Education Software for Monterey Peninsula College
+### CS Focused Education Software for Monterey Peninsula College
 
+<!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
 <p>Built WIth:</p>
 <a href="https://www.php.net/"><img src=https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white alt="PHP"></a>

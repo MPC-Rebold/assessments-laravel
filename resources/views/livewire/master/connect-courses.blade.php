@@ -46,8 +46,14 @@
             @else
                 @foreach ($connectedCourseModels as $course)
                     <div class="flex items-center justify-between">
-                        <div class="text-lg">
-                            {{ $course['title'] }}
+                        <div class="flex items-center space-x-6">
+                            <div class="text-lg">
+                                {{ $course->title }}
+                            </div>
+                            <div class="hidden text-gray-500 sm:flex">
+                                Specification Grading:
+                                {{ $course->specification_grading ? "ON ($course->specification_grading_threshold)" : 'OFF' }}
+                            </div>
                         </div>
                         <div>
                             <x-button secondary class="min-w-24" :href="route('course.edit', [$master->id, $course->id])" wire:navigate>
