@@ -1,6 +1,7 @@
 import defaultTheme from "tailwindcss/defaultTheme";
 import forms from "@tailwindcss/forms";
 
+// noinspection JSUnusedGlobalSymbols
 /** @type {import("tailwindcss").Config} */
 export default {
     presets: [require("./vendor/wireui/wireui/tailwind.config.js")],

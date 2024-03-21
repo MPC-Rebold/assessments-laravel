@@ -1,7 +1,11 @@
 {
   "private": true,
   "type": "module",
+  "version": "0.1.0",
   "scripts": {
+    "reformat": "npm run reformat:prettier && npm run reformat:pint",
+    "reformat:prettier": "prettier --write .",
+    "reformat:pint": "php ./vendor/bin/pint",
     "dev": "vite",
     "build": "vite build"
   },
@@ -15,5 +19,9 @@
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.1",
     "vite": "^5.0.0"
-  }
+  },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
+    }
 }

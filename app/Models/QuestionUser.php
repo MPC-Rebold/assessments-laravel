@@ -98,7 +98,7 @@ class QuestionUser extends Model
                 $s2position--;
             } else { // insertion required
                 if ($string_1[$s1position - 1] !== ' ') {
-                    $result = self::delimitMissing('_') . $result;
+                    $result = self::delimitMissing() . $result;
                 }      // only indicate insertions for non-spaces
                 $s1position--;
             }
@@ -106,7 +106,7 @@ class QuestionUser extends Model
         // take care of any leading mismatch errors
         if ($s2position == 0) {
             for ($k = 0; $k < $s1position; $k++) {
-                $result = self::delimitMissing('_') . $result;
+                $result = self::delimitMissing() . $result;
             }
         }
         if ($s1position == 0) {
@@ -128,8 +128,8 @@ class QuestionUser extends Model
         return strrev('</delete__>') . "$string" . strrev('<delete__>');
     }
 
-    private static function delimitMissing(string $string): string
+    private static function delimitMissing(): string
     {
-        return strrev('</missing__>') . "$string" . strrev('<missing__>');
+        return strrev('</missing__>') . '_' . strrev('<missing__>');
     }
 }

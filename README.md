@@ -1,7 +1,8 @@
 # MPC Rebold
 
-> CS Focused Education Software for Monterey Peninsula College
+### CS Focused Education Software for Monterey Peninsula College
 
+<!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
 <p>Built WIth:</p>
 <a href="https://www.php.net/"><img src=https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white alt="PHP"></a>
@@ -14,13 +15,25 @@
 
 ---
 
-## Getting started
+## Getting Started
 
-Requirements: `php >= 8.2` `composer >= 2.7`
+### Deployment (Production)
 
-1. Clone this repository
+Follow these instructions for deployment on a shared hosting environment.
+
+Requirements: `php == 8.2` `composer >= 2.7`
+
+1. Clone branch `production` from this repository
+
+```bash
+git clone -b production https://github.com/MPC-Rebold/assessments-laravel.git
+```
+
 2. Copy `.env.example` to `.env` and set the environment variables
+
+
 3. Run the following:
+
 
 ```bash
 composer install
@@ -29,4 +42,53 @@ php artisan migrate --force
 php artisan db:seed
 ```
 
-4. Ensure you have seed files in the `database/seed` directory
+
+4. Copy the seed files to the `database/seed` directory
+
+
+5. Copy the following into the root directory of the server (`public_html`)
+    - `./public/build/**`
+    - `./public/.htaccess`
+    - `./public/index.php`
+    - `./public/robots.txt`
+
+
+7. In `public_html/index.php` change the following lines:
+
+```php
+require __DIR__.'/../vendor/autoload.php';
+/* ... */
+$app = require_once __DIR__.'/../bootstrap/app.php';
+```
+
+to
+
+```php
+require __DIR__.'/../assessments-laravel/vendor/autoload.php';
+/* ... */
+$app = require_once __DIR__.'/../assessments-laravel/bootstrap/app.php';
+```
+
+---
+
+### Development
+
+Follow these instructions for development on a local environment.
+
+Requirements: `php == 8.2` `composer >= 2.7` `node >= 20` `npm >= 8`
+
+1. Clone this repository
+2. Copy `.env.example` to `.env` and set the environment variables
+3. Run the following:
+
+```bash
+npm install
+composer install
+php artisan key:generate
+php artisan migrate --force
+php artisan db:seed
+```
+
+4. Copy the seed files to the `database/seed` directory
+
+---

@@ -47,7 +47,7 @@ new class extends Component {
             return;
         }
 
-        if (str_contains($this->questionText, "@@") || str_contains($this->answer, "@@")) {
+        if (str_contains($this->questionText, '@@') || str_contains($this->answer, '@@')) {
             $this->notification()->error('Question and answer cannot contain the reserved charters "@@"');
             return;
         }
@@ -79,7 +79,9 @@ new class extends Component {
 
             $questionsAfter = $this->question->assessment
                 ->questions()
-                ->where('number', '>', $this->question->number)->orderBy('number')->get();
+                ->where('number', '>', $this->question->number)
+                ->orderBy('number')
+                ->get();
 
             foreach ($questionsAfter as $question) {
                 $question->update(['number' => $question->number - 1]);
@@ -88,7 +90,7 @@ new class extends Component {
             SeedService::writeAssessment($this->question->assessment);
         } catch (Exception $e) {
             DB::rollBack();
-            throw($e);
+            throw $e;
         }
 
         DB::commit();
@@ -102,17 +104,16 @@ new class extends Component {
     }
 }; ?>
 
-<div class="{{$isEditing ? 'border-2 border-positive-400' : ''}} sm:rounded-lg">
+<div class="{{ $isEditing ? 'border-2 border-positive-400' : '' }} sm:rounded-lg">
     <x-card>
         <x-slot name="header">
             <div class="border-b border-gray-300 px-4 py-2 font-bold text-slate-800">
-                Question {{ $question->number + ($increment ? 1 : 0)}}
+                Question {{ $question->number + ($increment ? 1 : 0) }}
             </div>
         </x-slot>
         @if ($isEditing)
             <div class="px-2">
-                <x-textarea wire:model="questionText" class="whitespace-nowrap font-mono font-bold"
-                            :rows="$questionTextRows" />
+                <x-textarea wire:model="questionText" class="whitespace-nowrap font-mono font-bold" :rows="$questionTextRows" />
             </div>
         @else
             <div class="overflow-auto px-4 font-mono text-black md:px-2">
@@ -162,10 +163,10 @@ new class extends Component {
                 </x-modal>
             @else
                 <div class="flex items-center justify-between">
-                    <div class="overflow-auto font-mono text-nowrap">
+                    <div class="overflow-auto text-nowrap font-mono">
                         {{ $question->answer }}
                     </div>
-                    @if($disabled)
+                    @if ($disabled)
                         <x-button secondary disabled icon="pencil" class="h-8">
                             Edit
                         </x-button>
