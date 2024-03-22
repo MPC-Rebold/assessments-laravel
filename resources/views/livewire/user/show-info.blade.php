@@ -74,12 +74,11 @@ new class extends Component {
             </p>
             <form class="flex flex-wrap items-center gap-4">
                 <div class="w-60 sm:w-80">
-                    <x-select placeholder="Course" :options="$courseOptions" wire:model.defer="courseSelect"
-                              :option-value="'id'"
-                              :option-label="'title'" />
+                    <x-select placeholder="Course" :options="$courseOptions" wire:model.defer="courseSelect" :option-value="'id'"
+                        :option-label="'title'" />
                 </div>
                 <x-button secondary spinner class="min-w-24" wire:click="fetchGrades" disabled
-                          wire:dirty.attr.remove="disabled">
+                    wire:dirty.attr.remove="disabled">
                     View
                 </x-button>
             </form>
@@ -96,20 +95,22 @@ new class extends Component {
                 @else
                     <div>
                         @foreach ($assessments as $assessment)
-                            <a href="{{route('user.grade.show', [$user->id, $assessment->id])}}" wire:navigate>
-                                <div class="flex items-center justify-between  rounded-lg px-4 py-3 hover:bg-gray-200 sm:px-6 transition-all hover:shadow group">
+                            <a href="{{ route('user.grade.show', [$user->id, $assessment->id]) }}" wire:navigate>
+                                <div
+                                    class="group flex items-center justify-between rounded-lg px-4 py-3 transition-all hover:bg-gray-200 hover:shadow sm:px-6">
                                     <div class="group-hover:underline">
                                         {{ $assessment->assessment->title }}
                                     </div>
                                     <div class="flex items-center gap-6">
                                         <div>{{ $assessment->pointsForUser($user) }} /
                                             {{ $assessment->assessment->questionCount() }}</div>
-                                        <x-icon name="chevron-right" class="h-5 text-gray-500 group-hover:scale-110 group-hover:translate-x-1 transition-all" />
+                                        <x-icon name="chevron-right"
+                                            class="h-5 text-gray-500 transition-all group-hover:translate-x-1 group-hover:scale-110" />
                                     </div>
                                 </div>
                             </a>
                             @if (!$loop->last)
-                                <hr class="mx-4 sm:mx-6"/>
+                                <hr class="mx-4 sm:mx-6" />
                             @endif
                         @endforeach
                     </div>

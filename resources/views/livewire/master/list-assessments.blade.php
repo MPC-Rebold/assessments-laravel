@@ -23,16 +23,16 @@ new class extends Component {
     </div>
     <div>
         @if ($assessments->isEmpty())
-            <div class="text-center p-4 sm:px-6">
+            <div class="p-4 text-center sm:px-6">
                 <p class="text-lg font-bold text-gray-400">
                     No Assessments
                 </p>
             </div>
         @else
             @foreach ($assessments as $assessment)
-                <a href="{{route('assessment.edit', [$master->id, $assessment->id])}}" wire:navigate>
+                <a href="{{ route('assessment.edit', [$master->id, $assessment->id]) }}" wire:navigate>
                     <div
-                        class="flex flex-wrap items-center justify-between gap-4 rounded-lg px-4 py-3 hover:bg-gray-200 sm:px-6 transition-all hover:shadow group">
+                        class="group flex flex-wrap items-center justify-between gap-4 rounded-lg px-4 py-3 transition-all hover:bg-gray-200 hover:shadow sm:px-6">
                         <div class="flex items-center space-x-4">
                             <div class="group-hover:underline">
                                 {{ $assessment->title }}

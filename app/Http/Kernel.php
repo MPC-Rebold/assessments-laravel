@@ -3,7 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\Admin;
-use App\Http\Middleware\AssessmentExists;
+use App\Http\Middleware\AssessmentActive;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\Enrolled;
@@ -78,7 +78,7 @@ class Kernel extends HttpKernel
      * @var array<string, class-string|string>
      */
     protected $middlewareAliases = [
-        'exists' => AssessmentExists::class,
+        'active' => AssessmentActive::class,
         'enrolled' => Enrolled::class,
         'admin' => Admin::class,
         'auth' => Authenticate::class,

@@ -47,7 +47,7 @@ new class extends Component {
             @foreach ($students as $enrolledStudent)
                 <a href="{{ route('user.show', $enrolledStudent->id) }}" wire:navigate>
                     <div
-                        class="flex flex-wrap items-center justify-between gap-4 rounded-lg px-4 py-3 hover:bg-gray-200 sm:px-6 transition-all hover:shadow group">
+                        class="group flex flex-wrap items-center justify-between gap-4 rounded-lg px-4 py-3 transition-all hover:bg-gray-200 hover:shadow sm:px-6">
                         <div class="flex items-center space-x-2">
                             <x-avatar xs :src="$enrolledStudent->avatar" />
                             <div class="group-hover:underline">
@@ -62,7 +62,8 @@ new class extends Component {
                                     @endif
                                 </p>
                             </div>
-                            <x-icon name="chevron-right" class="h-5 text-gray-500 group-hover:scale-110 transition-all group-hover:translate-x-1" />
+                            <x-icon name="chevron-right"
+                                class="h-5 text-gray-500 transition-all group-hover:translate-x-1 group-hover:scale-110" />
                         </div>
                     </div>
                 </a>
@@ -82,7 +83,7 @@ new class extends Component {
                         <div class="hidden text-gray-500 md:flex">
                             - Not Connected -
                         </div>
-                        <x-icon name="chevron-right" class="h-5 invisible" />
+                        <x-icon name="chevron-right" class="invisible h-5" />
                     </div>
                 </div>
                 @if (!$loop->last)

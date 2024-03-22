@@ -9,32 +9,27 @@ use Carbon\Carbon;
 new class extends Component {
     public int $courseId;
 
-    public Collection $assessments;
+    public Collection $assessmentCourses;
 
     public function mount(): void
     {
         if (isset($this->courseId)) {
-            $assessments = auth()
+            $this->assessmentCourses = auth()
                 ->user()
-                ->courses->find($this->courseId)->assessments;
-            $this->assessments = $assessments
-                ->filter(function ($assessment) {
-                    return $assessment->pivot->due_at === null || Carbon::parse($assessment->pivot->due_at)->isFuture();
-                })
-                ->sortBy('pivot.due_at');
+                ->courses->find($this->courseId)->assessmentCourses
+                ->filter(fn ($assessmentCourse) => !$assessmentCourse->isPastDue())
+                ->sortBy('due_at');
         } else {
-            $assessments = auth()->user()->courses->map->assessments->flatten();
+            $assessmentCourses = auth()->user()->courses->flatMap->assessmentCourses;
 
-            $this->assessments = $assessments
-                ->filter(function ($assessment) {
-                    return $assessment->pivot->due_at === null || Carbon::parse($assessment->pivot->due_at)->isFuture();
-                })
+            $this->assessmentCourses = $assessmentCourses
+                ->filter(fn ($assessmentCourse) => !$assessmentCourse->isPastDue())
                 ->flatten()
-                ->sortBy('pivot.due_at');
+                ->sortBy('due_at');
         }
 
-        $this->assessments = $this->assessments->take(4);
+        $this->assessmentCourses = $this->assessmentCourses->take(4);
     }
 }; ?>
 
-<livewire:assessment.assessment-cards :assessments="$assessments" />
+<livewire:assessment.assessment-cards :assessmentCourses="$assessmentCourses" />

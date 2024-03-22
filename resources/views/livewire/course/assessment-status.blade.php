@@ -3,8 +3,11 @@
 use App\Models\AssessmentCourse;
 use Livewire\Volt\Component;
 use Carbon\Carbon;
+use WireUi\Traits\Actions;
 
 new class extends Component {
+    use Actions;
+
     public AssessmentCourse $assessmentCourse;
 
     public bool $isActive;
@@ -26,6 +29,7 @@ new class extends Component {
     {
         $this->isActive = !$this->isActive;
         $this->assessmentCourse->update(['is_active' => $this->isActive]);
+        $this->notification()->success('Assessment status updated');
     }
 }; ?>
 
@@ -45,12 +49,20 @@ new class extends Component {
         </div>
     </div>
     <div class="flex items-center space-x-2">
-        <x-button.circle sm wire:click="changeIsActive" spinner>
+        <div class="flex items-center space-x-2">
             @if ($isActive)
-                <x-icon solid name="lock-open" class="h-5 text-secondary-500" />
+                <div>Unlocked</div>
             @else
-                <x-icon solid name="lock-closed" class="h-5 text-negative-500" />
+                <div>Locked</div>
             @endif
-        </x-button.circle>
+
+            <x-button.circle sm spinner wire:click="changeIsActive">
+                @if ($isActive)
+                    <x-icon solid name="lock-open" class="h-5 text-secondary-500" />
+                @else
+                    <x-icon solid name="lock-closed" class="h-5 text-negative-500" />
+                @endif
+            </x-button.circle>
+        </div>
     </div>
 </div>

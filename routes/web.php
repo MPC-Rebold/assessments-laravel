@@ -54,7 +54,7 @@ Route::view('courses/{courseId}', 'course.show')
     ->name('course.show');
 
 Route::view('courses/{courseId}/assessment/{assessmentId}', 'assessment.show')
-    ->middleware(['auth', 'enrolled', 'exists'])
+    ->middleware(['auth', 'enrolled', 'active'])
     ->name('assessment.show');
 
 Route::view('admin/masters/{masterId}', 'master.edit')
