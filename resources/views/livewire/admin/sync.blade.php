@@ -25,7 +25,7 @@ use Carbon\Carbon;
             <h2 class="min-w-24 basis-2/12">
                 Course
             </h2>
-            <h2 class="grow">
+            <h2 class="invisible grow sm:visible">
                 Canvas
             </h2>
             <h2 class="flex basis-1/12 justify-center">

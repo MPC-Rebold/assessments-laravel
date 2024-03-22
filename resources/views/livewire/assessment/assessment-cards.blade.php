@@ -9,15 +9,23 @@ use App\Models\AssessmentCourse;
 use App\Models\Master;
 
 new class extends Component {
-    public Collection $assessments;
+    public Collection $assessmentCourses;
+
+    public function mount(Collection $assessmentCourses): void
+    {
+        $this->assessmentCourses = $assessmentCourses;
+    }
 }; ?>
 
 <div class="space-y-4">
-    @if ($assessments->isNotEmpty())
-        @foreach ($assessments as $assessment)
-            @if ($assessment->pivot->assessment_canvas_id != -1)
-                <livewire:assessment.assessment-card :assessment="$assessment" :courseId="$assessment->pivot->course_id" :assessmentCanvasId="$assessment->pivot->assessment_canvas_id"
-                    :dueAt="$assessment->pivot->due_at" :key="$assessment->id" />
+    @if ($assessmentCourses->isNotEmpty())
+        @foreach ($assessmentCourses as $assessmentCourse)
+            @if ($assessmentCourse->assessment_canvas_id != -1)
+                @if ($assessmentCourse->is_active)
+                    <livewire:assessment.assessment-card-active :assessmentCourse="$assessmentCourse" :key="$assessmentCourse->id" />
+                @else
+                    <livewire:assessment.assessment-card-inactive :assessmentCourse="$assessmentCourse" :key="$assessmentCourse->id" />
+                @endif
             @endif
         @endforeach
     @else

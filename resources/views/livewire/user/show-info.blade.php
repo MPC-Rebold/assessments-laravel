@@ -93,26 +93,24 @@ new class extends Component {
                         </p>
                     </div>
                 @else
-                    <div class="space-y-4 p-4 sm:px-6 sm:py-4">
+                    <div>
                         @foreach ($assessments as $assessment)
-                            <div class="flex items-center justify-between">
-                                <div>{{ $assessment->assessment->title }}</div>
-                                <div class="flex items-center gap-6">
-                                    <div>{{ $assessment->pointsForUser($user) }} /
-                                        {{ $assessment->assessment->questionCount() }}</div>
-                                    <x-button secondary class="min-w-28 !p-[3px]" :href="route('user.grade.show', [$user->id, $assessment->id])" wire:navigate>
-                                        <div class="group flex items-center space-x-2">
-                                            <div>View More</div>
-                                            <div>
-                                                <x-icon name="chevron-right"
-                                                    class="h-4 w-4 transition-all ease-in-out group-hover:translate-x-1" />
-                                            </div>
-                                        </div>
-                                    </x-button>
+                            <a href="{{ route('user.grade.show', [$user->id, $assessment->id]) }}" wire:navigate>
+                                <div
+                                    class="group flex items-center justify-between rounded-lg px-4 py-3 transition-all hover:bg-gray-200 hover:shadow sm:px-6">
+                                    <div class="group-hover:underline">
+                                        {{ $assessment->assessment->title }}
+                                    </div>
+                                    <div class="flex items-center gap-6">
+                                        <div>{{ $assessment->pointsForUser($user) }} /
+                                            {{ $assessment->assessment->questionCount() }}</div>
+                                        <x-icon name="chevron-right"
+                                            class="h-5 text-gray-500 transition-all group-hover:translate-x-1 group-hover:scale-110" />
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                             @if (!$loop->last)
-                                <hr />
+                                <hr class="mx-4 sm:mx-6" />
                             @endif
                         @endforeach
                     </div>

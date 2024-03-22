@@ -28,28 +28,7 @@ new class extends Component {
             </div>
         @endif
         @foreach ($assessmentCourses as $assessmentCourse)
-            <div class="flex items-center justify-between">
-                <div class="flex flex-wrap gap-4">
-                    <div>
-                        {{ $assessmentCourse->assessment->title }}
-                    </div>
-                    <div class="text-gray-500">
-                        Due at: {{ Carbon::parse($assessmentCourse->due_at)->tz('PST')->format('M j, g:i A T') }}
-                    </div>
-                </div>
-                <div class="flex items-center space-x-6">
-                    @php($avgGrade = round($assessmentCourse->getAverageGrade() * 100, 1))
-                    <div class="hidden text-gray-500 md:block">
-                        Average:
-                        {{ $avgGrade }}%
-                    </div>
-                    <div class="hidden h-2.5 w-40 rounded-full bg-white shadow dark:bg-gray-700 md:block">
-                        <div class="h-2.5 rounded-full bg-positive-500 transition-all ease-out"
-                            style="width: {{ $avgGrade }}%">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <livewire:course.assessment-status :assessmentCourse="$assessmentCourse" wire:key="{{ now()->toDateTimeString() }}" />
             @if (!$loop->last)
                 <hr>
             @endif

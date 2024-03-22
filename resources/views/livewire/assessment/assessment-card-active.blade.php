@@ -7,40 +7,32 @@ use App\Models\AssessmentCourse;
 use Carbon\Carbon;
 
 new class extends Component {
-    public Assessment $assessment;
-    public int $courseId;
-    public int $assessmentCanvasId;
-    public string|null $dueAt;
+    public AssessmentCourse $assessmentCourse;
 
     public bool $isPastDue;
     public string $assessmentRoute;
     public string $dueInString;
-    public string $courseTitle;
     public int $percentage;
 
-    public function mount(Assessment $assessment): void
+    public function mount(AssessmentCourse $assessmentCourse): void
     {
-        $this->assessmentRoute = route('assessment.show', [$this->courseId, $this->assessmentCanvasId]);
-        $this->courseTitle = Course::find($this->courseId)->title;
+        $this->assessmentCourse = $assessmentCourse;
+        $this->assessmentRoute = route('assessment.show', [$assessmentCourse->course->id, $assessmentCourse->assessment_canvas_id]);
 
-        if ($this->dueAt) {
-            $diff = Carbon::now()->diff(Carbon::parse($this->dueAt));
+        $this->percentage = $assessmentCourse->percentageForUser(auth()->user()) * 100;
+        $this->isPastDue = $assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast();
+
+        if ($assessmentCourse->due_at) {
+            $diff = Carbon::now()->diff(Carbon::parse($assessmentCourse->due_at));
+
             if ($diff->invert) {
                 $this->dueInString = '';
             } else {
-                $this->dueInString = 'Due in ' . Carbon::parse($this->dueAt)->longAbsoluteDiffForHumans(parts: 2);
+                $this->dueInString = 'Due in ' . Carbon::parse($assessmentCourse->due_at)->longAbsoluteDiffForHumans(parts: 2);
             }
         } else {
             $this->dueInString = 'No due date';
         }
-
-        $assessmentCourse = AssessmentCourse::firstWhere([
-            'assessment_id' => $this->assessment->id,
-            'course_id' => $this->courseId,
-        ]);
-
-        $this->percentage = $assessmentCourse->percentageForUser(auth()->user()) * 100;
-        $this->isPastDue = $this->dueAt && Carbon::parse($this->dueAt)->isPast();
     }
 }; ?>
 
@@ -53,10 +45,10 @@ new class extends Component {
 
             <div class="py-2 text-left group-hover:underline">
                 <div class="text-lg font-semibold">
-                    {{ $assessment->title }}
+                    {{ $assessmentCourse->assessment->title }}
                 </div>
                 <div class="text-sm text-gray-500">
-                    {{ $courseTitle }}
+                    {{ $assessmentCourse->course->title }}
                 </div>
             </div>
         </div>

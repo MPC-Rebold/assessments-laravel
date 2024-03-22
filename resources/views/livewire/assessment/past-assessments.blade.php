@@ -9,17 +9,17 @@ use Carbon\Carbon;
 new class extends Component {
     public int $courseId;
 
-    public Collection $assessments;
+    public Collection $assessmentCourses;
 
     public function mount(): void
     {
-        $assessments = auth()
+        $this->assessmentCourses = auth()
             ->user()
-            ->courses->find($this->courseId)->assessments;
-        $this->assessments = $assessments->filter(fn($assessment) => $assessment->pivot->due_at !== null && Carbon::parse($assessment->pivot->due_at)->isPast())->sortBy('pivot.due_at');
-
-        $this->assessments = $this->assessments->take(4);
+            ->courses->find($this->courseId)
+            ->assessmentCourses->filter(fn($assessmentCourse) => $assessmentCourse->isPastDue())
+            ->sortBy('due_at')
+            ->take(4);
     }
 }; ?>
 
-<livewire:assessment.assessment-cards :assessments="$assessments" />
+<livewire:assessment.assessment-cards :assessmentCourses="$assessmentCourses" />

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,6 +13,7 @@ class AssessmentCourse extends Model
         'course_id',
         'assessment_canvas_id',
         'due_at',
+        'is_active',
     ];
 
     public function assessment(): BelongsTo
@@ -94,5 +96,19 @@ class AssessmentCourse extends Model
         })->count();
 
         return $totalQuestions > 0 ? ($totalPoints / $totalQuestions) : 0;
+    }
+
+    /**
+     * Returns whether the assessment is past due
+     *
+     * @return bool true if due date is in the past and not null
+     */
+    public function isPastDue(): bool
+    {
+        if ($this->due_at === null) {
+            return false;
+        }
+
+        return Carbon::parse($this->due_at)->isPast();
     }
 }
