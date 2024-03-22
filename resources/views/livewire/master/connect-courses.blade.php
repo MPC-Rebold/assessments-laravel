@@ -36,42 +36,43 @@
             </form>
         </div>
 
-        <div class="space-y-4 p-4 sm:px-6 sm:py-4">
-            @if (!$connectedCourses)
-                <div class="text-center">
-                    <p class="text-lg font-bold text-gray-400">
-                        No connected courses found
-                    </p>
-                </div>
-            @else
-                @foreach ($connectedCourseModels as $course)
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-6">
+        @if (!$connectedCourses)
+            <div class="p-4 text-center sm:px-6 sm:py-4">
+                <p class="text-lg font-bold text-gray-400">
+                    No connected courses found
+                </p>
+            </div>
+        @else
+            @foreach ($connectedCourseModels as $course)
+                <div class="flex items-center justify-between p-4 sm:px-6">
+                    <div class="flex items-center space-x-6">
+                        <div class="flex items-center space-x-4">
+                            <x-canvas-button :href="'/courses/' . $course->id" class="h-9 w-9" />
                             <div class="text-lg">
                                 {{ $course->title }}
                             </div>
-                            <div class="hidden text-gray-500 sm:flex">
-                                Specification Grading:
-                                {{ $course->specification_grading ? "ON ($course->specification_grading_threshold)" : 'OFF' }}
-                            </div>
                         </div>
-                        <div>
-                            <x-button secondary class="min-w-24" :href="route('course.edit', [$master->id, $course->id])" wire:navigate>
-                                <div class="group flex items-center space-x-2">
-                                    <div>Manage</div>
-                                    <div>
-                                        <x-icon name="chevron-right"
-                                            class="h-4 w-4 transition-all ease-in-out group-hover:translate-x-1" />
-                                    </div>
-                                </div>
-                            </x-button>
+                        <div class="hidden text-gray-500 sm:flex">
+                            Specification Grading:
+                            {{ $course->specification_grading ? "ON ($course->specification_grading_threshold)" : 'OFF' }}
                         </div>
                     </div>
-                    @if (!$loop->last)
-                        <hr />
-                    @endif
-                @endforeach
-            @endif
-        </div>
+                    <div>
+                        <x-button secondary class="min-w-24" :href="route('course.edit', [$master->id, $course->id])" wire:navigate>
+                            <div class="group flex items-center space-x-2">
+                                <div>Manage</div>
+                                <div>
+                                    <x-icon name="chevron-right"
+                                        class="h-4 w-4 transition-all ease-in-out group-hover:translate-x-1" />
+                                </div>
+                            </div>
+                        </x-button>
+                    </div>
+                </div>
+                @if (!$loop->last)
+                    <hr />
+                @endif
+            @endforeach
+        @endif
     </div>
 </div>
