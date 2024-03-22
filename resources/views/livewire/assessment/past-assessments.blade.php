@@ -15,7 +15,8 @@ new class extends Component {
     {
         $this->assessmentCourses = auth()
             ->user()
-            ->courses->find($this->courseId)->assessmentCourses->filter(fn($assessmentCourse) => $assessmentCourse->isPastDue())
+            ->courses->find($this->courseId)
+            ->assessmentCourses->filter(fn($assessmentCourse) => $assessmentCourse->isPastDue())
             ->sortBy('due_at')
             ->take(4);
     }

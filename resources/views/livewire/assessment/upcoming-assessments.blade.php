@@ -16,16 +16,13 @@ new class extends Component {
         if (isset($this->courseId)) {
             $this->assessmentCourses = auth()
                 ->user()
-                ->courses->find($this->courseId)->assessmentCourses
-                ->filter(fn ($assessmentCourse) => !$assessmentCourse->isPastDue())
+                ->courses->find($this->courseId)
+                ->assessmentCourses->filter(fn($assessmentCourse) => !$assessmentCourse->isPastDue())
                 ->sortBy('due_at');
         } else {
             $assessmentCourses = auth()->user()->courses->flatMap->assessmentCourses;
 
-            $this->assessmentCourses = $assessmentCourses
-                ->filter(fn ($assessmentCourse) => !$assessmentCourse->isPastDue())
-                ->flatten()
-                ->sortBy('due_at');
+            $this->assessmentCourses = $assessmentCourses->filter(fn($assessmentCourse) => !$assessmentCourse->isPastDue())->flatten()->sortBy('due_at');
         }
 
         $this->assessmentCourses = $this->assessmentCourses->take(4);

@@ -21,7 +21,7 @@ new class extends Component {
     @if ($assessmentCourses->isNotEmpty())
         @foreach ($assessmentCourses as $assessmentCourse)
             @if ($assessmentCourse->assessment_canvas_id != -1)
-                @if($assessmentCourse->is_active)
+                @if ($assessmentCourse->is_active)
                     <livewire:assessment.assessment-card-active :assessmentCourse="$assessmentCourse" :key="$assessmentCourse->id" />
                 @else
                     <livewire:assessment.assessment-card-inactive :assessmentCourse="$assessmentCourse" :key="$assessmentCourse->id" />
