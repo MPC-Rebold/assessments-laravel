@@ -37,7 +37,7 @@ new class extends Component {
     class="group w-full overflow-hidden bg-gray-200 px-6 py-2 text-gray-900 shadow-sm sm:rounded-lg">
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-4">
-            <div class="h-14 w-14 flex items-center justify-center">
+            <div class="h-14 w-14 items-center justify-center hidden sm:flex">
                 <x-icon solid name="lock-closed" class="text-gray-500 h-9 w-9" />
             </div>
 
