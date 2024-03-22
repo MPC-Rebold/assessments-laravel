@@ -12,7 +12,6 @@ new class extends Component {
     public Collection $courses;
     public array $notEnrolledStudents;
     public array $validStudents;
-    public string $search = '';
 
     public function mount(): void
     {
@@ -22,24 +21,11 @@ new class extends Component {
             $this->courses = collect([$this->course]);
         }
 
-        $this->students = $this->courses->flatMap->users
-            ->filter(function ($student) {
-                return str_contains(strtolower($student->email), strtolower($this->search)) || str_contains(strtolower($student->name), strtolower($this->search));
-            })
-            ->sortBy('name');
+        $this->students = $this->courses->flatMap->users->sortBy('name');
 
-        $this->validStudents = array_unique(
-            array_filter($this->courses->flatMap->valid_students->toArray(), function ($student) {
-                return str_contains(strtolower($student), strtolower($this->search));
-            }),
-        );
+        $this->validStudents = $this->courses->flatMap->valid_students->toArray();
 
         $this->notEnrolledStudents = array_diff($this->validStudents, $this->students->pluck('email')->toArray());
-    }
-
-    public function updateSearch(): void
-    {
-        $this->mount();
     }
 }; ?>
 
@@ -48,17 +34,9 @@ new class extends Component {
         <div class="text-lg font-bold">
             Students
         </div>
-        <div class="flex flex-wrap items-center justify-between gap-4">
-            <div class="w-64">
-                <x-input right-icon="search" placeholder="Search" wire:model.defer="search" />
-            </div>
-            <x-button secondary wire:click="updateSearch">
-                Search
-            </x-button>
-        </div>
     </div>
 
-    <div class="p-4 sm:px-6 sm:py-4">
+    <div>
         @if ($students->isEmpty() && empty($notEnrolledStudents))
             <div class="text-center">
                 <p class="text-lg font-bold text-gray-400">
@@ -66,14 +44,17 @@ new class extends Component {
                 </p>
             </div>
         @else
-            <div class="space-y-4">
-                @foreach ($students as $enrolledStudent)
-                    <div class="flex flex-wrap items-center justify-between gap-4">
+            @foreach ($students as $enrolledStudent)
+                <a href="{{ route('user.show', $enrolledStudent->id) }}" wire:navigate>
+                    <div
+                        class="flex flex-wrap items-center justify-between gap-4 rounded-lg px-4 py-3 hover:bg-gray-200 sm:px-6 transition-all hover:shadow group">
                         <div class="flex items-center space-x-2">
                             <x-avatar xs :src="$enrolledStudent->avatar" />
-                            <div class="break-all md:w-72">
+                            <div class="group-hover:underline">
                                 {{ $enrolledStudent->email }}
                             </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
                             <div class="hidden text-gray-500 md:flex">
                                 <p>{{ $enrolledStudent->name }}
                                     @if ($enrolledStudent->is_admin)
@@ -81,39 +62,33 @@ new class extends Component {
                                     @endif
                                 </p>
                             </div>
-                        </div>
-                        <x-button secondary class="h-6 min-w-24" :href="route('user.show', $enrolledStudent->id)" wire:navigate>
-                            <div class="group flex items-center space-x-2">
-                                <div>Manage</div>
-                                <div>
-                                    <x-icon name="chevron-right"
-                                        class="h-4 w-4 transition-all ease-in-out group-hover:translate-x-1" />
-                                </div>
-                            </div>
-                        </x-button>
-                    </div>
-
-                    @if (!empty($notEnrolledStudents))
-                        <hr />
-                    @endif
-                @endforeach
-                @foreach ($notEnrolledStudents as $notEnrolledStudent)
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <x-badge.circle secondary icon="ban" class="animate-pulse" />
-                            <div class="[overflow-wrap:anywhere] md:w-72">
-                                {{ $notEnrolledStudent }}
-                            </div>
-                            <div class="hidden text-gray-500 md:flex">
-                                - Not Connected -
-                            </div>
+                            <x-icon name="chevron-right" class="h-5 text-gray-500 group-hover:scale-110 transition-all group-hover:translate-x-1" />
                         </div>
                     </div>
-                    @if (!$loop->last)
-                        <hr />
-                    @endif
-                @endforeach
-            </div>
-        @endif
+                </a>
+                @if (!empty($notEnrolledStudents))
+                    <hr class="mx-4 sm:mx-6" />
+                @endif
+            @endforeach
+            @foreach ($notEnrolledStudents as $notEnrolledStudent)
+                <div class="flex items-center justify-between px-4 py-3 sm:px-6">
+                    <div class="flex items-center space-x-2">
+                        <x-badge.circle secondary icon="ban" class="animate-pulse" />
+                        <div>
+                            {{ $notEnrolledStudent }}
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="hidden text-gray-500 md:flex">
+                            - Not Connected -
+                        </div>
+                        <x-icon name="chevron-right" class="h-5 invisible" />
+                    </div>
+                </div>
+                @if (!$loop->last)
+                    <hr class="mx-4 sm:mx-6" />
+                @endif
+            @endforeach
     </div>
+    @endif
 </div>

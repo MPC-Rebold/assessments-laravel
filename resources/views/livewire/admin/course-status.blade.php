@@ -34,7 +34,7 @@ new class extends Component {
     <div class="min-w-24 basis-2/12">
         {{ $masterCourse->title }}
     </div>
-    <div class="grow overflow-hidden text-ellipsis pe-4 text-gray-500">
+    <div class="grow overflow-hidden text-ellipsis pe-4 text-gray-500 sm:flex invisible sm:visible text-nowrap">
         @if (in_array('NoSeed', $statusStrings))
             <div class="text-red-500">
                 Missing seed

@@ -28,7 +28,7 @@ new class extends Component {
             </div>
         @endif
         @foreach ($assessmentCourses as $assessmentCourse)
-            <livewire:course.assessment-status :assessmentCourse="$assessmentCourse" wire:key="{{now()->toDateTimeString()}}" />
+            <livewire:course.assessment-status :assessmentCourse="$assessmentCourse" wire:key="{{ now()->toDateTimeString() }}" />
             @if (!$loop->last)
                 <hr>
             @endif

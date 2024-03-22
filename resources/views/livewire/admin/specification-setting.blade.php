@@ -1,5 +1,5 @@
 <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
-    <div class="flex min-h-10 items-center justify-between gap-4 flex-wrap">
+    <div class="flex min-h-10 flex-wrap items-center justify-between gap-4">
         <div class="text-lg font-bold">
             Specification Grading
         </div>
@@ -8,9 +8,7 @@
                 <x-select :searchable="false" :clearable="false" :options="['OFF', '65%', '70%', '75%', '80%', '85%', '90%', '95%']"
                     wire:model="specification_grading_threshold" />
             </div>
-            <x-button disabled positive spinner class="min-w-28"
-                wire:dirty.attr.remove="disabled"
-                wire:click="openModal">
+            <x-button disabled positive spinner class="min-w-28" wire:dirty.attr.remove="disabled" wire:click="openModal">
                 Save
             </x-button>
             <x-modal wire:model.defer="modalOpen">

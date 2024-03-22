@@ -21,37 +21,37 @@ new class extends Component {
             Assessments
         </div>
     </div>
-
-    <div class="p-4 sm:px-6 sm:py-4">
+    <div>
         @if ($assessments->isEmpty())
-            <div class="text-center">
+            <div class="text-center p-4 sm:px-6">
                 <p class="text-lg font-bold text-gray-400">
                     No Assessments
                 </p>
             </div>
         @else
-            <div class="space-y-4">
-                @foreach ($assessments as $assessment)
-                    <div class="flex items-center justify-between">
+            @foreach ($assessments as $assessment)
+                <a href="{{route('assessment.edit', [$master->id, $assessment->id])}}" wire:navigate>
+                    <div
+                        class="flex flex-wrap items-center justify-between gap-4 rounded-lg px-4 py-3 hover:bg-gray-200 sm:px-6 transition-all hover:shadow group">
                         <div class="flex items-center space-x-4">
-                            <div>
+                            <div class="group-hover:underline">
                                 {{ $assessment->title }}
                             </div>
-                            <div>
+                            <div class="hidden sm:flex">
                                 <span class="text-gray-500">
                                     Questions: {{ $assessment->questions->count() }}
                                 </span>
                             </div>
                         </div>
-                        <x-button secondary icon="pencil" :href="route('assessment.edit', [$master->id, $assessment->id])" wire:navigate>
+                        <x-button secondary icon="pencil" class="group-hover:scale-[1.05]">
                             Edit
                         </x-button>
                     </div>
-                    @if (!$loop->last)
-                        <hr>
-                    @endif
-                @endforeach
-            </div>
-        @endif
+                </a>
+                @if (!$loop->last)
+                    <hr class="mx-4 sm:mx-6">
+                @endif
+            @endforeach
     </div>
+    @endif
 </div>

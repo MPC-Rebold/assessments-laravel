@@ -31,9 +31,7 @@ git clone -b production https://github.com/MPC-Rebold/assessments-laravel.git
 
 2. Copy `.env.example` to `.env` and set the environment variables
 
-
 3. Run the following:
-
 
 ```bash
 composer install
@@ -42,18 +40,16 @@ php artisan migrate --force
 php artisan db:seed
 ```
 
-
 4. Copy the seed files to the `database/seed` directory
 
-
 5. Copy the following into the root directory of the server (`public_html`)
+
     - `./public/build/**`
     - `./public/.htaccess`
     - `./public/index.php`
     - `./public/robots.txt`
 
-
-7. In `public_html/index.php` change the following lines:
+6. In `public_html/index.php` change the following lines:
 
 ```php
 require __DIR__.'/../vendor/autoload.php';

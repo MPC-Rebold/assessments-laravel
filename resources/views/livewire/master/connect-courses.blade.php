@@ -39,16 +39,15 @@
             </form>
         </div>
 
-        <div class="space-y-4 p-4 sm:px-6 sm:py-4">
-            @if (!$connectedCourses)
-                <div class="text-center">
-                    <p class="text-lg font-bold text-gray-400">
-                        No connected courses found
-                    </p>
-                </div>
-            @else
-                @foreach ($connectedCourseModels as $course)
-                    <div class="flex items-center justify-between">
+        @if (!$connectedCourses)
+            <div class="text-center p-4 sm:px-6 sm:py-4">
+                <p class="text-lg font-bold text-gray-400">
+                    No connected courses found
+                </p>
+            </div>
+        @else
+            @foreach ($connectedCourseModels as $course)
+                    <div class="flex items-center justify-between p-4 sm:px-6">
                         <div class="flex items-center space-x-6">
                             <div class="flex items-center space-x-4">
                                 <x-canvas-button :href="'/courses/' . $course->id" class="h-9 w-9" />
@@ -63,7 +62,8 @@
                         </div>
                         <div>
                             <x-button secondary class="min-w-24"
-                                      :href="route('course.edit', [$master->id, $course->id])" wire:navigate>
+                                      :href="route('course.edit', [$master->id, $course->id])"
+                                      wire:navigate>
                                 <div class="group flex items-center space-x-2">
                                     <div>Manage</div>
                                     <div>
@@ -74,11 +74,10 @@
                             </x-button>
                         </div>
                     </div>
-                    @if (!$loop->last)
-                        <hr />
-                    @endif
-                @endforeach
-            @endif
-        </div>
+                @if (!$loop->last)
+                    <hr />
+                @endif
+            @endforeach
+        @endif
     </div>
 </div>
