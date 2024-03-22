@@ -1,16 +1,15 @@
 <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
-    <div class="flex min-h-10 items-center justify-between space-x-4">
+    <div class="flex min-h-10 items-center justify-between gap-4 flex-wrap">
         <div class="text-lg font-bold">
             Specification Grading
         </div>
-        <div class="flex flex-wrap items-center gap-4">
+        <div class="flex items-center space-x-4">
             <div class="w-28">
                 <x-select :searchable="false" :clearable="false" :options="['OFF', '65%', '70%', '75%', '80%', '85%', '90%', '95%']"
                     wire:model="specification_grading_threshold" />
             </div>
-
-            <x-button disabled positive spinner class="min-w-28 bg-slate-300 hover:bg-slate-300"
-                wire:dirty.attr.remove="disabled" wire:dirty.class.remove="bg-slate-300 hover:bg-slate-300"
+            <x-button disabled positive spinner class="min-w-28"
+                wire:dirty.attr.remove="disabled"
                 wire:click="openModal">
                 Save
             </x-button>
@@ -32,7 +31,7 @@
                     </div>
                     <x-slot name="footer">
                         <div class="flex justify-between">
-                            <x-button flat label="Cancel" x-on:click="close" />
+                            <x-button flat label="Cancel" wire:click="closeModal" />
                             <x-button warning spinner label="Confirm" wire:click="updateSpecificationGrading" />
                         </div>
                     </x-slot>

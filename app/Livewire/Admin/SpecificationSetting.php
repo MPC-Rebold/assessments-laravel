@@ -42,6 +42,13 @@ class SpecificationSetting extends Component
         $this->modalOpen = true;
     }
 
+    public function closeModal(): void
+    {
+        $this->modalOpen = false;
+        $this->mount($this->course);
+        $this->render();
+    }
+
     public function updateSpecificationGrading(): void
     {
         $specification_grading = $this->specification_grading_threshold !== 'OFF';

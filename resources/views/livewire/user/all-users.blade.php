@@ -100,12 +100,12 @@ new class extends Component {
                 @foreach ($notEnrolledStudents as $notEnrolledStudent)
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
-                            <x-badge.circle warning icon="exclamation" class="animate-pulse" />
+                            <x-badge.circle secondary icon="ban" class="animate-pulse" />
                             <div class="[overflow-wrap:anywhere] md:w-72">
                                 {{ $notEnrolledStudent }}
                             </div>
-                            <div class="hidden text-warning-500 md:flex">
-                                Not Connected
+                            <div class="hidden text-gray-500 md:flex">
+                                - Not Connected -
                             </div>
                         </div>
                     </div>

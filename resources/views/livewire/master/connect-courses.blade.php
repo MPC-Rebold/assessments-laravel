@@ -4,7 +4,8 @@
             <livewire:master.status-no-seed :master="$master" />
         @endif
         @if (in_array('Warning', $statusStrings))
-            <livewire:master.status-warning :missingCourses="$missingCourses" :missingAssessments="$missingAssessments" />
+            <livewire:master.status-warning :missingCourses="$missingCourses"
+                                            :missingAssessments="$missingAssessments" />
         @endif
         @if (in_array('Disconnected', $statusStrings))
             <livewire:master.status-disconnected />
@@ -24,11 +25,13 @@
                     </h2>
                     <div class="flex w-full items-center justify-between gap-4 md:justify-end">
                         <x-select multiselect searchable class="max-w-md" wire:model="connectedCourses"
-                            placeholder="No connected courses" :options="$availableCourses" empty-message="No available courses" />
+                                  placeholder="No connected courses" :options="$availableCourses"
+                                  empty-message="No available courses" />
 
                         <x-button disabled positive spinner class="min-w-24 bg-slate-300 hover:bg-slate-300"
-                            wire:dirty.attr.remove="disabled" wire:dirty.class.remove="bg-slate-300 hover:bg-slate-300"
-                            wire:click="saveConnectedCourses">
+                                  wire:dirty.attr.remove="disabled"
+                                  wire:dirty.class.remove="bg-slate-300 hover:bg-slate-300"
+                                  wire:click="saveConnectedCourses">
                             Save
                         </x-button>
                     </div>
@@ -47,8 +50,11 @@
                 @foreach ($connectedCourseModels as $course)
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-6">
-                            <div class="text-lg">
-                                {{ $course->title }}
+                            <div class="flex items-center space-x-4">
+                                <x-canvas-button :href="'/courses/' . $course->id" class="h-9 w-9" />
+                                <div class="text-lg">
+                                    {{ $course->title }}
+                                </div>
                             </div>
                             <div class="hidden text-gray-500 sm:flex">
                                 Specification Grading:
@@ -56,12 +62,13 @@
                             </div>
                         </div>
                         <div>
-                            <x-button secondary class="min-w-24" :href="route('course.edit', [$master->id, $course->id])" wire:navigate>
+                            <x-button secondary class="min-w-24"
+                                      :href="route('course.edit', [$master->id, $course->id])" wire:navigate>
                                 <div class="group flex items-center space-x-2">
                                     <div>Manage</div>
                                     <div>
                                         <x-icon name="chevron-right"
-                                            class="h-4 w-4 transition-all ease-in-out group-hover:translate-x-1" />
+                                                class="h-4 w-4 transition-all ease-in-out group-hover:translate-x-1" />
                                     </div>
                                 </div>
                             </x-button>
