@@ -47,6 +47,7 @@ class Sync extends Component
         ]);
 
         try {
+            $this->validateCanvasKey();
             $this->createMasters();
             $this->checkMasterSeeds();
             $this->syncCourses();
@@ -262,6 +263,18 @@ class Sync extends Component
                     ]
                 );
             }
+        }
+    }
+
+    /**
+     * Check if the Canvas API Key is valid
+     *
+     * @throws Exception if the Canvas API Key is invalid
+     */
+    private function validateCanvasKey(): void
+    {
+        if (CanvasService::getSelf()->status() === 401) {
+            throw new Exception('Invalid Canvas API Key');
         }
     }
 
