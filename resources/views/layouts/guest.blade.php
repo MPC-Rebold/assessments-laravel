@@ -36,7 +36,7 @@
             </a>
         </div>
         <div class="text-sm">
-            &copy; 2024 Tom Rebold, Angel Vasquez, Andrew Wang
+            &copy; 2024 Tom Rebold, Angel Vazquez, Andrew Wang
         </div>
     </div>
 </body>
