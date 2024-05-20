@@ -107,7 +107,7 @@ class Sync extends Component
 
     public function syncCourses(): void
     {
-        $canvasCourses = CanvasService::getCourses()->json();
+        $canvasCourses = CanvasService::getCourses();
 
         $this->pruneCourses($canvasCourses);
 
@@ -182,8 +182,8 @@ class Sync extends Component
                 if ($course->marked_for_deletion === null) {
                     $course->update(['marked_for_deletion' => Carbon::now()]);
                 } else {
-                    // if the course has been marked for deletion for more than 180 days, delete it
-                    if (Carbon::parse($course->marked_for_deletion)->diffInDays(Carbon::now()) > 180) {
+                    // if the course has been marked for deletion for more than 360 days, delete it
+                    if (Carbon::parse($course->marked_for_deletion)->diffInDays(Carbon::now()) > 360) {
                         $course->delete();
                     }
                 }

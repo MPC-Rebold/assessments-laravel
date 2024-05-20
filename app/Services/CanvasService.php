@@ -86,13 +86,18 @@ class CanvasService
     }
 
     /**
-     * Get all the courses from Canvas where the user is a teacher
+     * Get all the courses from Canvas where the user is a teacher and the course is a favorite
      *
-     * @return Response
+     * @return array
      */
-    public static function getCourses(): Response
+    public static function getCourses(): array
     {
-        return self::get('courses', ['enrollment_type' => 'teacher']);
+        $teacherCourses = self::get(
+            'courses',
+            ['enrollment_type' => 'teacher', 'include[]' => 'favorites']
+        );
+
+        return array_filter($teacherCourses->json(), (fn ($course) => $course['is_favorite']));
     }
 
     /**

@@ -19,18 +19,18 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->call(function () {
-            Log::info('Backing up database');
+            Log::info('Schedule: Backing up database');
             SeedService::backupDatabase();
-        })->everyFifteenMinutes();
+        })->hourly();
 
         $schedule->call(function () {
-            Log::info('Syncing with Canvas');
+            Log::info('Schedule: Syncing with Canvas');
             $sync = new Sync();
             $sync->sync();
         })->everyFiveMinutes();
 
         $schedule->call(function () {
-            Log::info('Posting final grades');
+            Log::info('Schedule: Posting final grades');
             $this->postFinalGrades();
         })->dailyAt('01:00');
 
@@ -53,7 +53,7 @@ class Kernel extends ConsoleKernel
             $dueAt = Carbon::parse($assessmentCourse->due_at);
 
             // if it was due within the last day, post the final grade
-            if ($dueAt->isPast() && $dueAt->diffInDays(Carbon::now()) < 1.005) {
+            if ($dueAt->isPast() && $dueAt->diffInDays(Carbon::now()) < 1.01) {
                 $specificationSetting->regradeAssessmentCourse($assessmentCourse);
             }
         }
