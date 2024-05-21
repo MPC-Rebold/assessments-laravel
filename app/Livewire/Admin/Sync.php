@@ -83,6 +83,12 @@ class Sync extends Component
         );
     }
 
+    /**
+     * Creates the masters and their assessments
+     * Associates a status with each master
+     *
+     * @return void
+     */
     public function createMasters(): void
     {
         $masters = SeedService::getMasters();
@@ -108,8 +114,6 @@ class Sync extends Component
     public function syncCourses(): void
     {
         $canvasCourses = CanvasService::getCourses();
-
-        $this->pruneCourses($canvasCourses);
 
         foreach ($canvasCourses as $canvasCourse) {
             $validStudents = $this->getValidStudents($canvasCourse);
@@ -161,32 +165,6 @@ class Sync extends Component
                 $assessmentModel = Assessment::where('title', $assessment)->first();
                 $status = Status::where('master_id', $master->id)->first();
                 $status->missing_assessment_seeds()->attach($assessmentModel->id);
-            }
-        }
-    }
-
-    /**
-     * Removes courses that are no longer in the Canvas and are not associated with any master
-     *
-     * @param array $canvasCourses
-     * @return void
-     */
-    public function pruneCourses(array $canvasCourses): void
-    {
-        $canvasCoursesIds = array_column($canvasCourses, 'id');
-        $courses = Course::all();
-
-        foreach ($courses as $course) {
-            if (! in_array($course->id, $canvasCoursesIds) && ! $course->master) {
-                // if the course is not already marked for deletion (null), mark it for deletion
-                if ($course->marked_for_deletion === null) {
-                    $course->update(['marked_for_deletion' => Carbon::now()]);
-                } else {
-                    // if the course has been marked for deletion for more than 360 days, delete it
-                    if (Carbon::parse($course->marked_for_deletion)->diffInDays(Carbon::now()) > 360) {
-                        $course->delete();
-                    }
-                }
             }
         }
     }

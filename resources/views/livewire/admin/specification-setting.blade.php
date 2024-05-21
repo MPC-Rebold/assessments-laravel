@@ -17,7 +17,7 @@
                     <div class='rounded-lg border border-warning-600 bg-warning-50 p-4'>
                         <div class="flex items-center border-b-2 border-warning-200 pb-3">
                             <x-icon name="exclamation" class="h-6 w-6 text-warning-700" />
-                            <span class="ml-1 flex text-lg text-warning-700">
+                            <span class="ml-1 text-lg text-warning-700">
                                 You are about to change the grading option for&nbsp;<b>{{ $course->title }}</b>
                             </span>
                         </div>

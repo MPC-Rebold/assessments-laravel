@@ -24,7 +24,7 @@ new class extends Component {
             ? Carbon::parse($assessmentCourse->due_at)
                 ->tz('PST')
                 ->format('M j, g:i A T')
-            : 'N/A';
+            : 'No due date';
 
         $this->isMissing = $assessmentCourse->course->master->status->missing_assessments->contains($assessmentCourse->assessment);
     }

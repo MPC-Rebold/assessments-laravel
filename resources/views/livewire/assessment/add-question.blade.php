@@ -96,12 +96,13 @@ new class extends Component {
                 </x-slot>
 
                 <div class="px-2">
-                    <x-textarea wire:model="questionText" class="whitespace-nowrap font-mono font-bold" rows="6" />
+                    <x-textarea wire:model="questionText" class="whitespace-nowrap font-mono font-bold" rows="6"
+                        placeholder="Question" />
                 </div>
 
                 <x-slot name="footer">
                     <div class="space-y-4">
-                        <x-input wire:model="answer" class="font-mono font-bold" />
+                        <x-input wire:model="answer" class="font-mono font-bold" placeholder="Answer" />
                         <div class="flex items-center justify-between">
                             <x-button secondary icon="ban" class="h-8" wire:click="cancelAddition">
                                 Cancel
@@ -116,12 +117,12 @@ new class extends Component {
         </div>
     @else
         @if ($disabled)
-            <x-button disabled spinner class="h-8 w-full bg-white">
+            <x-button disabled spinner class="h-8 w-full">
                 <x-icon name="plus" class="h-4 w-4" />
                 Add Question
             </x-button>
         @else
-            <x-button spinner class="h-8 w-full bg-white" wire:click="addQuestion">
+            <x-button spinner class="h-8 w-full" wire:click="addQuestion">
                 <x-icon name="plus" class="h-4 w-4" />
                 Add Question
             </x-button>

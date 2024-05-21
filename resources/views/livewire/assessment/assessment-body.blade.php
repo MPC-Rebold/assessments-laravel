@@ -92,7 +92,7 @@ new class extends Component {
             <div class="flex flex-wrap items-baseline justify-between gap-2 text-nowrap">
                 <h1 class="text-2xl">{{ $assessment->title }}</h1>
                 <div class="flex items-baseline text-slate-800">
-                    Due at: {{ $dueAt ?? 'N/A' }}
+                    Due at: {{ $dueAt ?? 'No due date' }}
                 </div>
             </div>
             <hr class="border-2">
@@ -106,9 +106,7 @@ new class extends Component {
         <div class="flex flex-wrap items-center justify-between gap-2 px-2 sm:px-0">
             <div>
                 <x-canvas-button class="h-10 w-fit" :href="'/courses/' . $course->id . '/assignments/' . $assessmentCourse->assessment_canvas_id">
-                    <div class="ms-2 text-nowrap text-base font-extrabold">
-                        View On Canvas
-                    </div>
+                    View On Canvas
                 </x-canvas-button>
             </div>
             @if (!$isPastDue)
@@ -137,7 +135,7 @@ new class extends Component {
                                 ? 'bg-positive-500'
                                 : ($question->getGuessesLeft(auth()->user(), $course) === 0
                                     ? 'bg-slate-500'
-                                    : 'bg-white') }} h-3 w-full rounded-full transition-all ease-in-out hover:scale-110"
+                                    : 'bg-white') }} h-3 w-full rounded-full shadow transition-all ease-in-out hover:scale-110"
                             title="Question {{ $question->number }}"
                             x-on:click="scrollToQuestion({{ $question->number }})">
                         </button>

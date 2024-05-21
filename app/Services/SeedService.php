@@ -120,6 +120,18 @@ class SeedService
     }
 
     /**
+     * Deletes the assessment from the seed directory
+     *
+     * @param Assessment $assessment
+     * @return void
+     */
+    public static function deleteAssessment(Assessment $assessment): void
+    {
+        $assessmentPath = database_path('seed/' . $assessment->master->title . '/' . $assessment->title . '.txt');
+        unlink($assessmentPath);
+    }
+
+    /**
      * Returns the emails of all admins
      *
      * @return array

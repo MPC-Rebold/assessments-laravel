@@ -19,7 +19,6 @@ return new class extends Migration
             $table->json('valid_assessments')->default('[]');
             $table->foreignId('master_id')->nullable()->constrained()->cascadeOnDelete();
 
-            $table->dateTime('marked_for_deletion')->nullable()->default(null);
             $table->boolean('specification_grading')->default(false);
             $table->float('specification_grading_threshold')->unsigned()->default(0.80);
         });

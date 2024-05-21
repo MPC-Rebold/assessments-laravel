@@ -11,7 +11,7 @@ new class extends Component {
     public function mount(Master $master): void
     {
         $this->master = $master;
-        $this->assessments = $master->assessments;
+        $this->assessments = $master->assessments->sortBy('title');
     }
 }; ?>
 
