@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
+/**
+ * See https://canvas.instructure.com/doc/api/
+ */
 class CanvasService
 {
     private static string $apiToken;
@@ -88,7 +91,7 @@ class CanvasService
     /**
      * Get all the courses from Canvas where the user is a teacher and the course is a favorite
      *
-     * @return array
+     * @return array of Canvas courses
      */
     public static function getCourses(): array
     {

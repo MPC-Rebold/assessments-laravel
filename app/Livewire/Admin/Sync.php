@@ -111,6 +111,12 @@ class Sync extends Component
         }
     }
 
+    /**
+     * Synchronizes the local courses with Canvas courses
+     * Checks statuses for missing courses and assessments
+     *
+     * @return void
+     */
     public function syncCourses(): void
     {
         $canvasCourses = CanvasService::getCourses();
@@ -132,6 +138,12 @@ class Sync extends Component
         $this->checkMastersCourses($canvasCourses);
     }
 
+    /**
+     * Checks whether the masters have all of their seeds
+     * Assigns missing seeds to a master's status
+     *
+     * @return void
+     */
     public function checkMasterSeeds(): void
     {
         $masters = SeedService::getMasters();
@@ -152,6 +164,12 @@ class Sync extends Component
         $this->checkAssessmentSeeds();
     }
 
+    /**
+     * Checks whether the masters have all of their connected assessments in its seed
+     * Assigns missing assessments to a master's status
+     *
+     * @return void
+     */
     public function checkAssessmentSeeds(): void
     {
         $masters = Master::all();
@@ -169,6 +187,13 @@ class Sync extends Component
         }
     }
 
+    /**
+     * Checks whether the masters have all of their connected courses in Canvas
+     * Assigns missing courses to a master's status
+     *
+     * @param array $courses the Canvas course objects
+     * @return void
+     */
     public function checkMastersCourses(array $courses): void
     {
         $masters = Master::all();
@@ -186,7 +211,13 @@ class Sync extends Component
         }
     }
 
-    private function getValidStudents($course): array
+    /**
+     * Returns the valid students for a Canvas course
+     *
+     * @param array $course the Canvas course object
+     * @return array of valid students on the Canvas course
+     */
+    private function getValidStudents(array $course): array
     {
         $enrolled = CanvasService::getCourseEnrollments($course['id'])->json();
         $validStudents = [];
@@ -202,7 +233,13 @@ class Sync extends Component
         return $validStudents;
     }
 
-    private function getValidAssessments($course): array
+    /**
+     * Returns the valid assessments for a Canvas course
+     *
+     * @param array $course the Canvas course object
+     * @return array of valid assessments on the Canvas course
+     */
+    private function getValidAssessments(array $course): array
     {
         $validAssessments = [];
         $canvasAssignments = CanvasService::getCourseAssignments($course['id'])->json();
@@ -256,6 +293,11 @@ class Sync extends Component
         }
     }
 
+    /**
+     * Synchronizes the AssessmentCourses with their associated Canvas courses
+     *
+     * @return void
+     */
     public function syncAssessmentCourses(): void
     {
         $masters = Master::all();
@@ -299,6 +341,11 @@ class Sync extends Component
         }
     }
 
+    /**
+     * Connects the users to their enrolled courses
+     *
+     * @return void
+     */
     public function connectUserCourses(): void
     {
         $users = User::all();
@@ -311,10 +358,13 @@ class Sync extends Component
     public function mount(): void
     {
         $this->masterCourses = Master::all();
+        $this->progress = $this->progress ?? 0;
     }
 
     public function render(): View
     {
+        $this->progress += 1;
+
         return view('livewire.admin.sync');
     }
 }
