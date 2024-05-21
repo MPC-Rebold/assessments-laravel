@@ -20,20 +20,21 @@ new class extends Component {
 }; ?>
 
 <div class="flex flex-row items-center">
-    <div class="min-w-16 basis-1/12 space-y-4">
+    <div class="flex basis-2/12 items-center space-x-2">
         @if (in_array('NoSeed', $statusStrings))
-            <x-button.circle negative icon="exclamation" class="animate-pulse" :href="route('master.edit', $masterCourse->id)" wire:navigate />
+            <x-icon negative name="exclamation" class="h-6 w-6 text-negative-500" />
         @elseif(in_array('Warning', $statusStrings))
-            <x-button.circle warning icon="exclamation" class="animate-pulse" :href="route('master.edit', $masterCourse->id)" wire:navigate />
+            <x-icon warning name="exclamation" class="h-6 w-6 text-warning-500" />
         @elseif (in_array('Disconnected', $statusStrings))
-            <x-button.circle slate icon="ban" :href="route('master.edit', $masterCourse->id)" wire:navigate />
+            <x-icon secondary name="ban" class="h-6 w-6 text-secondary-500" />
         @elseif (in_array('Okay', $statusStrings))
-            <x-button.circle positive icon="check" :href="route('master.edit', $masterCourse->id)" wire:navigate />
+            <x-icon positive name="check" class="h-6 w-6 text-positive-500" />
         @endif
+        <div class="min-w-24 basis-2/12">
+            {{ $masterCourse->title }}
+        </div>
     </div>
-    <div class="min-w-24 basis-2/12">
-        {{ $masterCourse->title }}
-    </div>
+
     <div class="invisible grow overflow-hidden text-ellipsis text-nowrap pe-4 text-gray-500 sm:visible sm:flex">
         @if (in_array('NoSeed', $statusStrings))
             <div class="text-red-500">

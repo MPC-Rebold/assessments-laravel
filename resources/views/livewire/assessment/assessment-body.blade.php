@@ -105,8 +105,7 @@ new class extends Component {
 
         <div class="flex flex-wrap items-center justify-between gap-2 px-2 sm:px-0">
             <div>
-                <x-canvas-button class="h-10 w-fit"
-                                 :href="'/courses/' . $course->id . '/assignments/' . $assessmentCourse->assessment_canvas_id">
+                <x-canvas-button class="h-10 w-fit" :href="'/courses/' . $course->id . '/assignments/' . $assessmentCourse->assessment_canvas_id">
                     <div class="ms-2 text-nowrap text-base font-extrabold">
                         View On Canvas
                     </div>
@@ -128,16 +127,18 @@ new class extends Component {
             <div class="flex items-center justify-between pl-2">
                 <div class="h-3 w-full rounded-full bg-white md:hidden">
                     <div class="h-3 rounded-full bg-positive-500 transition-all ease-out"
-                         style="width: {{ $percentage }}%">
+                        style="width: {{ $percentage }}%">
                     </div>
                 </div>
-                <div class="gap-3 items-center w-full hidden md:flex">
-                    @foreach($questions as $question)
+                <div class="hidden w-full items-center gap-3 md:flex">
+                    @foreach ($questions as $question)
                         <button
-                            class="h-3 w-full rounded-full hover:scale-110 transition-all ease-in-out
-                            {{ $question->isCorrect(auth()->user(), $course) ?
-                            'bg-positive-500' : ($question->getGuessesLeft(auth()->user(), $course) === 0 ? 'bg-slate-500' :
-                            'bg-white') }}" title="Question {{ $question->number }}"
+                            class="{{ $question->isCorrect(auth()->user(), $course)
+                                ? 'bg-positive-500'
+                                : ($question->getGuessesLeft(auth()->user(), $course) === 0
+                                    ? 'bg-slate-500'
+                                    : 'bg-white') }} h-3 w-full rounded-full transition-all ease-in-out hover:scale-110"
+                            title="Question {{ $question->number }}"
                             x-on:click="scrollToQuestion({{ $question->number }})">
                         </button>
                     @endforeach
@@ -147,11 +148,14 @@ new class extends Component {
                         const question = document.getElementById('question_' + questionNumber);
                         const navbarHeight = document.querySelector('nav').offsetHeight;
                         const y = question.getBoundingClientRect().top + window.scrollY - navbarHeight - 20;
-                        window.scrollTo({ top: y, behavior: 'smooth' });
+                        window.scrollTo({
+                            top: y,
+                            behavior: 'smooth'
+                        });
                     }
                 </script>
                 <button class="ml-4 min-w-20 text-xl font-extrabold transition-all ease-in-out hover:scale-110"
-                        x-data="{ percentage: false }" @click="percentage = ! percentage">
+                    x-data="{ percentage: false }" @click="percentage = ! percentage">
                     <div :class="{ 'hidden': !percentage }">
                         {{ $percentage }}%
                     </div>

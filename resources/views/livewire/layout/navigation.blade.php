@@ -48,28 +48,23 @@ new class extends Component {
                     </x-nav-link>
                 </div>
 
-                <div x-data="{ coursesOpen: false }" @click="coursesOpen = !coursesOpen"
-                     @click.outside="coursesOpen = false"
-                     class="hidden h-full space-x-8 sm:ms-6 sm:flex">
+                <div x-data="{ coursesOpen: false }" @click="coursesOpen = !coursesOpen" @click.outside="coursesOpen = false"
+                    class="hidden h-full space-x-8 sm:ms-6 sm:flex">
                     <x-dropdown align="left">
                         <x-slot name="trigger" class="h-full">
                             <div class="h-full">
-                                <x-nav-link
-                                    :active="request()->routeIs('course.index', 'course.show', 'assessment.show')"
-                                    class="group h-full">
+                                <x-nav-link :active="request()->routeIs('course.index', 'course.show', 'assessment.show')" class="group h-full">
                                     {{ __('Courses') }}
                                     <div :class="{ 'rotate-180': coursesOpen }" class="transition-all ease-in-out">
                                         <x-icon name="chevron-down"
-                                                class="h-5 w-5 transition-all ease-in-out group-hover:scale-125"
-                                                solid />
+                                            class="h-5 w-5 transition-all ease-in-out group-hover:scale-125" solid />
                                     </div>
                                 </x-nav-link>
                             </div>
                         </x-slot>
                         @if (count($courses) > 0)
                             @for ($i = 0; $i < count($courses); $i++)
-                                <x-dropdown.item class="group" :separator="(bool) $i" :href="$courses[$i]['href']"
-                                                 wire:navigate>
+                                <x-dropdown.item class="group" :separator="(bool) $i" :href="$courses[$i]['href']" wire:navigate>
                                     <div class="text-lg font-bold">
                                         {{ $courses[$i]['title'] }}
                                     </div>
@@ -89,9 +84,8 @@ new class extends Component {
 
                 @if (auth()->user()->is_admin)
                     <div class="hidden h-full space-x-8 sm:-my-px sm:ms-6 sm:flex">
-                        <x-nav-link :href="route('admin')" :active="request()->segment(1) == 'admin'" wire:navigate
-                                    class="text-red-500"
-                                    :style="'danger'">
+                        <x-nav-link :href="route('admin')" :active="request()->segment(1) == 'admin'" wire:navigate class="text-red-500"
+                            :style="'danger'">
                             {{ __('ADMIN') }}
                         </x-nav-link>
                     </div>
@@ -99,9 +93,8 @@ new class extends Component {
             </div>
 
             <!-- Settings Dropdown -->
-            <div x-data="{ profileOpen: false }" @click="profileOpen = ! profileOpen"
-                 @click.outside="profileOpen = false"
-                 class="hidden sm:ms-6 sm:flex sm:items-center">
+            <div x-data="{ profileOpen: false }" @click="profileOpen = ! profileOpen" @click.outside="profileOpen = false"
+                class="hidden sm:ms-6 sm:flex sm:items-center">
                 <x-dropdown align="right" class="w-48">
                     <x-slot name="trigger">
                         <button
@@ -111,7 +104,7 @@ new class extends Component {
                             <x-avatar sm :src="auth()->user()->avatar" class="ml-2" />
                             <div :class="{ 'rotate-180': profileOpen }" class="ms-1 transition-all ease-in-out">
                                 <x-icon name="chevron-down"
-                                        class="h-5 w-5 transition-all ease-in-out group-hover:scale-125" solid />
+                                    class="h-5 w-5 transition-all ease-in-out group-hover:scale-125" solid />
                             </div>
                         </button>
                     </x-slot>
@@ -136,7 +129,7 @@ new class extends Component {
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
-                        class="inline-flex items-center justify-center rounded-md p-2 text-slate-200 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none">
+                    class="inline-flex items-center justify-center rounded-md p-2 text-slate-200 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none">
                     <div :class="{ 'hidden': open, 'inline-flex': !open }">
                         <x-icon name="menu" class="h-6" solid />
                     </div>
@@ -157,16 +150,13 @@ new class extends Component {
         </div>
         <!-- Courses -->
         <div class="space-y-1 pb-3 pt-2">
-            <x-responsive-nav-link :href="route('course.index')"
-                                   :active="request()->routeIs('course.index', 'course.show', 'assessment.show')"
-                                   wire:navigate>
+            <x-responsive-nav-link :href="route('course.index')" :active="request()->routeIs('course.index', 'course.show', 'assessment.show')" wire:navigate>
                 {{ __('Courses') }}
             </x-responsive-nav-link>
         </div>
         @if (auth()->user()->is_admin)
             <div class="space-y-1 pb-3 pt-2">
-                <x-responsive-nav-link :href="route('admin')" :active="request()->segment(1) == 'admin'" wire:navigate
-                                       :style="'danger'">
+                <x-responsive-nav-link :href="route('admin')" :active="request()->segment(1) == 'admin'" wire:navigate :style="'danger'">
                     {{ __('ADMIN') }}
                 </x-responsive-nav-link>
             </div>
@@ -174,8 +164,7 @@ new class extends Component {
         <!-- Responsive Settings Options -->
         <div class="border-t border-gray-200 pb-1 pt-4">
             <div class="px-4">
-                <div class="text-base font-medium text-gray-200"
-                     x-data="{{ json_encode(['name' => auth()->user()->name]) }}"></div>
+                <div class="text-base font-medium text-gray-200" x-data="{{ json_encode(['name' => auth()->user()->name]) }}"></div>
                 <div class="text-sm font-medium text-gray-400">{{ auth()->user()->email }}</div>
             </div>
             <div class="mt-3 space-y-1">

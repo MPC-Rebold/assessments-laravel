@@ -100,11 +100,10 @@ new class extends Component {
     <x-card>
         <x-slot name="header">
             <div
-                class="flex items-center justify-between border-b border-gray-300 px-4 py-2 font-bold text-slate-800 rounded-t-md
-                {{ $isCorrect ? 'bg-positive-50' : ($guessesLeft === 0 ? 'bg-gray-300' : '')}}">
+                class="{{ $isCorrect ? 'bg-positive-50' : ($guessesLeft === 0 ? 'bg-gray-300' : '') }} flex items-center justify-between rounded-t-md border-b border-gray-300 px-4 py-2 font-bold text-slate-800">
                 <div id="question_{{ $question->number }}">Question {{ $question->number }}</div>
                 @if ($isCorrect)
-                    <x-icon class="text-positive-500 h-6 w-6" name="check" solid />
+                    <x-icon class="h-6 w-6 text-positive-500" name="check" solid />
                 @endif
             </div>
         </x-slot>
@@ -118,8 +117,8 @@ new class extends Component {
             <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <div class="grow">
                     <x-input class="w-full font-mono sm:text-base" spellcheck="false" onpaste="return false;"
-                             oncopy="return false;" ondrop="return false;" oncut="return false;" autocomplete="off"
-                             maxlength="{{ $maxAnswerLength }}" wire:model.defer="answer" placeholder="Answer" />
+                        oncopy="return false;" ondrop="return false;" oncut="return false;" autocomplete="off"
+                        maxlength="{{ $maxAnswerLength }}" wire:model.defer="answer" placeholder="Answer" />
                 </div>
 
                 <div class="flex w-full flex-nowrap items-center justify-between space-x-4 md:w-auto">
@@ -143,9 +142,8 @@ new class extends Component {
                                     Submit
                                 </div>
                                 <x-icon class="invisible -me-3 h-5 w-5 scale-0 transition-all ease-in-out"
-                                        wire:dirty.class="group-hover:visible group-hover:scale-100"
-                                        name="chevron-right"
-                                        solid />
+                                    wire:dirty.class="group-hover:visible group-hover:scale-100" name="chevron-right"
+                                    solid />
                             </x-button>
                         @else
                             <x-button secondary disabled class="min-w-28">

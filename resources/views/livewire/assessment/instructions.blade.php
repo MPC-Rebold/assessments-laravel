@@ -54,9 +54,8 @@ new class extends Component {
                     <div class="flex flex-wrap items-center">
                         <div> To upload your grade to Canvas press
                         </div>
-                        <div
-                            class="mx-1 w-fit min-w-fit overflow-auto text-nowrap rounded-md bg-positive-500 px-2 py-1 text-white"
-                        x-on:click="document.getElementById('submit_to_canvas').scrollIntoView({behavior: 'smooth'})">
+                        <div class="mx-1 w-fit min-w-fit overflow-auto text-nowrap rounded-md bg-positive-500 px-2 py-1 text-white"
+                            x-on:click="document.getElementById('submit_to_canvas').scrollIntoView({behavior: 'smooth'})">
                             Submit to Canvas
                         </div>
                         <div>

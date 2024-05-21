@@ -74,7 +74,7 @@ new class extends Component {
             @foreach ($notEnrolledStudents as $notEnrolledStudent)
                 <div class="flex items-center justify-between px-4 py-3 sm:px-6">
                     <div class="flex items-center space-x-2">
-                        <x-badge.circle secondary icon="ban" class="animate-pulse" />
+                        <x-badge.circle secondary icon="ban" />
                         <div>
                             {{ $notEnrolledStudent }}
                         </div>

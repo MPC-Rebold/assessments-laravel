@@ -2,7 +2,7 @@
 
 <x-button outline orange {{ $attributes->merge(['class' => '!px-0 !py-0']) }} href="{{ config('canvas.host') . $href }}"
     target="_blank" title="View on Canvas">
-    <div class="flex w-full justify-center px-4 py-2">
+    <div class="flex w-full justify-center">
         <div class="flex items-center justify-center">
             <svg fill="#d73e33" class="h-6 w-6" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
                 <path
