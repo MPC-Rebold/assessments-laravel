@@ -108,14 +108,14 @@ new class extends Component {
                 <x-canvas-button class="h-10 w-fit"
                                  :href="'/courses/' . $course->id . '/assignments/' . $assessmentCourse->assessment_canvas_id">
                     <div class="ms-2 text-nowrap text-base font-extrabold">
-                        Canvas
+                        View On Canvas
                     </div>
                 </x-canvas-button>
             </div>
             @if (!$isPastDue)
                 <div>
                     <x-button positive spinner class="min-w-48" wire:click="submitToCanvas">
-                        <p class="text-base">
+                        <p class="text-base" id="submit_to_canvas">
                             Submit to Canvas
                         </p>
                     </x-button>

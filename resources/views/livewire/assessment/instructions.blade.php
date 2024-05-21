@@ -28,9 +28,9 @@ new class extends Component {
                 <li>You have ten (10) guesses for each question</li>
                 <li>Feedback for your answer will be given after each attempt</li>
                 <ul class="list-disc pl-1 sm:list-inside">
-                    <li>Correct letters will be green</li>
-                    <li>Incorrect letters will have a strikethrough</li>
-                    <li>Missing letters will be underscores</li>
+                    <li>Correct characters will be green</li>
+                    <li>Additional incorrect characters will have a strikethrough</li>
+                    <li>Missing characters will be marked as underscores</li>
                     <li>
                         Example: if the correct answer is <b>example</b>
                         and you entered <b>exa123pl</b>
@@ -55,7 +55,8 @@ new class extends Component {
                         <div> To upload your grade to Canvas press
                         </div>
                         <div
-                            class="mx-1 w-fit min-w-fit overflow-auto text-nowrap rounded-md bg-positive-500 px-2 py-1 text-white">
+                            class="mx-1 w-fit min-w-fit overflow-auto text-nowrap rounded-md bg-positive-500 px-2 py-1 text-white"
+                        x-on:click="document.getElementById('submit_to_canvas').scrollIntoView({behavior: 'smooth'})">
                             Submit to Canvas
                         </div>
                         <div>

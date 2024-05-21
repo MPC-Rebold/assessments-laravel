@@ -97,17 +97,13 @@ class SpecificationSetting extends Component
                 continue;
             }
 
-            if ($assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast()) {
-                continue;
-            }
-
             $this->regradeAssessmentCourse($assessmentCourse, false);
         }
     }
 
     public function regradeAssessmentCourse(AssessmentCourse $assessmentCourse, bool $regradePastDue = true): void
     {
-        if ($assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast() && ! $regradePastDue) {
+        if (! $regradePastDue && $assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast()) {
             return;
         }
 
