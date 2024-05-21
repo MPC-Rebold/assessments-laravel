@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Livewire\Attributes\On;
 use WireUi\Traits\Actions;
 use App\Services\CanvasService;
+use Illuminate\Http\Client\Response;
 
 new class extends Component {
     use Actions;
@@ -69,7 +70,6 @@ new class extends Component {
             $this->notification()->error('Failed to submit to Canvas', $e->getMessage());
             return;
         }
-        $this->notification()->success('Submitted to Canvas', 'Grade: ' . $gradeResponse->json('grade'));
     }
 };
 
@@ -105,7 +105,8 @@ new class extends Component {
 
         <div class="flex flex-wrap items-center justify-between gap-2 px-2 sm:px-0">
             <div>
-                <x-canvas-button class="h-10 w-fit" :href="'/courses/' . $course->id . '/assignments/' . $assessmentCourse->assessment_canvas_id">
+                <x-canvas-button class="h-10 w-fit"
+                                 :href="'/courses/' . $course->id . '/assignments/' . $assessmentCourse->assessment_canvas_id">
                     <div class="ms-2 text-nowrap text-base font-extrabold">
                         Canvas
                     </div>
@@ -125,13 +126,32 @@ new class extends Component {
     @if (!$isPastDue)
         <footer class="fixed bottom-0 mx-auto w-full bg-slate-300 px-4 py-0.5 shadow-inner sm:px-6 lg:px-8">
             <div class="flex items-center justify-between pl-2">
-                <div class="h-2.5 w-full rounded-full bg-white">
-                    <div class="h-2.5 rounded-full bg-positive-500 transition-all ease-out"
-                        style="width: {{ $percentage }}%">
+                <div class="h-3 w-full rounded-full bg-white md:hidden">
+                    <div class="h-3 rounded-full bg-positive-500 transition-all ease-out"
+                         style="width: {{ $percentage }}%">
                     </div>
                 </div>
-                <button class="ml-4 min-w-20 text-xl font-extrabold transition-all ease-in-out hover:scale-125"
-                    x-data="{ percentage: false }" @click="percentage = ! percentage">
+                <div class="gap-3 items-center w-full hidden md:flex">
+                    @foreach($questions as $question)
+                        <button
+                            class="h-3 w-full rounded-full hover:scale-110 transition-all ease-in-out
+                            {{ $question->isCorrect(auth()->user(), $course) ?
+                            'bg-positive-500' : ($question->getGuessesLeft(auth()->user(), $course) === 0 ? 'bg-slate-500' :
+                            'bg-white') }}" title="Question {{ $question->number }}"
+                            x-on:click="scrollToQuestion({{ $question->number }})">
+                        </button>
+                    @endforeach
+                </div>
+                <script>
+                    function scrollToQuestion(questionNumber) {
+                        const question = document.getElementById('question_' + questionNumber);
+                        const navbarHeight = document.querySelector('nav').offsetHeight;
+                        const y = question.getBoundingClientRect().top + window.scrollY - navbarHeight - 20;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+                </script>
+                <button class="ml-4 min-w-20 text-xl font-extrabold transition-all ease-in-out hover:scale-110"
+                        x-data="{ percentage: false }" @click="percentage = ! percentage">
                     <div :class="{ 'hidden': !percentage }">
                         {{ $percentage }}%
                     </div>
@@ -140,7 +160,6 @@ new class extends Component {
                     </div>
                 </button>
             </div>
-
         </footer>
     @else
         <footer class="fixed bottom-0 mx-auto w-full bg-positive-500 px-4 py-0 shadow-inner sm:px-6 lg:px-8">
