@@ -159,10 +159,10 @@ new class extends Component {
                                     <div class="text-negative-500">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <!-- Progress Bar -->
-                            <div x-show="uploading" class="w-full">
-                                <progress max="100" x-bind:value="progress"></progress>
-                            </div>
+{{--                            <!-- Progress Bar -->--}}
+{{--                            <div x-show="uploading" class="w-full">--}}
+{{--                                <progress max="100" x-bind:value="progress"></progress>--}}
+{{--                            </div>--}}
 
                         </div>
                         <x-button positive type="submit" class="min-w-20">Submit</x-button>
