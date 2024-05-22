@@ -20,14 +20,6 @@ new class extends Component {
         $this->apiKeyValid = $canvasSelf->status() !== 401;
         $this->apiKeyName = $canvasSelf->json()['name'];
         $this->activeCourses = CanvasService::getCourses();
-        // add random entries to $this->activeCourses
-        for ($i = 0; $i < 50; $i++) {
-            $this->activeCourses[] = [
-                'id' => $i,
-                'name' => 'Course ' . $i,
-            ];
-        }
-
         $this->activeCoursesModalOpen = false;
     }
 
