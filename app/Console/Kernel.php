@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use App\Livewire\Admin\SpecificationSetting;
 use App\Livewire\Admin\Sync;
 use App\Models\AssessmentCourse;
 use App\Services\CanvasService;

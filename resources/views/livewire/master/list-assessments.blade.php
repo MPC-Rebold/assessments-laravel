@@ -49,7 +49,7 @@ new class extends Component {
             Assessment::where('master_id', $this->master->id)
                 ->whereIn('title', $this->conflictingNames)
                 ->delete();
-        } else if (!empty($this->conflictingNames)) {
+        } elseif (!empty($this->conflictingNames)) {
             $this->forceModalOpen = true;
             DB::rollBack();
             return;
@@ -65,7 +65,7 @@ new class extends Component {
                 rmdir(storage_path("app/uploads/$master"));
             }
         } catch (Exception $e) {
-            $this->notification()->error("Failed to upload assessment", $e->getMessage());
+            $this->notification()->error('Failed to upload assessment', $e->getMessage());
             return;
             DB::rollBack();
         }
@@ -82,13 +82,13 @@ new class extends Component {
                 $canvasService->regradeAssessmentCourses($assessmentCourses);
             }
         } catch (Exception $e) {
-            $this->notification()->error("Failed to sync new assessments", $e->getMessage());
+            $this->notification()->error('Failed to sync new assessments', $e->getMessage());
             return;
         }
 
         $this->dispatch('refresh');
         $this->mount($this->master);
-        $this->notification()->success("Assessment uploaded successfully", implode($uploadedNames) . " uploaded to $master");
+        $this->notification()->success('Assessment uploaded successfully', implode($uploadedNames) . " uploaded to $master");
         $this->showUpload = false;
     }
 }; ?>
@@ -129,36 +129,35 @@ new class extends Component {
                 <hr class="mx-4 sm:mx-6">
             @endforeach
         @endif
-        <div class="p-4 sm:px-6 w-full" x-data="{open: @entangle('showUpload')}">
+        <div class="w-full p-4 sm:px-6" x-data="{ open: @entangle('showUpload') }">
             <div @click="open = true" :class="open ? 'hidden' : 'block'">
                 <x-button icon="plus" class="w-full">
                     Add Assessments
                 </x-button>
             </div>
             <div class="overflow-hidden transition-all duration-500"
-                 :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
+                :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
 
-                {{--                <form action="{{ route('assessment.upload') }}" method="POST" enctype="multipart/form-data">--}}
+                {{--                <form action="{{ route('assessment.upload') }}" method="POST" enctype="multipart/form-data"> --}}
                 <form wire:submit="save">
                     @csrf
 
                     <div class="flex items-center justify-between">
-                        <div
-                            x-data="{ uploading: false, progress: 0 }"
-                            x-on:livewire-upload-start="uploading = true"
+                        <div x-data="{ uploading: false, progress: 0 }" x-on:livewire-upload-start="uploading = true"
                             x-on:livewire-upload-finish="uploading = false"
                             x-on:livewire-upload-cancel="uploading = false"
                             x-on:livewire-upload-error="uploading = false"
-                            x-on:livewire-upload-progress="progress = $event.detail.progress;"
-                        >
+                            x-on:livewire-upload-progress="progress = $event.detail.progress;">
                             <!-- File Input -->
-                            <div class="space-y-1 ">
+                            <div class="space-y-1">
                                 <input type="file" wire:model="uploadedAssessments" name="uploaded_assessments[]"
-                                       multiple>
+                                    multiple>
                                 @error('uploadedAssessments.*')
-                                <div class="text-negative-500">{{ $message }}</div> @enderror
+                                    <div class="text-negative-500">{{ $message }}</div>
+                                @enderror
                                 @error('uploadedAssessments')
-                                <div class="text-negative-500">{{ $message }}</div> @enderror
+                                    <div class="text-negative-500">{{ $message }}</div>
+                                @enderror
                             </div>
                             <!-- Progress Bar -->
                             <div x-show="uploading" class="w-full">
@@ -175,18 +174,19 @@ new class extends Component {
                             <div class="flex items-center border-b-2 border-warning-200 pb-3">
                                 <x-icon name="exclamation" class="h-6 w-6 text-warning-700" />
                                 <div class="ml-1 text-lg text-warning-700">
-                                    The following assessments already exist on <b>{{$master->title}}</b>
+                                    The following assessments already exist on <b>{{ $master->title }}</b>
                                 </div>
                             </div>
                             <div class="ml-5 mt-2 flex items-center justify-between pl-1">
                                 <ul class="list-disc space-y-1 text-warning-700">
                                     @foreach ($conflictingNames as $conflictingName)
-                                        <li>{{$conflictingName}}</li>
+                                        <li>{{ $conflictingName }}</li>
                                     @endforeach
                                 </ul>
                             </div>
-                            <div class="text-warning-700 mt-2">
-                                Do you want to replace them? This will delete the existing assessments and any associated grades.
+                            <div class="mt-2 text-warning-700">
+                                Do you want to replace them? This will delete the existing assessments and any
+                                associated grades.
                             </div>
                         </div>
                         <x-slot name="footer">

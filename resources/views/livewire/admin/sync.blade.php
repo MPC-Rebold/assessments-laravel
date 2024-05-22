@@ -50,25 +50,25 @@ use Carbon\Carbon;
                     <hr />
                 @endforeach
             @endif
-            <div class="w-full" x-data="{open: @entangle('showInput')}">
+            <div class="w-full" x-data="{ open: @entangle('showInput') }">
                 <div @click="open = true" :class="open ? 'hidden' : 'block'">
                     <x-button icon="plus" class="w-full">
                         Add Course
                     </x-button>
                 </div>
                 <div class="overflow-hidden transition-all duration-500"
-                     :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
+                    :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
 
                     <form wire:submit="saveNewMaster">
                         @csrf
                         <div class="flex items-center justify-between space-x-4">
                             <x-input type="text" class="w-full" wire:model="newMasterTitle" name="new_course_title"
-                                     placeholder="Title" />
+                                placeholder="Title" />
 
                             <x-button positive type="submit" class="min-w-20">Submit</x-button>
                         </div>
                         @error('newMasterTitle')
-                        <div class="text-negative-500 mt-1">{{ $message }}</div>
+                            <div class="mt-1 text-negative-500">{{ $message }}</div>
                         @enderror
                     </form>
                 </div>
