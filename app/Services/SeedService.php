@@ -184,15 +184,37 @@ class SeedService
     {
         if (! is_dir(database_path('seed/' . $title))) {
             mkdir(database_path('seed/' . $title));
-        } else {
-            if(Master::where('title', $title)->first()) {
-                throw new Exception("Course $title already exists");
-            }
+        } elseif (Master::where('title', $title)->exists()) {
+            throw new Exception("Course $title already exists");
         }
 
         $master = Master::create(['title' => $title]);
         $master->status()->create();
 
         return $master;
+    }
+
+    public static function deleteMaster(Master $master): void
+    {
+        $masterPath = database_path('seed/' . $master->title);
+        self::rmrf($masterPath);
+        $master->delete();
+    }
+
+    public static function rmrf($dir): void
+    {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != '.' && $object != '..') {
+                    if (is_dir($dir. DIRECTORY_SEPARATOR .$object) && ! is_link($dir.'/'.$object)) {
+                        self::rmrf($dir . DIRECTORY_SEPARATOR . $object);
+                    } else {
+                        unlink($dir. DIRECTORY_SEPARATOR .$object);
+                    }
+                }
+            }
+            rmdir($dir);
+        }
     }
 }

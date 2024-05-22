@@ -38,15 +38,12 @@ class Sync extends Component
         $this->validate();
 
         try {
-            DB::beginTransaction();
             SeedService::createMaster($this->newMasterTitle);
-            DB::commit();
         } catch (Exception $e) {
             $this->notification()->error(
                 'Failed to create master',
                 $e->getMessage(),
             );
-            DB::rollBack();
 
             return;
         }

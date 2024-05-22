@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use App\Models\Master;
+use App\Services\SeedService;
 
 new class extends Component {
     public Master $master;
@@ -20,7 +21,7 @@ new class extends Component {
 
     public function deleteMaster(): void
     {
-        $this->master->delete();
+        SeedService::deleteMaster($this->master);
         $this->redirect(route('admin'));
     }
 }; ?>
