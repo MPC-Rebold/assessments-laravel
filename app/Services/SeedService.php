@@ -130,6 +130,7 @@ class SeedService
     {
         $assessmentPath = database_path('seed/' . $assessment->master->title . '/' . $assessment->title . '.txt');
         unlink($assessmentPath);
+        $assessment->delete();
     }
 
     /**

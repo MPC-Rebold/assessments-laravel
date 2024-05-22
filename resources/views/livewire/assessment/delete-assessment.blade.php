@@ -12,6 +12,8 @@ new class extends Component {
 
     public bool $deleteModalOpen = false;
 
+    public string $confirmDeleteString = '';
+
     public function mount(Assessment $assessment): void
     {
         $this->assessment = $assessment;
@@ -25,13 +27,9 @@ new class extends Component {
     public function deleteAssessment(): void
     {
         try {
-            DB::beginTransaction();
-            $this->assessment->delete();
             SeedService::deleteAssessment($this->assessment);
-            DB::commit();
             $this->redirect(route('master.edit', $this->assessment->master_id));
         } catch (Exception $e) {
-            DB::rollBack();
             $this->deleteModalOpen = false;
             $this->notification()->error('Failed to delete assessment');
             return;
@@ -53,24 +51,38 @@ new class extends Component {
     </div>
     <x-modal wire:model.defer="deleteModalOpen">
         <x-card title="Delete Assessment">
-            <div class='rounded-lg border border-negative-600 bg-negative-50 p-4'>
-                <div class="flex items-center border-b-2 border-negative-200 pb-3">
-                    <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
-                    <span class="ml-1 text-lg text-negative-600">
+            <div class="space-y-2">
+                <div class='rounded-lg border border-negative-600 bg-negative-50 p-4'>
+                    <div class="flex items-center border-b-2 border-negative-200 pb-3">
+                        <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
+                        <span class="ml-1 text-lg text-negative-600">
                         You are about to delete the assessment&nbsp;<b>{{ $assessment->title }}</b>
                     </span>
+                    </div>
+                    <div class="ml-5 mt-2 flex items-center justify-between pl-1">
+                        <ul class="list-disc space-y-1 text-negative-600">
+                            <li>All associated grades will be deleted</li>
+                            <li>This action cannot be undone</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="ml-5 mt-2 flex items-center justify-between pl-1">
-                    <ul class="list-disc space-y-1 text-negative-600">
-                        <li>All associated grades will be deleted</li>
-                        <li>This action cannot be undone</li>
-                    </ul>
+                <div class="space-y-1">
+                    <div>
+                        Type <b>{{$assessment->master->title}}/{{ $assessment->title }}</b> below to confirm
+                    </div>
+                    <x-input class="font-mono font-bold"
+                             placeholder="{{$assessment->master->title}}/{{ $assessment->title }}"
+                             wire:model.live="confirmDeleteString" />
                 </div>
             </div>
             <x-slot name="footer">
                 <div class="flex justify-between">
                     <x-button flat label="Cancel" x-on:click="close" />
-                    <x-button negative spinner label="Confirm" wire:click="deleteAssessment" />
+                    <x-button spinner label="Confirm" wire:click="deleteAssessment"
+                              :disabled="$confirmDeleteString !== $assessment->master->title . '/' . $assessment->title"
+                              :secondary="$confirmDeleteString !== $assessment->master->title . '/' . $assessment->title"
+                              :negative="$confirmDeleteString === $assessment->master->title . '/' . $assessment->title"
+                    />
                 </div>
             </x-slot>
         </x-card>

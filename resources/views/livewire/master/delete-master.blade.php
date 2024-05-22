@@ -9,6 +9,8 @@ new class extends Component {
 
     public bool $deleteModalOpen = false;
 
+    public string $confirmDeleteString = '';
+
     public function mount(Master $master): void
     {
         $this->master = $master;
@@ -39,27 +41,40 @@ new class extends Component {
         </x-button>
     </div>
     <x-modal wire:model.defer="deleteModalOpen">
-        <x-card title="Delete Master Course">
-            <div class='rounded-lg border border-negative-600 bg-negative-50 p-4'>
-                <div class="flex items-center border-b-2 border-negative-200 pb-3">
-                    <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
-                    <span class="ml-1 text-lg text-negative-600">
+        <x-card title="Delete Course">
+            <div class="space-y-2">
+                <div class='rounded-lg border border-negative-600 bg-negative-50 p-4'>
+                    <div class="flex items-center border-b-2 border-negative-200 pb-3">
+                        <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
+                        <span class="ml-1 text-lg text-negative-600">
                         You are about to delete the course&nbsp;<b>{{ $master->title }}</b>
                     </span>
+                    </div>
+                    <div class="ml-5 mt-2 flex items-center justify-between pl-1">
+                        <ul class="list-disc space-y-1 text-negative-600">
+                            <li>All associated assessments will be deleted</li>
+                            <li>All associated grades will be deleted</li>
+                            <li>This will not affect Canvas</li>
+                            <li>This action cannot be undone</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="ml-5 mt-2 flex items-center justify-between pl-1">
-                    <ul class="list-disc space-y-1 text-negative-600">
-                        <li>All associated assessments will be deleted</li>
-                        <li>All associated grades will be deleted</li>
-                        <li>This will not affect Canvas</li>
-                        <li>This action cannot be undone</li>
-                    </ul>
+                <div class="space-y-1">
+                    <div>
+                        Type <b>{{ $master->title }}</b> below to confirm
+                    </div>
+                    <x-input class="font-mono font-bold" placeholder="{{ $master->title }}"
+                             wire:model.live="confirmDeleteString" />
                 </div>
             </div>
             <x-slot name="footer">
                 <div class="flex justify-between">
                     <x-button flat label="Cancel" x-on:click="close" />
-                    <x-button negative spinner label="Confirm" wire:click="deleteMaster" />
+                    <x-button spinner label="Confirm" wire:click="deleteMaster"
+                              :disabled="$confirmDeleteString !== $master->title"
+                              :secondary="$confirmDeleteString !== $master->title"
+                              :negative="$confirmDeleteString === $master->title"
+                    />
                 </div>
             </x-slot>
         </x-card>
