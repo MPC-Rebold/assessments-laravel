@@ -20,6 +20,7 @@ new class extends Component {
     public array $conflictingNames = [];
     public bool $showUpload = false;
     public bool $forceModalOpen = false;
+    public string $confirmDeleteString = '';
 
     #[Validate(['uploadedAssessments' => 'required', 'uploadedAssessments.*' => 'file|mimes:txt'])]
     public array $uploadedAssessments = [];
@@ -136,7 +137,7 @@ new class extends Component {
                 </x-button>
             </div>
             <div class="overflow-hidden transition-all duration-500"
-                :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
+                 :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
 
                 {{--                <form action="{{ route('assessment.upload') }}" method="POST" enctype="multipart/form-data"> --}}
                 <form wire:submit="save">
@@ -144,25 +145,25 @@ new class extends Component {
 
                     <div class="flex items-center justify-between">
                         <div x-data="{ uploading: false, progress: 0 }" x-on:livewire-upload-start="uploading = true"
-                            x-on:livewire-upload-finish="uploading = false"
-                            x-on:livewire-upload-cancel="uploading = false"
-                            x-on:livewire-upload-error="uploading = false"
-                            x-on:livewire-upload-progress="progress = $event.detail.progress;">
+                             x-on:livewire-upload-finish="uploading = false"
+                             x-on:livewire-upload-cancel="uploading = false"
+                             x-on:livewire-upload-error="uploading = false"
+                             x-on:livewire-upload-progress="progress = $event.detail.progress;">
                             <!-- File Input -->
                             <div class="space-y-1">
                                 <input type="file" wire:model="uploadedAssessments" name="uploaded_assessments[]"
-                                    multiple>
+                                       multiple>
                                 @error('uploadedAssessments.*')
-                                    <div class="text-negative-500">{{ $message }}</div>
+                                <div class="text-negative-500">{{ $message }}</div>
                                 @enderror
                                 @error('uploadedAssessments')
-                                    <div class="text-negative-500">{{ $message }}</div>
+                                <div class="text-negative-500">{{ $message }}</div>
                                 @enderror
                             </div>
-{{--                            <!-- Progress Bar -->--}}
-{{--                            <div x-show="uploading" class="w-full">--}}
-{{--                                <progress max="100" x-bind:value="progress"></progress>--}}
-{{--                            </div>--}}
+                            {{--                            <!-- Progress Bar -->--}}
+                            {{--                            <div x-show="uploading" class="w-full">--}}
+                            {{--                                <progress max="100" x-bind:value="progress"></progress>--}}
+                            {{--                            </div>--}}
 
                         </div>
                         <x-button positive type="submit" class="min-w-20">Submit</x-button>
@@ -170,29 +171,43 @@ new class extends Component {
                 </form>
                 <x-modal wire:model.defer="forceModalOpen">
                     <x-card title="Conflicting Assessment Names">
-                        <div class='rounded-lg border border-warning-600 bg-warning-50 p-4'>
-                            <div class="flex items-center border-b-2 border-warning-200 pb-3">
-                                <x-icon name="exclamation" class="h-6 w-6 text-warning-700" />
-                                <div class="ml-1 text-lg text-warning-700">
-                                    The following assessments already exist on <b>{{ $master->title }}</b>
+                        <div class="space-y-2">
+                            <div class='rounded-lg border border-negative-600 bg-negative-50 p-4'>
+                                <div class="flex items-center border-b-2 border-negative-200 pb-3">
+                                    <x-icon name="exclamation" class="h-6 w-6 text-negative-700" />
+                                    <div class="ml-1 text-lg text-negative-700">
+                                        The following assessments already exist on <b>{{ $master->title }}</b>
+                                    </div>
+                                </div>
+                                <div class="ml-5 mt-2 flex items-center justify-between pl-1">
+                                    <ul class="list-disc space-y-1 text-negative-700">
+                                        @foreach ($conflictingNames as $conflictingName)
+                                            <li><b>{{ $conflictingName }}</b></li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                <div class="mt-2 text-negative-700">
+                                    Do you want to replace them? This will delete the existing assessments and any
+                                    associated grades.
                                 </div>
                             </div>
-                            <div class="ml-5 mt-2 flex items-center justify-between pl-1">
-                                <ul class="list-disc space-y-1 text-warning-700">
-                                    @foreach ($conflictingNames as $conflictingName)
-                                        <li>{{ $conflictingName }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                            <div class="mt-2 text-warning-700">
-                                Do you want to replace them? This will delete the existing assessments and any
-                                associated grades.
+                            <div class="space-y-1">
+                                <div>
+                                    Type <b>I confirm</b> below to confirm
+                                </div>
+                                <x-input class="font-mono font-bold"
+                                         placeholder="I confirm"
+                                         wire:model.live="confirmDeleteString" />
                             </div>
                         </div>
                         <x-slot name="footer">
                             <div class="flex justify-between">
                                 <x-button flat label="Cancel" wire:click="closeModal" />
-                                <x-button warning label="Replace" wire:click="save(true)" />
+                                <x-button label="Delete & Replace" wire:click="save(true)"
+                                          :disabled="$confirmDeleteString !== 'I confirm'"
+                                          :secondary="$confirmDeleteString !== 'I confirm'"
+                                          :negative="$confirmDeleteString === 'I confirm'"
+                                />
                             </div>
                         </x-slot>
                     </x-card>
