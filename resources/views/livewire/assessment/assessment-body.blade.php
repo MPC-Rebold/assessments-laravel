@@ -150,6 +150,12 @@ new class extends Component {
                             top: y,
                             behavior: 'smooth'
                         });
+
+                        //add border to question for 1 second
+                        question.className += ' border-4 border-secondary-500';
+                        setTimeout(() => {
+                            question.classList.remove('border-4', 'border-secondary-500');
+                        }, 1000);
                     }
                 </script>
                 <button class="ml-4 min-w-20 text-xl font-extrabold transition-all ease-in-out hover:scale-110"

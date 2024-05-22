@@ -96,12 +96,12 @@ new class extends Component {
     }
 }; ?>
 
-<div>
+<div id="question_{{ $question->number }}" class="rounded-lg">
     <x-card>
         <x-slot name="header">
             <div
                 class="{{ $isCorrect ? 'bg-positive-50' : ($guessesLeft === 0 ? 'bg-gray-300' : '') }} flex items-center justify-between rounded-t-md border-b border-gray-300 px-4 py-2 font-bold text-slate-800">
-                <div id="question_{{ $question->number }}">Question {{ $question->number }}</div>
+                <div>Question {{ $question->number }}</div>
                 @if ($isCorrect)
                     <x-icon class="h-6 w-6 text-positive-500" name="check" solid />
                 @endif
