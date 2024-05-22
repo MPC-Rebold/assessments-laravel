@@ -11,6 +11,13 @@ new class extends Component {
 
     public Collection $assessmentCourses;
 
+    public function placeholder(): string
+    {
+        return <<<'HTML'
+        <x-placeholder-assessment />
+        HTML;
+    }
+
     public function mount(): void
     {
         if (isset($this->courseId)) {
@@ -30,3 +37,4 @@ new class extends Component {
 }; ?>
 
 <livewire:assessment.assessment-cards :assessmentCourses="$assessmentCourses" />
+

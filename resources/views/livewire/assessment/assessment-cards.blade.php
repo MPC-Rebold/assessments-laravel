@@ -31,7 +31,7 @@ new class extends Component {
     @else
         <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
             <div class="flex max-h-20 w-full items-center justify-between px-6 py-4 text-gray-900">
-                No assessments found
+                No assessments
             </div>
         </div>
     @endif
