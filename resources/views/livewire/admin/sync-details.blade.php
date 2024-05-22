@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Livewire\Attributes\On;
 
 new class extends Component {
-    public string $lastSyncedAt;
+    public string|null $lastSyncedAt;
     public bool $apiKeyValid;
     public string $apiKeyName;
     public array $activeCourses;

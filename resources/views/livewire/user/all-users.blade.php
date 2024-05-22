@@ -21,9 +21,9 @@ new class extends Component {
             $this->courses = collect([$this->course]);
         }
 
-        $this->students = $this->courses->flatMap->users->sortBy('name');
-
-        $this->validStudents = $this->courses->flatMap->valid_students->toArray();
+        $this->students = $this->courses->flatMap->users->sortBy('name')->unique('email');
+        $this->validStudents = array_unique($this->courses->flatMap->valid_students->toArray());
+        sort($this->validStudents);
 
         $this->notEnrolledStudents = array_diff($this->validStudents, $this->students->pluck('email')->toArray());
     }
