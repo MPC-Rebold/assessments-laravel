@@ -1,8 +1,5 @@
 <?php
-
-use App\Models\Settings;
 use Carbon\Carbon;
-
 ?>
 
 <div class="space-y-6">
@@ -10,7 +7,7 @@ use Carbon\Carbon;
         <div class="flex items-center justify-between">
             <div class="text-gray-500">
                 Last Synced:
-                {{ Settings::first()->last_synced_at? Carbon::parse(Settings::first()->last_synced_at)->tz('PST')->format('Y-m-d H:i:s T'): 'Never' }}
+                {{ $lastSyncedAt ? Carbon::parse($lastSyncedAt)->tz('PST')->format('Y-m-d H:i:s T'): 'Never' }}
             </div>
             <x-button positive spinner class="min-w-28" wire:click="sync">
                 Sync

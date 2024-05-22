@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\UserCanvas;
 use App\Services\CanvasService;
 use App\Services\SeedService;
+use App\Services\SyncStatusService;
 use Carbon\Carbon;
 use DB;
 use Exception;
@@ -27,12 +28,15 @@ class Sync extends Component
 
     public Collection $masterCourses;
 
+    public string $lastSyncedAt;
+
+
     public function sync(): void
     {
 
         $settings = Settings::firstOrNew();
 
-        if ($settings->is_syncing) {
+        if ($settings->is_syncing && Carbon::parse($settings->last_synced_at)->diffInMinutes(Carbon::now()) < 30) {
             $this->notification()->warning(
                 'Syncing already in progress, please wait.',
             );
@@ -40,16 +44,20 @@ class Sync extends Component
             return;
         }
 
-        DB::beginTransaction();
-
         $settings->update([
             'is_syncing' => true,
         ]);
 
+        DB::beginTransaction();
+
         try {
+
             $this->validateCanvasKey();
+
             $this->createMasters();
+
             $this->checkMasterSeeds();
+
             $this->syncCourses();
             $this->syncAssessmentCourses();
             $this->connectUserCourses();
@@ -60,11 +68,11 @@ class Sync extends Component
             ]);
 
         } catch (Exception $e) {
+            DB::rollBack();
+
             $settings->update([
                 'is_syncing' => false,
             ]);
-
-            DB::rollBack();
 
             $this->notification()->error(
                 'Sync Failed',
@@ -358,13 +366,12 @@ class Sync extends Component
     public function mount(): void
     {
         $this->masterCourses = Master::all();
-        $this->progress = $this->progress ?? 0;
+        $this->lastSyncedAt = Settings::first()->last_synced_at;
+
     }
 
     public function render(): View
     {
-        $this->progress += 1;
-
         return view('livewire.admin.sync');
     }
 }
