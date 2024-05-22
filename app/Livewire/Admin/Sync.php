@@ -13,7 +13,6 @@ use App\Models\User;
 use App\Models\UserCanvas;
 use App\Services\CanvasService;
 use App\Services\SeedService;
-use App\Services\SyncStatusService;
 use Carbon\Carbon;
 use DB;
 use Exception;
@@ -27,9 +26,6 @@ class Sync extends Component
     use Actions;
 
     public Collection $masterCourses;
-
-    public string $lastSyncedAt;
-
 
     public function sync(): void
     {
@@ -53,11 +49,8 @@ class Sync extends Component
         try {
 
             $this->validateCanvasKey();
-
             $this->createMasters();
-
             $this->checkMasterSeeds();
-
             $this->syncCourses();
             $this->syncAssessmentCourses();
             $this->connectUserCourses();
@@ -85,6 +78,7 @@ class Sync extends Component
         DB::commit();
 
         $this->mount();
+        $this->dispatch('updateLastSyncedAt');
 
         $this->notification()->success(
             'Sync Complete',
@@ -366,7 +360,6 @@ class Sync extends Component
     public function mount(): void
     {
         $this->masterCourses = Master::all();
-        $this->lastSyncedAt = Settings::first()->last_synced_at;
 
     }
 

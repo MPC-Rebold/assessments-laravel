@@ -1,23 +1,27 @@
 <?php
+
 use Carbon\Carbon;
+
 ?>
 
 <div class="space-y-6">
-    <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
-        <div class="flex items-center justify-between">
-            <div class="text-gray-500">
-                Last Synced:
-                {{ $lastSyncedAt ? Carbon::parse($lastSyncedAt)->tz('PST')->format('Y-m-d H:i:s T'): 'Never' }}
+    <div class="bg-slate-100 shadow sm:rounded-lg">
+        <div class="bg-white p-4 shadow sm:rounded-lg sm:px-6">
+            <div class="flex items-center justify-between">
+                <div class="text-lg font-bold">
+                    Sync
+                </div>
+                <x-button positive spinner class="min-w-28" wire:click="sync">
+                    Sync
+                </x-button>
             </div>
-            <x-button positive spinner class="min-w-28" wire:click="sync">
-                Sync
-            </x-button>
         </div>
+        <livewire:admin.sync-details lazy="true" />
     </div>
     <div class="bg-slate-100 shadow sm:rounded-lg">
         <div class="flex bg-white p-4 text-lg font-bold shadow sm:flex-row sm:rounded-lg sm:px-6 sm:py-4">
             <div class="hidden h-full w-full md:flex">
-                <h2 class="min-w-24 basis-2/12">
+                <h2 class="min-w-32 basis-2/12">
                     Local Course
                 </h2>
                 <h2 class="grow">
