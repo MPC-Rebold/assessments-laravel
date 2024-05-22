@@ -52,7 +52,7 @@ use Carbon\Carbon;
             @endif
             <div class="w-full" x-data="{ open: @entangle('showInput') }">
                 <div @click="open = true" :class="open ? 'hidden' : 'block'">
-                    <x-button icon="plus" class="w-full">
+                    <x-button icon="plus" class="w-full hover:bg-secondary-500 hover:text-white">
                         Add Course
                     </x-button>
                 </div>

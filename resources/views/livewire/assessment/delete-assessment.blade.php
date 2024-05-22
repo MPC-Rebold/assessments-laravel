@@ -56,8 +56,8 @@ new class extends Component {
                     <div class="flex items-center border-b-2 border-negative-200 pb-3">
                         <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
                         <span class="ml-1 text-lg text-negative-600">
-                        You are about to delete the assessment&nbsp;<b>{{ $assessment->title }}</b>
-                    </span>
+                            You are about to delete the assessment&nbsp;<b>{{ $assessment->title }}</b>
+                        </span>
                     </div>
                     <div class="ml-5 mt-2 flex items-center justify-between pl-1">
                         <ul class="list-disc space-y-1 text-negative-600">
@@ -68,21 +68,18 @@ new class extends Component {
                 </div>
                 <div class="space-y-1">
                     <div>
-                        Type <b>{{$assessment->master->title}}/{{ $assessment->title }}</b> below to confirm
+                        Type <b>{{ $assessment->master->title }}/{{ $assessment->title }}</b> below to confirm
                     </div>
                     <x-input class="font-mono font-bold"
-                             placeholder="{{$assessment->master->title}}/{{ $assessment->title }}"
-                             wire:model.live="confirmDeleteString" />
+                        placeholder="{{ $assessment->master->title }}/{{ $assessment->title }}"
+                        wire:model.live="confirmDeleteString" />
                 </div>
             </div>
             <x-slot name="footer">
                 <div class="flex justify-between">
                     <x-button flat label="Cancel" x-on:click="close" />
-                    <x-button spinner label="Confirm" wire:click="deleteAssessment"
-                              :disabled="$confirmDeleteString !== $assessment->master->title . '/' . $assessment->title"
-                              :secondary="$confirmDeleteString !== $assessment->master->title . '/' . $assessment->title"
-                              :negative="$confirmDeleteString === $assessment->master->title . '/' . $assessment->title"
-                    />
+                    <x-button spinner label="Confirm" wire:click="deleteAssessment" :disabled="$confirmDeleteString !== $assessment->master->title . '/' . $assessment->title" :secondary="$confirmDeleteString !== $assessment->master->title . '/' . $assessment->title"
+                        :negative="$confirmDeleteString === $assessment->master->title . '/' . $assessment->title" />
                 </div>
             </x-slot>
         </x-card>

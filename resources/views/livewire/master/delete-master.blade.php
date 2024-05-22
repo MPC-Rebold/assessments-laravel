@@ -47,8 +47,8 @@ new class extends Component {
                     <div class="flex items-center border-b-2 border-negative-200 pb-3">
                         <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
                         <span class="ml-1 text-lg text-negative-600">
-                        You are about to delete the course&nbsp;<b>{{ $master->title }}</b>
-                    </span>
+                            You are about to delete the course&nbsp;<b>{{ $master->title }}</b>
+                        </span>
                     </div>
                     <div class="ml-5 mt-2 flex items-center justify-between pl-1">
                         <ul class="list-disc space-y-1 text-negative-600">
@@ -64,17 +64,14 @@ new class extends Component {
                         Type <b>{{ $master->title }}</b> below to confirm
                     </div>
                     <x-input class="font-mono font-bold" placeholder="{{ $master->title }}"
-                             wire:model.live="confirmDeleteString" />
+                        wire:model.live="confirmDeleteString" />
                 </div>
             </div>
             <x-slot name="footer">
                 <div class="flex justify-between">
                     <x-button flat label="Cancel" x-on:click="close" />
-                    <x-button spinner label="Confirm" wire:click="deleteMaster"
-                              :disabled="$confirmDeleteString !== $master->title"
-                              :secondary="$confirmDeleteString !== $master->title"
-                              :negative="$confirmDeleteString === $master->title"
-                    />
+                    <x-button spinner label="Confirm" wire:click="deleteMaster" :disabled="$confirmDeleteString !== $master->title" :secondary="$confirmDeleteString !== $master->title"
+                        :negative="$confirmDeleteString === $master->title" />
                 </div>
             </x-slot>
         </x-card>

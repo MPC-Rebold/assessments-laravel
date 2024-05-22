@@ -39,7 +39,7 @@
         @if (!$connectedCourses)
             <div class="p-4 text-center sm:px-6 sm:py-4">
                 <p class="text-lg font-bold text-gray-400">
-                    No connected courses found
+                    No Connected Courses
                 </p>
             </div>
         @else

@@ -132,12 +132,12 @@ new class extends Component {
         @endif
         <div class="w-full p-4 sm:px-6" x-data="{ open: @entangle('showUpload') }">
             <div @click="open = true" :class="open ? 'hidden' : 'block'">
-                <x-button icon="plus" class="w-full">
+                <x-button icon="plus" class="w-full hover:bg-secondary-500 hover:text-white">
                     Add Assessments
                 </x-button>
             </div>
             <div class="overflow-hidden transition-all duration-500"
-                 :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
+                :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
 
                 {{--                <form action="{{ route('assessment.upload') }}" method="POST" enctype="multipart/form-data"> --}}
                 <form wire:submit="save">
@@ -145,25 +145,25 @@ new class extends Component {
 
                     <div class="flex items-center justify-between">
                         <div x-data="{ uploading: false, progress: 0 }" x-on:livewire-upload-start="uploading = true"
-                             x-on:livewire-upload-finish="uploading = false"
-                             x-on:livewire-upload-cancel="uploading = false"
-                             x-on:livewire-upload-error="uploading = false"
-                             x-on:livewire-upload-progress="progress = $event.detail.progress;">
+                            x-on:livewire-upload-finish="uploading = false"
+                            x-on:livewire-upload-cancel="uploading = false"
+                            x-on:livewire-upload-error="uploading = false"
+                            x-on:livewire-upload-progress="progress = $event.detail.progress;">
                             <!-- File Input -->
                             <div class="space-y-1">
                                 <input type="file" wire:model="uploadedAssessments" name="uploaded_assessments[]"
-                                       multiple>
+                                    multiple>
                                 @error('uploadedAssessments.*')
-                                <div class="text-negative-500">{{ $message }}</div>
+                                    <div class="text-negative-500">{{ $message }}</div>
                                 @enderror
                                 @error('uploadedAssessments')
-                                <div class="text-negative-500">{{ $message }}</div>
+                                    <div class="text-negative-500">{{ $message }}</div>
                                 @enderror
                             </div>
-                            {{--                            <!-- Progress Bar -->--}}
-                            {{--                            <div x-show="uploading" class="w-full">--}}
-                            {{--                                <progress max="100" x-bind:value="progress"></progress>--}}
-                            {{--                            </div>--}}
+                            {{--                            <!-- Progress Bar --> --}}
+                            {{--                            <div x-show="uploading" class="w-full"> --}}
+                            {{--                                <progress max="100" x-bind:value="progress"></progress> --}}
+                            {{--                            </div> --}}
 
                         </div>
                         <x-button positive type="submit" class="min-w-20">Submit</x-button>
@@ -195,19 +195,15 @@ new class extends Component {
                                 <div>
                                     Type <b>I confirm</b> below to confirm
                                 </div>
-                                <x-input class="font-mono font-bold"
-                                         placeholder="I confirm"
-                                         wire:model.live="confirmDeleteString" />
+                                <x-input class="font-mono font-bold" placeholder="I confirm"
+                                    wire:model.live="confirmDeleteString" />
                             </div>
                         </div>
                         <x-slot name="footer">
                             <div class="flex justify-between">
                                 <x-button flat label="Cancel" wire:click="closeModal" />
-                                <x-button label="Delete & Replace" wire:click="save(true)"
-                                          :disabled="$confirmDeleteString !== 'I confirm'"
-                                          :secondary="$confirmDeleteString !== 'I confirm'"
-                                          :negative="$confirmDeleteString === 'I confirm'"
-                                />
+                                <x-button label="Delete & Replace" wire:click="save(true)" :disabled="$confirmDeleteString !== 'I confirm'"
+                                    :secondary="$confirmDeleteString !== 'I confirm'" :negative="$confirmDeleteString === 'I confirm'" />
                             </div>
                         </x-slot>
                     </x-card>
