@@ -5,8 +5,10 @@ namespace App\Console;
 use App\Livewire\Admin\SpecificationSetting;
 use App\Livewire\Admin\Sync;
 use App\Models\AssessmentCourse;
+use App\Services\CanvasService;
 use App\Services\SeedService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Log;
@@ -27,7 +29,7 @@ class Kernel extends ConsoleKernel
             Log::info('Schedule: Syncing with Canvas');
             $sync = new Sync();
             $sync->sync();
-        })->everyFiveMinutes();
+        })->everyThirtyMinutes();
 
         $schedule->call(function () {
             Log::info('Schedule: Posting final grades');
@@ -36,9 +38,12 @@ class Kernel extends ConsoleKernel
 
     }
 
+    /**
+     * @throws Exception
+     */
     public function postFinalGrades(): void
     {
-        $specificationSetting = new SpecificationSetting();
+        $canvasService = new CanvasService();
         $assessmentCourses = AssessmentCourse::all();
 
         foreach ($assessmentCourses as $assessmentCourse) {
@@ -54,7 +59,7 @@ class Kernel extends ConsoleKernel
 
             // if it was due within the last day, post the final grade
             if ($dueAt->isPast() && $dueAt->diffInDays(Carbon::now()) < 1.01) {
-                $specificationSetting->regradeAssessmentCourse($assessmentCourse);
+                $canvasService->regradeAssessmentCourse($assessmentCourse);
             }
         }
     }

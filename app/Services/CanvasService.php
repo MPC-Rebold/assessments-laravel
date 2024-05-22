@@ -5,8 +5,11 @@ namespace App\Services;
 use App\Models\AssessmentCourse;
 use App\Models\QuestionUser;
 use App\Models\User;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Collection;
 
 /**
  * See https://canvas.instructure.com/doc/api/
@@ -186,10 +189,10 @@ class CanvasService
                     'is_correct' => true,
                 ]
             )->exists();
-            $comment .= "\nQuestion $question->number: " . ($isCorrect ? 'Correct' : 'Incorrect');
+            $comment .= "$question->number: " . ($isCorrect ? '✔' : '✘') . ', ';
         }
 
-        $comment .= "\n\nGrade: $grade";
+        $comment .= "Grade: $grade";
 
         return $comment;
     }
@@ -241,5 +244,46 @@ class CanvasService
                 'grading_type' => $is_specification ? 'pass_fail' : 'points',
             ]
         );
+    }
+
+    /**
+     * Regrades the given assessment courses
+     *
+     * @param Collection $assessmentCourses the assessment courses to regrade
+     *
+     * @throws Exception if any regrade fails
+     */
+    public function regradeAssessmentCourses(Collection $assessmentCourses): void
+    {
+        foreach ($assessmentCourses as $assessmentCourse) {
+            if (! $assessmentCourse->assessment_canvas_id || ! $assessmentCourse->course->master_id) {
+                continue;
+            }
+
+            $this->regradeAssessmentCourse($assessmentCourse, false);
+        }
+    }
+
+    /**
+     * Regrades the given assessment course
+     *
+     * @param AssessmentCourse $assessmentCourse
+     * @param bool $regradePastDue whether to regrade past due assessments
+     * @return void
+     *
+     * @throws Exception if regrade fails
+     */
+    public function regradeAssessmentCourse(AssessmentCourse $assessmentCourse, bool $regradePastDue = true): void
+    {
+        if (! $regradePastDue && $assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast()) {
+            return;
+        }
+
+        CanvasService::setMaxPoints($assessmentCourse);
+        $gradeAssessmentResponse = CanvasService::gradeAssessment($assessmentCourse);
+
+        if ($gradeAssessmentResponse->status() !== 200) {
+            throw new Exception('Failed to grade assessment');
+        }
     }
 }
