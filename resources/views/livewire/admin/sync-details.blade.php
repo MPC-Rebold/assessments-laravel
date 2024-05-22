@@ -126,6 +126,13 @@ new class extends Component {
                         @endforeach
                     </ul>
                 </div>
+                <div class="mt-4">
+                    <p>
+                        Active Canvas Courses are courses where you are enrolled as a teacher and are favorited.
+                        See your <a class="underline hover:text-secondary-500" target="_blank"
+                            href="{{ config('canvas.host') . '/courses' }}">Canvas Courses</a>.
+                    </p>
+                </div>
             </div>
             <x-slot name="footer">
                 <div class="w-full">

@@ -149,10 +149,18 @@ class Sync extends Component
      * Checks statuses for missing courses and assessments
      *
      * @return void
+     *
+     * @throws Exception if the number of Canvas courses is invalid
      */
     public function syncCourses(): void
     {
         $canvasCourses = CanvasService::getCourses();
+
+        if (empty($canvasCourses)) {
+            throw new Exception('No active courses found in Canvas');
+        } elseif (count($canvasCourses) > 10) {
+            throw new Exception('Too many active courses found in Canvas, please filter the courses in Canvas to 10 or less');
+        }
 
         foreach ($canvasCourses as $canvasCourse) {
             $validStudents = $this->getValidStudents($canvasCourse);
