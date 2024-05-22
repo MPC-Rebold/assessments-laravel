@@ -118,7 +118,7 @@ new class extends Component {
                     <ul class="max-h-[40vh] w-full list-inside list-disc space-y-1 overflow-auto text-secondary-700">
                         @foreach ($activeCourses as $course)
                             <li>
-                                <a class="hover:underline"
+                                <a class="hover:underline" target="_blank"
                                     href="{{ config('canvas.host') . '/courses/' . $course['id'] }}">
                                     {{ $course['name'] }}
                                 </a>
