@@ -18,6 +18,7 @@ use DB;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 
@@ -26,6 +27,39 @@ class Sync extends Component
     use Actions;
 
     public Collection $masterCourses;
+
+    #[Validate('required|string|max:50')]
+    public string $newMasterTitle = '';
+
+    public bool $showInput = false;
+
+    public function saveNewMaster(): void
+    {
+        $this->validate();
+
+        try {
+            DB::beginTransaction();
+            SeedService::createMaster($this->newMasterTitle);
+            DB::commit();
+        } catch (Exception $e) {
+            $this->notification()->error(
+                'Failed to create master',
+                $e->getMessage(),
+            );
+            DB::rollBack();
+
+            return;
+        }
+
+        $this->notification()->success(
+            'Master created',
+            $this->newMasterTitle,
+        );
+
+        $this->newMasterTitle = '';
+        $this->showInput = false;
+        $this->mount();
+    }
 
     public function sync(): void
     {

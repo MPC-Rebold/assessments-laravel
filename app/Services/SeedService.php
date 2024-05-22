@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Assessment;
 use App\Models\Master;
+use Exception;
 
 class SeedService
 {
@@ -164,7 +165,7 @@ class SeedService
             $totalBackupSize += filesize($file);
         }
 
-        $maxSize = 500000000;
+        $maxSize = 500_000_000;
 
         if ($totalBackupSize > $maxSize && count($files) > 0) {
             unlink($files[0]);
@@ -174,5 +175,24 @@ class SeedService
         $backupFile = $backupPath . '/' . $backupName;
 
         copy(database_path('database.sqlite'), $backupFile);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function createMaster(string $title): Master
+    {
+        if (! is_dir(database_path('seed/' . $title))) {
+            mkdir(database_path('seed/' . $title));
+        } else {
+            if(Master::where('title', $title)->first()) {
+                throw new Exception("Course $title already exists");
+            }
+        }
+
+        $master = Master::create(['title' => $title]);
+        $master->status()->create();
+
+        return $master;
     }
 }

@@ -62,6 +62,7 @@ new class extends Component {
 
                 $uploadedAssessment->storeAs("uploads/$master", $fileName);
                 rename(storage_path("app/uploads/$master/$fileName"), database_path("seed/$master/$fileName"));
+                rmdir(storage_path("app/uploads/$master"));
             }
         } catch (Exception $e) {
             $this->notification()->error("Failed to upload assessment", $e->getMessage());
@@ -160,7 +161,7 @@ new class extends Component {
                                 <div class="text-negative-500">{{ $message }}</div> @enderror
                             </div>
                             <!-- Progress Bar -->
-                            <div x-show="uploading">
+                            <div x-show="uploading" class="w-full">
                                 <progress max="100" x-bind:value="progress"></progress>
                             </div>
 
