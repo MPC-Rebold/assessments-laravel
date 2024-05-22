@@ -22,7 +22,7 @@ if (!$course) {
         <div class="mx-auto max-w-7xl space-y-8 sm:px-6 lg:px-8">
             <div class="space-y-4">
                 <livewire:layout.section-header :header="__('Upcoming Assessments')" />
-                <livewire:assessment.upcoming-assessments :courseId="$course->id"/>
+                <livewire:assessment.upcoming-assessments :courseId="$course->id" />
             </div>
             <div class="space-y-4">
                 <livewire:layout.section-header :header="__('Past Assessments')" />

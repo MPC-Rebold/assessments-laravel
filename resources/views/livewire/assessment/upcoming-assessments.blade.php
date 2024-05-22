@@ -37,4 +37,3 @@ new class extends Component {
 }; ?>
 
 <livewire:assessment.assessment-cards :assessmentCourses="$assessmentCourses" />
-
