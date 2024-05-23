@@ -27,6 +27,7 @@ new class extends Component {
         <livewire:master.list-assessments :master="$master" />
         <hr>
         <livewire:master.rename-master :master="$master" />
+        <livewire:master.download-master :master="$master" />
         <livewire:master.delete-master :master="$master" />
     </div>
 </div>
