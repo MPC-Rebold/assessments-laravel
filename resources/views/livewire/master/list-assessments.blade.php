@@ -61,9 +61,9 @@ new class extends Component {
                 $fileName = $uploadedAssessment->getClientOriginalName();
                 $master = $this->master->title;
 
-                $uploadedAssessment->storeAs("uploads/$master", $fileName);
-                rename(storage_path("app/uploads/$master/$fileName"), database_path("seed/$master/$fileName"));
-                rmdir(storage_path("app/uploads/$master"));
+                $uploadedAssessment->storeAs("tmp/$master", $fileName);
+                rename(storage_path("app/tmp/$master/$fileName"), database_path("seed/$master/$fileName"));
+                rmdir(storage_path("app/tmp/$master"));
             }
         } catch (Exception $e) {
             $this->notification()->error('Failed to upload assessment', $e->getMessage());

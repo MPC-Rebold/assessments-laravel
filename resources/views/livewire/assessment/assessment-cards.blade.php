@@ -13,7 +13,7 @@ new class extends Component {
 
     public function mount(Collection $assessmentCourses): void
     {
-        $this->assessmentCourses = $assessmentCourses;
+        $this->assessmentCourses = $assessmentCourses->where('assessment_canvas_id', '!=', -1)->sortBy('due_at');
     }
 }; ?>
 

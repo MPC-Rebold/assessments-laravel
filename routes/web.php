@@ -57,10 +57,6 @@ Route::view('courses/{courseId}/assessment/{assessmentId}', 'assessment.show')
     ->middleware(['auth', 'enrolled', 'active'])
     ->name('assessment.show');
 
-Route::view('admin/masters/{masterId}', 'master.edit')
-    ->middleware(['auth', 'admin'])
-    ->name('master.edit');
-
 Route::view('admin/masters/{masterId}/assessment/{assessmentId}', 'assessment.edit')
     ->middleware(['auth', 'admin'])
     ->name('assessment.edit');

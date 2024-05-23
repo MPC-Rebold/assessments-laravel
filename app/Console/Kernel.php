@@ -2,10 +2,10 @@
 
 namespace App\Console;
 
-use App\Livewire\Admin\Sync;
 use App\Models\AssessmentCourse;
 use App\Services\CanvasService;
 use App\Services\SeedService;
+use App\Services\SyncService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Console\Scheduling\Schedule;
@@ -26,8 +26,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             Log::info('Schedule: Syncing with Canvas');
-            $sync = new Sync();
-            $sync->sync();
+            SyncService::sync();
         })->everyThirtyMinutes();
 
         $schedule->call(function () {
