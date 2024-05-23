@@ -179,7 +179,9 @@ class SeedService
     }
 
     /**
-     * @throws Exception
+     * Creates a new master in the seed directory and database
+     *
+     * @throws Exception if the master already exists
      */
     public static function createMaster(string $title): Master
     {
@@ -195,6 +197,12 @@ class SeedService
         return $master;
     }
 
+    /**
+     * Deletes the master from the seed directory and database
+     *
+     * @param Master $master the master to delete
+     * @return void
+     */
     public static function deleteMaster(Master $master): void
     {
         $masterPath = database_path('seed/' . $master->title);
@@ -217,5 +225,21 @@ class SeedService
             }
             rmdir($dir);
         }
+    }
+
+    /**
+     * Renames the master in the seed directory and database
+     *
+     * @param Master $master the master to rename
+     * @param string $newTitle the new title of the master
+     * @return void
+     */
+    public static function renameMaster(Master $master, string $newTitle): void
+    {
+        $oldPath = database_path('seed/' . $master->title);
+        $newPath = database_path('seed/' . $newTitle);
+
+        rename($oldPath, $newPath);
+        $master->update(['title' => $newTitle]);
     }
 }

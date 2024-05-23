@@ -18,14 +18,5 @@ if (!$master) {
         ['title' => $master->title, 'href' => route('master.edit', $master->id)],
     ]" />
 
-    <div class="py-10">
-        <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-            <livewire:layout.section-header :header="$master->title" />
-            <livewire:master.connect-courses :master="$master" />
-            <hr>
-            <livewire:master.list-assessments :master="$master" />
-            <hr>
-            <livewire:master.delete-master :master="$master" />
-        </div>
-    </div>
+    <livewire:master.edit :master="$master" />
 </x-app-layout>

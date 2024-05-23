@@ -13,6 +13,11 @@ new class extends Component {
      *     ],
      */
     public array $routes;
+
+    public function mount(array $routes): void
+    {
+        $this->routes = $routes;
+    }
 }; ?>
 
 <div>
