@@ -21,7 +21,7 @@ use Carbon\Carbon;
     <div class="bg-slate-100 shadow sm:rounded-lg">
         <div class="flex bg-white p-4 text-lg font-bold shadow sm:flex-row sm:rounded-lg sm:px-6 sm:py-4">
             <div class="hidden h-full w-full md:flex">
-                <h2 class="min-w-32 basis-2/12">
+                <h2 class="basis-1/4">
                     Local Course
                 </h2>
                 <h2 class="grow">

@@ -398,8 +398,10 @@ class Sync extends Component
 
     public function mount(): void
     {
-        $this->masterCourses = Master::all();
-
+        $this->masterCourses = Master::all()->load('courses')->
+            sortByDesc(function ($master) {
+                return $master->courses->count();
+            });
     }
 
     public function render(): View

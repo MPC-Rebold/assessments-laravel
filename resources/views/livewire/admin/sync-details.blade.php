@@ -84,7 +84,7 @@ new class extends Component {
         </div>
         <div class="flex items-center">
             @if ($apiKeyValid)
-                <div class="text-positive-500">Valid ({{ $apiKeyName }})</div>
+                <div class="text-positive-500 flex"><span>Valid</span><span class="hidden sm:flex">({{ $apiKeyName }})</span></div>
                 <x-icon name="check" class="h-6 w-6 text-positive-500" />
             @else
                 <div class="text-negative-500">Invalid</div>
