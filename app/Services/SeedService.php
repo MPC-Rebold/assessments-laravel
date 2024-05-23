@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Assessment;
 use App\Models\Master;
+use Exception;
 
 class SeedService
 {
@@ -120,6 +121,19 @@ class SeedService
     }
 
     /**
+     * Deletes the assessment from the seed directory
+     *
+     * @param Assessment $assessment
+     * @return void
+     */
+    public static function deleteAssessment(Assessment $assessment): void
+    {
+        $assessmentPath = database_path('seed/' . $assessment->master->title . '/' . $assessment->title . '.txt');
+        unlink($assessmentPath);
+        $assessment->delete();
+    }
+
+    /**
      * Returns the emails of all admins
      *
      * @return array
@@ -152,7 +166,7 @@ class SeedService
             $totalBackupSize += filesize($file);
         }
 
-        $maxSize = 500000000;
+        $maxSize = 500_000_000;
 
         if ($totalBackupSize > $maxSize && count($files) > 0) {
             unlink($files[0]);
@@ -162,5 +176,46 @@ class SeedService
         $backupFile = $backupPath . '/' . $backupName;
 
         copy(database_path('database.sqlite'), $backupFile);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function createMaster(string $title): Master
+    {
+        if (! is_dir(database_path('seed/' . $title))) {
+            mkdir(database_path('seed/' . $title));
+        } elseif (Master::where('title', $title)->exists()) {
+            throw new Exception("Course $title already exists");
+        }
+
+        $master = Master::create(['title' => $title]);
+        $master->status()->create();
+
+        return $master;
+    }
+
+    public static function deleteMaster(Master $master): void
+    {
+        $masterPath = database_path('seed/' . $master->title);
+        self::rmrf($masterPath);
+        $master->delete();
+    }
+
+    public static function rmrf($dir): void
+    {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != '.' && $object != '..') {
+                    if (is_dir($dir. DIRECTORY_SEPARATOR .$object) && ! is_link($dir.'/'.$object)) {
+                        self::rmrf($dir . DIRECTORY_SEPARATOR . $object);
+                    } else {
+                        unlink($dir. DIRECTORY_SEPARATOR .$object);
+                    }
+                }
+            }
+            rmdir($dir);
+        }
     }
 }

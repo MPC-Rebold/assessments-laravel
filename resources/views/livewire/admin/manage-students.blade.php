@@ -6,7 +6,7 @@ new class extends Component {
     //
 }; ?>
 
-<div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
+<div class="bg-white p-4 shadow sm:rounded-lg sm:px-6">
     <div class="flex items-center justify-between">
         <div class="text-lg font-bold">
             Manage Users

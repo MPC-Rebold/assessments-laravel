@@ -96,15 +96,14 @@ new class extends Component {
     }
 }; ?>
 
-<div>
+<div id="question_{{ $question->number }}" class="rounded-lg">
     <x-card>
         <x-slot name="header">
-            <div class="flex items-center justify-between border-b border-gray-300 px-4 py-2 font-bold text-slate-800">
+            <div
+                class="{{ $isCorrect ? 'bg-positive-50' : ($guessesLeft === 0 ? 'bg-gray-300' : '') }} flex items-center justify-between rounded-t-md border-b border-gray-300 px-4 py-2 font-bold text-slate-800">
                 <div>Question {{ $question->number }}</div>
                 @if ($isCorrect)
-                    <div>1 / 1</div>
-                @else
-                    <div>0 / 1</div>
+                    <x-icon class="h-6 w-6 text-positive-500" name="check" solid />
                 @endif
             </div>
         </x-slot>
@@ -129,17 +128,16 @@ new class extends Component {
                     </div>
                     <div>
                         @if ($isPastDue)
-                            <x-button positive class="min-w-28" wire:click="practiceSubmit">
+                            <x-button positive spinner class="min-w-28" wire:click="practiceSubmit">
                                 Check
                             </x-button>
                         @elseif ($isCorrect)
-                            <x-button positive class="min-w-28" wire:click="practiceSubmit">
+                            <x-button positive spinner class="min-w-28" wire:click="practiceSubmit">
                                 <x-icon class="h-5 w-5" name="check" solid />
                                 Submit
                             </x-button>
                         @elseif ($guessesLeft > 0)
-                            <x-button secondary disabled class="group min-w-28" wire:click="submit"
-                                wire:dirty.attr.remove="disabled">
+                            <x-button secondary spinner class="group min-w-28" wire:click="submit">
                                 <div class="-me-4 transition-all ease-in-out" wire:dirty.class="group-hover:-me-1">
                                     Submit
                                 </div>
@@ -148,7 +146,7 @@ new class extends Component {
                                     solid />
                             </x-button>
                         @else
-                            <x-button secondary disabled class="min-w-28" wire:click="submit">
+                            <x-button secondary disabled class="min-w-28">
                                 <x-icon class="h-5 w-5" name="ban" solid />
                                 Submit
                             </x-button>

@@ -18,6 +18,7 @@ use DB;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 
@@ -27,12 +28,42 @@ class Sync extends Component
 
     public Collection $masterCourses;
 
+    #[Validate('required|string|max:50')]
+    public string $newMasterTitle = '';
+
+    public bool $showInput = false;
+
+    public function saveNewMaster(): void
+    {
+        $this->validate();
+
+        try {
+            SeedService::createMaster($this->newMasterTitle);
+        } catch (Exception $e) {
+            $this->notification()->error(
+                'Failed to create master',
+                $e->getMessage(),
+            );
+
+            return;
+        }
+
+        $this->notification()->success(
+            'Master created',
+            $this->newMasterTitle,
+        );
+
+        $this->newMasterTitle = '';
+        $this->showInput = false;
+        $this->mount();
+    }
+
     public function sync(): void
     {
 
         $settings = Settings::firstOrNew();
 
-        if ($settings->is_syncing) {
+        if ($settings->is_syncing && Carbon::parse($settings->last_synced_at)->diffInMinutes(Carbon::now()) < 30) {
             $this->notification()->warning(
                 'Syncing already in progress, please wait.',
             );
@@ -40,13 +71,15 @@ class Sync extends Component
             return;
         }
 
-        DB::beginTransaction();
-
         $settings->update([
             'is_syncing' => true,
         ]);
 
+        DB::beginTransaction();
+
         try {
+
+            $this->validateCanvasKey();
             $this->createMasters();
             $this->checkMasterSeeds();
             $this->syncCourses();
@@ -59,11 +92,11 @@ class Sync extends Component
             ]);
 
         } catch (Exception $e) {
+            DB::rollBack();
+
             $settings->update([
                 'is_syncing' => false,
             ]);
-
-            DB::rollBack();
 
             $this->notification()->error(
                 'Sync Failed',
@@ -76,12 +109,19 @@ class Sync extends Component
         DB::commit();
 
         $this->mount();
+        $this->dispatch('updateLastSyncedAt');
 
         $this->notification()->success(
             'Sync Complete',
         );
     }
 
+    /**
+     * Creates the masters and their assessments
+     * Associates a status with each master
+     *
+     * @return void
+     */
     public function createMasters(): void
     {
         $masters = SeedService::getMasters();
@@ -104,11 +144,23 @@ class Sync extends Component
         }
     }
 
+    /**
+     * Synchronizes the local courses with Canvas courses
+     * Checks statuses for missing courses and assessments
+     *
+     * @return void
+     *
+     * @throws Exception if the number of Canvas courses is invalid
+     */
     public function syncCourses(): void
     {
-        $canvasCourses = CanvasService::getCourses()->json();
+        $canvasCourses = CanvasService::getCourses();
 
-        $this->pruneCourses($canvasCourses);
+        if (empty($canvasCourses)) {
+            throw new Exception('No active courses found in Canvas');
+        } elseif (count($canvasCourses) > 10) {
+            throw new Exception('Too many active courses found in Canvas, please filter the courses in Canvas to 10 or less');
+        }
 
         foreach ($canvasCourses as $canvasCourse) {
             $validStudents = $this->getValidStudents($canvasCourse);
@@ -127,6 +179,12 @@ class Sync extends Component
         $this->checkMastersCourses($canvasCourses);
     }
 
+    /**
+     * Checks whether the masters have all of their seeds
+     * Assigns missing seeds to a master's status
+     *
+     * @return void
+     */
     public function checkMasterSeeds(): void
     {
         $masters = SeedService::getMasters();
@@ -147,6 +205,12 @@ class Sync extends Component
         $this->checkAssessmentSeeds();
     }
 
+    /**
+     * Checks whether the masters have all of their connected assessments in its seed
+     * Assigns missing assessments to a master's status
+     *
+     * @return void
+     */
     public function checkAssessmentSeeds(): void
     {
         $masters = Master::all();
@@ -165,31 +229,12 @@ class Sync extends Component
     }
 
     /**
-     * Removes courses that are no longer in the Canvas and are not associated with any master
+     * Checks whether the masters have all of their connected courses in Canvas
+     * Assigns missing courses to a master's status
      *
-     * @param array $canvasCourses
+     * @param array $courses the Canvas course objects
      * @return void
      */
-    public function pruneCourses(array $canvasCourses): void
-    {
-        $canvasCoursesIds = array_column($canvasCourses, 'id');
-        $courses = Course::all();
-
-        foreach ($courses as $course) {
-            if (! in_array($course->id, $canvasCoursesIds) && ! $course->master) {
-                // if the course is not already marked for deletion (null), mark it for deletion
-                if ($course->marked_for_deletion === null) {
-                    $course->update(['marked_for_deletion' => Carbon::now()]);
-                } else {
-                    // if the course has been marked for deletion for more than 180 days, delete it
-                    if (Carbon::parse($course->marked_for_deletion)->diffInDays(Carbon::now()) > 180) {
-                        $course->delete();
-                    }
-                }
-            }
-        }
-    }
-
     public function checkMastersCourses(array $courses): void
     {
         $masters = Master::all();
@@ -207,7 +252,13 @@ class Sync extends Component
         }
     }
 
-    private function getValidStudents($course): array
+    /**
+     * Returns the valid students for a Canvas course
+     *
+     * @param array $course the Canvas course object
+     * @return array of valid students on the Canvas course
+     */
+    private function getValidStudents(array $course): array
     {
         $enrolled = CanvasService::getCourseEnrollments($course['id'])->json();
         $validStudents = [];
@@ -223,7 +274,13 @@ class Sync extends Component
         return $validStudents;
     }
 
-    private function getValidAssessments($course): array
+    /**
+     * Returns the valid assessments for a Canvas course
+     *
+     * @param array $course the Canvas course object
+     * @return array of valid assessments on the Canvas course
+     */
+    private function getValidAssessments(array $course): array
     {
         $validAssessments = [];
         $canvasAssignments = CanvasService::getCourseAssignments($course['id'])->json();
@@ -265,6 +322,23 @@ class Sync extends Component
         }
     }
 
+    /**
+     * Check if the Canvas API Key is valid
+     *
+     * @throws Exception if the Canvas API Key is invalid
+     */
+    private function validateCanvasKey(): void
+    {
+        if (CanvasService::getSelf()->status() === 401) {
+            throw new Exception('Invalid Canvas API Key');
+        }
+    }
+
+    /**
+     * Synchronizes the AssessmentCourses with their associated Canvas courses
+     *
+     * @return void
+     */
     public function syncAssessmentCourses(): void
     {
         $masters = Master::all();
@@ -308,6 +382,11 @@ class Sync extends Component
         }
     }
 
+    /**
+     * Connects the users to their enrolled courses
+     *
+     * @return void
+     */
     public function connectUserCourses(): void
     {
         $users = User::all();
@@ -320,6 +399,7 @@ class Sync extends Component
     public function mount(): void
     {
         $this->masterCourses = Master::all();
+
     }
 
     public function render(): View

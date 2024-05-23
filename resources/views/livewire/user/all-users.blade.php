@@ -21,9 +21,9 @@ new class extends Component {
             $this->courses = collect([$this->course]);
         }
 
-        $this->students = $this->courses->flatMap->users->sortBy('name');
-
-        $this->validStudents = $this->courses->flatMap->valid_students->toArray();
+        $this->students = $this->courses->flatMap->users->sortBy('name')->unique('email');
+        $this->validStudents = array_unique($this->courses->flatMap->valid_students->toArray());
+        sort($this->validStudents);
 
         $this->notEnrolledStudents = array_diff($this->validStudents, $this->students->pluck('email')->toArray());
     }
@@ -74,7 +74,7 @@ new class extends Component {
             @foreach ($notEnrolledStudents as $notEnrolledStudent)
                 <div class="flex items-center justify-between px-4 py-3 sm:px-6">
                     <div class="flex items-center space-x-2">
-                        <x-badge.circle secondary icon="ban" class="animate-pulse" />
+                        <x-badge.circle secondary icon="ban" />
                         <div>
                             {{ $notEnrolledStudent }}
                         </div>

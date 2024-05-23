@@ -29,8 +29,11 @@ $questions = $assessmentCourse->assessment->questions;
                 ' - ' .
                 $assessmentCourse->assessment->title .
                 ' Grades'" />
+
+            <livewire:user.assessment-grade :user="$user" :assessmentCourse="$assessmentCourse" />
+
             @foreach ($questions as $question)
-                <livewire:user.asessment-question-grade :user="$user" :question="$question" :assessment="$assessmentCourse"
+                <livewire:user.assessment-question-grade :user="$user" :question="$question" :assessment="$assessmentCourse"
                     wire:key="{{ $question->id }}">
             @endforeach
         </div>

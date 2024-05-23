@@ -16,7 +16,6 @@ class Course extends Model
         'valid_assessments',
         'specification_grading',
         'specification_grading_threshold',
-        'marked_for_deletion',
     ];
 
     protected $casts = [

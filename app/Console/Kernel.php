@@ -2,11 +2,12 @@
 
 namespace App\Console;
 
-use App\Livewire\Admin\SpecificationSetting;
 use App\Livewire\Admin\Sync;
 use App\Models\AssessmentCourse;
+use App\Services\CanvasService;
 use App\Services\SeedService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Log;
@@ -19,26 +20,29 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->call(function () {
-            Log::info('Backing up database');
+            Log::info('Schedule: Backing up database');
             SeedService::backupDatabase();
-        })->everyFifteenMinutes();
+        })->hourly();
 
         $schedule->call(function () {
-            Log::info('Syncing with Canvas');
+            Log::info('Schedule: Syncing with Canvas');
             $sync = new Sync();
             $sync->sync();
-        })->everyFiveMinutes();
+        })->everyThirtyMinutes();
 
         $schedule->call(function () {
-            Log::info('Posting final grades');
+            Log::info('Schedule: Posting final grades');
             $this->postFinalGrades();
         })->dailyAt('01:00');
 
     }
 
+    /**
+     * @throws Exception
+     */
     public function postFinalGrades(): void
     {
-        $specificationSetting = new SpecificationSetting();
+        $canvasService = new CanvasService();
         $assessmentCourses = AssessmentCourse::all();
 
         foreach ($assessmentCourses as $assessmentCourse) {
@@ -53,8 +57,8 @@ class Kernel extends ConsoleKernel
             $dueAt = Carbon::parse($assessmentCourse->due_at);
 
             // if it was due within the last day, post the final grade
-            if ($dueAt->isPast() && $dueAt->diffInDays(Carbon::now()) < 1.005) {
-                $specificationSetting->regradeAssessmentCourse($assessmentCourse);
+            if ($dueAt->isPast() && $dueAt->diffInDays(Carbon::now()) < 1.01) {
+                $canvasService->regradeAssessmentCourse($assessmentCourse);
             }
         }
     }

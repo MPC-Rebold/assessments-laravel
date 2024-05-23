@@ -57,9 +57,6 @@ new class extends Component {
             <div class="hidden text-slate-500 sm:block" wire:poll.keep-alive.10s>
                 {{ $dueInString }}
             </div>
-
-            {{-- <x-canvas-button class="h-10 min-h-10 w-10 min-w-10" :href="'/courses/' . $courseId . '/assignments/' . $assessmentCanvasId" /> --}}
-
             @if (!$isPastDue)
                 <x-button positive :href="$assessmentRoute" wire:navigate class="relative">
                     <span class="transition-transform duration-300">Go</span>

@@ -79,7 +79,7 @@ class ConnectCourses extends Component
             in_array('Disconnected', $this->master->statusStrings())) {
             $this->notification()->success('Course connections saved');
         } else {
-            $this->notification()->error('Course connections saved with warnings');
+            $this->notification()->warning('Course connections saved with warnings');
         }
     }
 

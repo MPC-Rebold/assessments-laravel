@@ -24,6 +24,8 @@ if (!$master) {
             <livewire:master.connect-courses :master="$master" />
             <hr>
             <livewire:master.list-assessments :master="$master" />
+            <hr>
+            <livewire:master.delete-master :master="$master" />
         </div>
     </div>
 </x-app-layout>

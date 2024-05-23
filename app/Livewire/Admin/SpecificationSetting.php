@@ -5,7 +5,6 @@ namespace App\Livewire\Admin;
 use App\Models\AssessmentCourse;
 use App\Models\Course;
 use App\Services\CanvasService;
-use Carbon\Carbon;
 use DB;
 use Exception;
 use Illuminate\Contracts\View\View;
@@ -66,7 +65,9 @@ class SpecificationSetting extends Component
                 'specification_grading_threshold' => $specification_grading_threshold,
             ]);
 
-            $this->regradeAssessments();
+            $canvasService = new CanvasService();
+            $assessmentCourses = AssessmentCourse::where('course_id', $this->course->id)->get();
+            $canvasService->regradeAssessmentCourses($assessmentCourses);
 
             $this->specification_grading = $this->course->specification_grading;
 
@@ -86,40 +87,6 @@ class SpecificationSetting extends Component
         DB::commit();
 
         $this->modalOpen = false;
-    }
-
-    public function regradeAssessments(): void
-    {
-        $assessmentCourses = AssessmentCourse::where('course_id', $this->course->id)->get();
-
-        foreach ($assessmentCourses as $assessmentCourse) {
-            if (! $assessmentCourse->assessment_canvas_id || ! $assessmentCourse->course->master_id) {
-                continue;
-            }
-
-            if ($assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast()) {
-                continue;
-            }
-
-            $this->regradeAssessmentCourse($assessmentCourse, false);
-        }
-    }
-
-    public function regradeAssessmentCourse(AssessmentCourse $assessmentCourse, bool $regradePastDue = true): void
-    {
-        if ($assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast() && ! $regradePastDue) {
-            return;
-        }
-
-        CanvasService::setMaxPoints($assessmentCourse);
-        $gradeAssessmentResponse = CanvasService::gradeAssessment($assessmentCourse);
-
-        if ($gradeAssessmentResponse->status() !== 200) {
-            $this->notification()->warning(
-                'Failed to regrade assessment ' . $assessmentCourse->assessment->title,
-                'Status: ' . $gradeAssessmentResponse->status()
-            );
-        }
     }
 
     public function render(): View

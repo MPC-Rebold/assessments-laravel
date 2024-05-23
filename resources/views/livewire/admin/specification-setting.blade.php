@@ -8,7 +8,8 @@
                 <x-select :searchable="false" :clearable="false" :options="['OFF', '65%', '70%', '75%', '80%', '85%', '90%', '95%']"
                     wire:model="specification_grading_threshold" />
             </div>
-            <x-button disabled positive spinner class="min-w-28" wire:dirty.attr.remove="disabled" wire:click="openModal">
+            <x-button disabled secondary spinner class="min-w-28" wire:dirty.attr.remove="disabled"
+                wire:dirty.class="!bg-positive-500" wire:click="openModal">
                 Save
             </x-button>
             <x-modal wire:model.defer="modalOpen">
@@ -16,7 +17,7 @@
                     <div class='rounded-lg border border-warning-600 bg-warning-50 p-4'>
                         <div class="flex items-center border-b-2 border-warning-200 pb-3">
                             <x-icon name="exclamation" class="h-6 w-6 text-warning-700" />
-                            <span class="ml-1 flex text-lg text-warning-700">
+                            <span class="ml-1 text-lg text-warning-700">
                                 You are about to change the grading option for&nbsp;<b>{{ $course->title }}</b>
                             </span>
                         </div>
