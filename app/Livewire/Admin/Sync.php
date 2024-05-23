@@ -12,7 +12,6 @@ class Sync extends Component
 {
     use Actions;
 
-
     public function sync(): void
     {
 

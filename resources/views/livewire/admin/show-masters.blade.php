@@ -7,7 +7,6 @@ use App\Services\SeedService;
 use Livewire\Attributes\Validate;
 use WireUi\Traits\Actions;
 
-
 new class extends Component {
     use Actions;
 
@@ -25,18 +24,12 @@ new class extends Component {
         try {
             $newMaster = SeedService::createMaster($this->newMasterTitle);
         } catch (Exception $e) {
-            $this->notification()->error(
-                'Failed to create master',
-                $e->getMessage(),
-            );
+            $this->notification()->error('Failed to create master', $e->getMessage());
 
             return;
         }
 
-        $this->notification()->success(
-            'Master created',
-            $this->newMasterTitle,
-        );
+        $this->notification()->success('Master created', $this->newMasterTitle);
 
         $this->newMasterTitle = '';
         $this->showInput = false;
@@ -45,10 +38,11 @@ new class extends Component {
 
     public function mount(): void
     {
-        $this->masterCourses = Master::all()->load('courses')->
-        sortByDesc(function ($master) {
-            return $master->courses->count();
-        });
+        $this->masterCourses = Master::all()
+            ->load('courses')
+            ->sortByDesc(function ($master) {
+                return $master->courses->count();
+            });
     }
 }; ?>
 
@@ -72,18 +66,18 @@ new class extends Component {
             </x-button>
         </div>
         <div class="overflow-hidden transition-all duration-500"
-             :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
+            :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
 
             <form wire:submit="saveNewMaster">
                 @csrf
                 <div class="flex items-center justify-between space-x-4">
                     <x-input type="text" class="w-full" wire:model="newMasterTitle" name="new_course_title"
-                             placeholder="Title" />
+                        placeholder="Title" />
 
                     <x-button positive type="submit" class="min-w-20">Submit</x-button>
                 </div>
                 @error('newMasterTitle')
-                <div class="mt-1 text-negative-500">{{ $message }}</div>
+                    <div class="mt-1 text-negative-500">{{ $message }}</div>
                 @enderror
             </form>
         </div>

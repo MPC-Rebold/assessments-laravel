@@ -71,7 +71,7 @@ new class extends Component {
                                 </x-dropdown.item>
                             @endfor
                         @else
-                            <x-dropdown.item>
+                            <x-dropdown.item class="hover:cursor-default hover:bg-white">
                                 <div class="flex w-full items-center justify-between">
                                     <div class="text-lg font-bold">
                                         - No Courses -
