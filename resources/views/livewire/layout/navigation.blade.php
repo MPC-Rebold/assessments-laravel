@@ -50,7 +50,7 @@ new class extends Component {
 
                 <div x-data="{ coursesOpen: false }" @click="coursesOpen = !coursesOpen" @click.outside="coursesOpen = false"
                     class="hidden h-full space-x-8 sm:ms-6 sm:flex">
-                    <x-dropdown align="left">
+                    <x-dropdown align="left" class="w-fit">
                         <x-slot name="trigger" class="h-full">
                             <div class="h-full">
                                 <x-nav-link :active="request()->routeIs('course.index', 'course.show', 'assessment.show')" class="group h-full">
@@ -64,7 +64,7 @@ new class extends Component {
                         </x-slot>
                         @if (count($courses) > 0)
                             @for ($i = 0; $i < count($courses); $i++)
-                                <x-dropdown.item class="group" :separator="(bool) $i" :href="$courses[$i]['href']" wire:navigate>
+                                <x-dropdown.item class="group w-full" :separator="(bool) $i" :href="$courses[$i]['href']" wire:navigate>
                                     <div class="text-lg font-bold">
                                         {{ $courses[$i]['title'] }}
                                     </div>
