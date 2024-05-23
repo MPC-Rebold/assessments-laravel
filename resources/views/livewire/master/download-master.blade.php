@@ -27,7 +27,7 @@ new class extends Component {
             mkdir(storage_path('app/tmp'));
         }
 
-        $zipPath = storage_path('app/tmp/' . $this->master->title  . '.zip');
+        $zipPath = storage_path('app/tmp/' . $this->master->title . '.zip');
         $zip = new ZipArchive();
 
         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
