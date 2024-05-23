@@ -233,13 +233,46 @@ class SeedService
      * @param Master $master the master to rename
      * @param string $newTitle the new title of the master
      * @return void
+     *
+     * @throws Exception if a Master with the new title already exists
      */
     public static function renameMaster(Master $master, string $newTitle): void
     {
         $oldPath = database_path('seed/' . $master->title);
         $newPath = database_path('seed/' . $newTitle);
+        $existingMaster = Master::where('title', $newTitle)->first();
+
+        if ($existingMaster || is_dir($newPath)) {
+            throw new Exception("Course $newTitle already exists");
+        }
 
         rename($oldPath, $newPath);
         $master->update(['title' => $newTitle]);
+    }
+
+    /**
+     * Renames the assessment in the seed directory and database
+     *
+     * @param Assessment $assessment the assessment to rename
+     * @param string $newTitle the new title of the assessment
+     * @return void
+     *
+     * @throws Exception if an Assessment with new title in the same course already exists
+     */
+    public static function renameAssessment(Assessment $assessment, string $newTitle): void
+    {
+        $oldPath = database_path('seed/' . $assessment->master->title . '/' . $assessment->title . '.txt');
+        $newPath = database_path('seed/' . $assessment->master->title . '/' . $newTitle . '.txt');
+        $existingAssessment = Assessment::where([
+            ['title', $newTitle],
+            ['master_id', $assessment->master_id],
+        ])->first();
+
+        if ($existingAssessment || file_exists($newPath)) {
+            throw new Exception("Assessment $newTitle already exists on " . $assessment->master->title);
+        }
+
+        rename($oldPath, $newPath);
+        $assessment->update(['title' => $newTitle]);
     }
 }
