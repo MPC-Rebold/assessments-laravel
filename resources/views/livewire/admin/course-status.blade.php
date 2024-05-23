@@ -20,7 +20,7 @@ new class extends Component {
 }; ?>
 
 <div class="flex flex-row items-center">
-    <div class="flex w-1/4 items-center space-x-4 ">
+    <div class="flex w-1/4 items-center space-x-4">
         @if (in_array('NoSeed', $statusStrings))
             <x-icon negative name="exclamation" class="h-6 w-6 text-negative-500" />
         @elseif(in_array('Warning', $statusStrings))
