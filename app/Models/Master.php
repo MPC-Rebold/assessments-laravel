@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Master extends Model
 {
+    final public const string NO_SEED = 'NO_SEED';
+
+    final public const string DISCONNECTED = 'DISCONNECTED';
+
+    final public const string WARNING = 'WARNING';
+
+    final public const string OKAY = 'OKAY';
+
     protected $fillable = [
         'title',
     ];
@@ -38,22 +46,22 @@ class Master extends Model
         $hasMissingAssessmentSeeds = $this->status->missing_assessment_seeds->isNotEmpty();
 
         if (! $this->status->has_seed or $hasMissingAssessmentSeeds) {
-            $statusStrings[] = 'NoSeed';
+            $statusStrings[] = self::NO_SEED;
         }
 
         if ($this->courses->isEmpty()) {
-            $statusStrings[] = 'Disconnected';
+            $statusStrings[] = self::DISCONNECTED;
         }
 
         $hasMissingCourses = $this->status->missing_courses->isNotEmpty();
         $hasMissingAssessments = $this->status->missing_assessments->isNotEmpty();
 
         if ($hasMissingCourses or $hasMissingAssessments) {
-            $statusStrings[] = 'Warning';
+            $statusStrings[] = self::WARNING;
         }
 
         if (! $statusStrings) {
-            $statusStrings[] = 'Okay';
+            $statusStrings[] = self::OKAY;
         }
 
         return $statusStrings;

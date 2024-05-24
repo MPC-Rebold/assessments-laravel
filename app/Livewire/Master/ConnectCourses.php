@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Master;
 
-use App\Livewire\Admin\Sync;
 use App\Models\Course;
 use App\Models\Master;
 use App\Models\User;
+use App\Services\SyncService;
 use DB;
 use Exception;
 use Illuminate\Contracts\View\View;
@@ -32,7 +32,7 @@ class ConnectCourses extends Component
 
     public Collection $missingAssessments;
 
-    #[On(('refresh'))]
+    #[On('refresh')]
     public function mount(): void
     {
         $this->statusStrings = $this->master->statusStrings();
@@ -63,6 +63,8 @@ class ConnectCourses extends Component
                 $user->connectCourses();
             }
 
+            SyncService::sync();
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -70,8 +72,6 @@ class ConnectCourses extends Component
 
             return;
         }
-
-        (new Sync())->sync();
 
         $this->mount();
 
