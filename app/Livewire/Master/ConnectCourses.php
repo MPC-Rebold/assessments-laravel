@@ -62,9 +62,9 @@ class ConnectCourses extends Component
                 $user->connectCourses();
             }
 
-            SyncService::sync();
-
             DB::commit();
+
+            SyncService::sync();
         } catch (Exception $e) {
             DB::rollBack();
             $this->notification()->error('Course connections failed with error ' . $e->getMessage());
@@ -74,8 +74,8 @@ class ConnectCourses extends Component
 
         $this->mount();
 
-        if (in_array('Okay', $this->master->statusStrings()) or
-            in_array('Disconnected', $this->master->statusStrings())) {
+        if (in_array(Master::OKAY, $this->master->statusStrings()) or
+            in_array(Master::DISCONNECTED, $this->master->statusStrings())) {
             $this->notification()->success('Course connections saved');
         } else {
             $this->notification()->warning('Course connections saved with warnings');

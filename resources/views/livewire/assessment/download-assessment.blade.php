@@ -36,7 +36,7 @@ new class extends Component {
         <div class="text-lg font-bold">
             Download Raw Assessment
         </div>
-        <x-button sky class="w-28" wire:click="downloadAssessment">
+        <x-button cyan class="w-28" wire:click="downloadAssessment">
             <div class="flex items-center space-x-2">
                 <x-icon solid name="download" class="h-4 w-4" />
                 <div>Download</div>

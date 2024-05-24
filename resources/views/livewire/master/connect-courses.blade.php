@@ -10,8 +10,7 @@ use App\Models\Master;
             <livewire:master.status-no-seed :master="$master" />
         @endif
         @if (in_array(Master::WARNING, $statusStrings))
-            <livewire:master.status-warning :missingCourses="$missingCourses"
-                                            :missingAssessments="$missingAssessments" />
+            <livewire:master.status-warning :missingCourses="$missingCourses" :missingAssessments="$missingAssessments" />
         @endif
         @if (in_array(Master::DISCONNECTED, $statusStrings))
             <livewire:master.status-disconnected />
@@ -31,13 +30,11 @@ use App\Models\Master;
                     </h2>
                     <div class="flex w-full items-center justify-between gap-4 md:justify-end">
                         <x-select multiselect searchable class="max-w-md" wire:model="connectedCourses"
-                                  placeholder="No connected courses" :options="$availableCourses"
-                                  empty-message="No available courses" />
+                            placeholder="No connected courses" :options="$availableCourses" empty-message="No available courses" />
 
                         <x-button disabled positive spinner class="min-w-24 bg-slate-300 hover:bg-slate-300"
-                                  wire:dirty.attr.remove="disabled"
-                                  wire:dirty.class.remove="bg-slate-300 hover:bg-slate-300"
-                                  wire:click="saveConnectedCourses">
+                            wire:dirty.attr.remove="disabled" wire:dirty.class.remove="bg-slate-300 hover:bg-slate-300"
+                            wire:click="saveConnectedCourses">
                             Save
                         </x-button>
                     </div>
@@ -67,13 +64,12 @@ use App\Models\Master;
                         </div>
                     </div>
                     <div>
-                        <x-button secondary class="min-w-24" :href="route('course.edit', [$master->id, $course->id])"
-                                  wire:navigate>
+                        <x-button secondary class="min-w-24" :href="route('course.edit', [$master->id, $course->id])" wire:navigate>
                             <div class="group flex items-center space-x-2">
                                 <div>Manage</div>
                                 <div>
                                     <x-icon name="chevron-right"
-                                            class="h-4 w-4 transition-all ease-in-out group-hover:translate-x-1" />
+                                        class="h-4 w-4 transition-all ease-in-out group-hover:translate-x-1" />
                                 </div>
                             </div>
                         </x-button>

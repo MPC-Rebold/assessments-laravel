@@ -63,8 +63,6 @@ new class extends Component {
         }
 
         $this->checkPastDue();
-
-        // Add grace-period of 1 minute
         if ($this->isPastDue) {
             $this->notification()->error('You cannot submit after the due date');
             return;

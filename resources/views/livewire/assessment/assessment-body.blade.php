@@ -46,7 +46,7 @@ new class extends Component {
         $this->assessment_canvas_id = request()->route('assessmentId');
 
         $this->points = $this->assessmentCourse->pointsForUser(auth()->user());
-        $this->percentage = ($this->points / $this->assessmentCourse->assessment->questionCount()) * 100;
+        $this->percentage = $this->assessmentCourse->percentageForUser(auth()->user()) * 100;
 
         $this->isPastDue = $this->assessmentCourse->due_at !== null && Carbon::parse($this->assessmentCourse->due_at)->isPast();
     }
@@ -150,12 +150,6 @@ new class extends Component {
                             top: y,
                             behavior: 'smooth'
                         });
-
-                        //add border to question for 1 second
-                        question.className += ' border-4 border-secondary-500';
-                        setTimeout(() => {
-                            question.classList.remove('border-4', 'border-secondary-500');
-                        }, 1000);
                     }
                 </script>
                 <button class="ml-4 min-w-20 text-xl font-extrabold transition-all ease-in-out hover:scale-110"
