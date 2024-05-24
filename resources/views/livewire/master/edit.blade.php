@@ -16,6 +16,7 @@ new class extends Component {
     public function updateMaster(int $masterId): void
     {
         $this->mount(Master::find($masterId));
+        $this->dispatch('updateStatus');
     }
 }; ?>
 
