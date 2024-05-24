@@ -41,7 +41,7 @@ new class extends Component {
     <div class="flex flex-wrap items-center gap-6">
         <div class="flex items-center space-x-4">
             @if ($isMissing)
-                <x-icon name="exclamation" class="h-5 text-warning-500" />
+                <x-icon name="exclamation" class="h-9 w-9 text-warning-500" />
             @else
                 <x-canvas-button :href="'/courses/' .
                     $assessmentCourse->course->id .
@@ -53,12 +53,12 @@ new class extends Component {
             </div>
         </div>
         @if (!$isMissing)
-            <div class="hidden text-gray-500 sm:flex">
+            <div class="hidden text-secondary-500 sm:flex">
                 Due at: {{ $dueAt }}
             </div>
         @else
             <div class="text-secondary-500">
-                - This assessment is missing from Canvas -
+                This assessment is missing from Canvas
             </div>
         @endif
     </div>

@@ -87,7 +87,7 @@ new class extends Component {
             return;
         }
 
-        $this->dispatch('refresh');
+        $this->dispatch('updateMaster', $this->master->id);
         $this->mount($this->master);
         $this->notification()->success('Assessment uploaded successfully', implode($uploadedNames) . " uploaded to $master");
         $this->showUpload = false;
@@ -132,7 +132,7 @@ new class extends Component {
         @endif
         <div class="w-full p-4 sm:px-6" x-data="{ open: @entangle('showUpload') }">
             <div @click="open = true" :class="open ? 'hidden' : 'block'">
-                <x-button icon="plus" class="w-full hover:bg-secondary-500 hover:text-white">
+                <x-button icon="plus" class="w-full hover:!bg-secondary-500 hover:text-white">
                     Add Assessments
                 </x-button>
             </div>

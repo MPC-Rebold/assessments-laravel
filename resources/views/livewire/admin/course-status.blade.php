@@ -21,13 +21,13 @@ new class extends Component {
 
 <div class="flex flex-row items-center">
     <div class="flex w-1/4 items-center space-x-4">
-        @if (in_array('NoSeed', $statusStrings))
+        @if (in_array(Master::NO_SEED, $statusStrings))
             <x-icon negative name="exclamation" class="h-6 w-6 text-negative-500" />
-        @elseif(in_array('Warning', $statusStrings))
+        @elseif(in_array(Master::WARNING, $statusStrings))
             <x-icon warning name="exclamation" class="h-6 w-6 text-warning-500" />
-        @elseif (in_array('Disconnected', $statusStrings))
+        @elseif (in_array(Master::DISCONNECTED, $statusStrings))
             <x-icon secondary name="ban" class="h-6 w-6 text-secondary-500" />
-        @elseif (in_array('Okay', $statusStrings))
+        @elseif (in_array(Master::OKAY, $statusStrings))
             <x-icon positive name="check" class="h-6 w-6 text-positive-500" />
         @endif
         <div class="w-3/4 truncate">
@@ -36,7 +36,7 @@ new class extends Component {
     </div>
 
     <div class="invisible grow overflow-hidden text-ellipsis text-nowrap pe-4 text-gray-500 sm:visible sm:flex">
-        @if (in_array('NoSeed', $statusStrings))
+        @if (in_array(Master::NO_SEED, $statusStrings))
             <div class="text-red-500">
                 Missing seed
             </div>

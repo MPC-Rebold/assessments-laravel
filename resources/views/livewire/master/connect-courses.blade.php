@@ -1,15 +1,21 @@
+<?php
+
+use App\Models\Master;
+
+?>
+
 <div class="space-y-4">
     <div class="space-y-4">
-        @if (in_array('NoSeed', $statusStrings))
+        @if (in_array(Master::NO_SEED, $statusStrings))
             <livewire:master.status-no-seed :master="$master" />
         @endif
-        @if (in_array('Warning', $statusStrings))
+        @if (in_array(Master::WARNING, $statusStrings))
             <livewire:master.status-warning :missingCourses="$missingCourses" :missingAssessments="$missingAssessments" />
         @endif
-        @if (in_array('Disconnected', $statusStrings))
+        @if (in_array(Master::DISCONNECTED, $statusStrings))
             <livewire:master.status-disconnected />
         @endif
-        @if (in_array('Okay', $statusStrings))
+        @if (in_array(Master::OKAY, $statusStrings))
             <livewire:master.status-successful />
         @endif
 

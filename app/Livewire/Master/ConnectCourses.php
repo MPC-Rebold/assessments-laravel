@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Master;
 
-use App\Livewire\Admin\Sync;
 use App\Models\Course;
 use App\Models\Master;
 use App\Models\User;
+use App\Services\SyncService;
 use DB;
 use Exception;
 use Illuminate\Contracts\View\View;
@@ -32,7 +32,6 @@ class ConnectCourses extends Component
 
     public Collection $missingAssessments;
 
-    #[On(('refresh'))]
     public function mount(): void
     {
         $this->statusStrings = $this->master->statusStrings();
@@ -64,6 +63,8 @@ class ConnectCourses extends Component
             }
 
             DB::commit();
+
+            SyncService::sync();
         } catch (Exception $e) {
             DB::rollBack();
             $this->notification()->error('Course connections failed with error ' . $e->getMessage());
@@ -71,16 +72,22 @@ class ConnectCourses extends Component
             return;
         }
 
-        (new Sync())->sync();
-
         $this->mount();
 
-        if (in_array('Okay', $this->master->statusStrings()) or
-            in_array('Disconnected', $this->master->statusStrings())) {
+        if (in_array(Master::OKAY, $this->master->statusStrings()) or
+            in_array(Master::DISCONNECTED, $this->master->statusStrings())) {
             $this->notification()->success('Course connections saved');
         } else {
             $this->notification()->warning('Course connections saved with warnings');
         }
+    }
+
+    #[On('updateStatus')]
+    public function updateStatus(): void
+    {
+        $this->statusStrings = $this->master->statusStrings();
+        $this->missingCourses = $this->master->status->missing_courses;
+        $this->missingAssessments = $this->master->status->missing_assessments;
     }
 
     public function render(): View

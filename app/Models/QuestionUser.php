@@ -115,7 +115,7 @@ class QuestionUser extends Model
             }
         }
 
-        return strrev($result);
+        return str_replace(' ', '&nbsp;', strrev($result));
     }
 
     private static function delimitKeep(string $string): string
