@@ -18,7 +18,13 @@ new class extends Component {
         $this->lastSyncedAt = Settings::first()->last_synced_at;
         $canvasSelf = CanvasService::getSelf();
         $this->apiKeyValid = $canvasSelf->status() !== 401;
-        $this->apiKeyName = $canvasSelf->json()['name'];
+
+        if ($this->apiKeyValid) {
+            $this->apiKeyName = $canvasSelf->json()['name'];
+        } else {
+            $this->apiKeyName = '';
+        }
+
         $this->activeCourses = CanvasService::getCourses();
         $this->activeCoursesModalOpen = false;
     }
