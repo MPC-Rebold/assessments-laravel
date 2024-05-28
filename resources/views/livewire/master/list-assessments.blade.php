@@ -24,12 +24,13 @@ new class extends Component {
     public bool $deleteConfirmed = false;
 
     #[Validate(['uploadedAssessments' => 'required', 'uploadedAssessments.*' => 'file|mimes:txt'])]
-    public array $uploadedAssessments = [];
+    public array $uploadedAssessments;
 
     public function mount(Master $master): void
     {
         $this->master = $master;
         $this->assessments = $master->assessments->sortBy('title');
+        $this->uploadedAssessments = [];
     }
 
     public function updated(): void
@@ -42,12 +43,12 @@ new class extends Component {
         $this->forceModalOpen = false;
     }
 
-    public function save(bool $force = false): void
+    public function saveAddedAssessments(bool $force = false): void
     {
         $this->validate();
 
         $existingNames = $this->assessments->pluck('title')->toArray();
-        $uploadedNames = array_map(fn($assessment) => pathinfo($assessment->getClientOriginalName(), PATHINFO_FILENAME), $this->uploadedAssessments);
+        $uploadedNames = array_map(fn($assessment) => trim(pathinfo($assessment->getClientOriginalName(), PATHINFO_FILENAME)), $this->uploadedAssessments);
 
         $this->conflictingNames = array_intersect($existingNames, $uploadedNames);
 
@@ -85,8 +86,7 @@ new class extends Component {
             if ($force) {
                 $assessments = $this->master->courses->flatMap->assessments->whereIn('title', $this->conflictingNames);
                 $assessmentCourses = $assessments->flatMap->assessmentCourses->unique('id');
-                $canvasService = new CanvasService();
-                $canvasService->regradeAssessmentCourses($assessmentCourses);
+                CanvasService::regradeAssessmentCourses($assessmentCourses);
             }
         } catch (Exception $e) {
             $this->notification()->error('Failed to sync new assessments', $e->getMessage());
@@ -147,7 +147,7 @@ new class extends Component {
                 :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
 
                 {{--                <form action="{{ route('assessment.upload') }}" method="POST" enctype="multipart/form-data"> --}}
-                <form wire:submit="save">
+                <form wire:submit="saveAddedAssessments">
                     @csrf
 
                     <div class="flex items-center justify-between">
@@ -158,7 +158,7 @@ new class extends Component {
                             x-on:livewire-upload-progress="progress = $event.detail.progress;">
                             <!-- File Input -->
                             <div class="space-y-1">
-                                <input type="file" wire:model="uploadedAssessments" name="uploaded_assessments[]"
+                                <input type="file" wire:model.defer="uploadedAssessments" name="uploaded_assessments[]"
                                     multiple>
                                 @error('uploadedAssessments.*')
                                     <div class="text-negative-500">
@@ -175,7 +175,9 @@ new class extends Component {
                             {{--                            </div> --}}
 
                         </div>
-                        <x-button positive type="submit" class="min-w-20">Submit</x-button>
+                        <x-button positive type="submit" class="min-w-20">
+                            Upload
+                        </x-button>
                     </div>
                 </form>
                 <x-modal wire:model.defer="forceModalOpen">
@@ -214,8 +216,8 @@ new class extends Component {
                         <x-slot name="footer">
                             <div class="flex justify-between">
                                 <x-button flat label="Cancel" wire:click="closeModal" />
-                                <x-button label="Delete & Replace" wire:click="save(true)" :disabled="!$deleteConfirmed"
-                                    :secondary="!$deleteConfirmed" :negative="$deleteConfirmed" />
+                                <x-button label="Delete & Replace" wire:click="saveAddedAssessments(true)"
+                                    :disabled="!$deleteConfirmed" :secondary="!$deleteConfirmed" :negative="$deleteConfirmed" />
                             </div>
                         </x-slot>
                     </x-card>

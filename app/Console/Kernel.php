@@ -41,7 +41,6 @@ class Kernel extends ConsoleKernel
      */
     public function postFinalGrades(): void
     {
-        $canvasService = new CanvasService();
         $assessmentCourses = AssessmentCourse::all();
 
         foreach ($assessmentCourses as $assessmentCourse) {
@@ -57,7 +56,7 @@ class Kernel extends ConsoleKernel
 
             // if it was due within the last day, post the final grade
             if ($dueAt->isPast() && $dueAt->diffInDays(Carbon::now()) < 1.01) {
-                $canvasService->regradeAssessmentCourse($assessmentCourse);
+                CanvasService::regradeAssessmentCourse($assessmentCourse);
             }
         }
     }

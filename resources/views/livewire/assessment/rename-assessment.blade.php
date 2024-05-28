@@ -6,13 +6,14 @@ use Livewire\Features\SupportRedirects\Redirector;
 use Livewire\Volt\Component;
 use App\Models\Assessment;
 use WireUi\Traits\Actions;
+use App\Services\SyncService;
 
 new class extends Component {
     use Actions;
 
     public Assessment $assessment;
 
-    #[Validate('required|string|max:255')]
+    #[Validate('required|string|max:50')]
     public string $newTitle;
 
     public bool $renameModalOpen;
