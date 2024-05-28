@@ -19,8 +19,14 @@ $missingAssessments = $master->status->missing_assessments;
 <x-app-layout>
     <livewire:layout.header :routes="[
         ['title' => 'Admin', 'href' => route('admin')],
-        ['title' => $master->title, 'href' => route('master.edit', $master->id)],
-        ['title' => $course->title, 'href' => route('course.edit', [$master->id, $course->id])],
+        [
+            'title' => $master->title,
+            'href' => route('master.edit', $master->id),
+        ],
+        [
+            'title' => $course->title,
+            'href' => route('course.edit', [$master->id, $course->id]),
+        ],
     ]" />
     <x-slot:content>
         @if ($missingAssessments->isNotEmpty())

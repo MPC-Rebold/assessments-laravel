@@ -173,6 +173,12 @@ class SeedService
      */
     public static function createMaster(string $title): Master
     {
+        $title = trim($title);
+
+        if ($title === '') {
+            throw new Exception('Course title cannot be empty');
+        }
+
         $newMasterPath = self::getMasterPath($title);
 
         if (! is_dir($newMasterPath)) {
@@ -228,6 +234,8 @@ class SeedService
      */
     public static function renameMaster(Master $master, string $newTitle): void
     {
+        $newTitle = trim($newTitle);
+
         $oldPath = self::getMasterPath($master);
         $newPath = self::getMasterPath($newTitle);
         $existingMaster = Master::where('title', $newTitle)->first();
@@ -251,6 +259,12 @@ class SeedService
      */
     public static function renameAssessment(Assessment $assessment, string $newTitle): void
     {
+        $newTitle = trim($newTitle);
+
+        if ($newTitle === '') {
+            throw new Exception('Assessment title cannot be empty');
+        }
+
         $oldPath = self::getAssessmentPath($assessment);
         $newPath = database_path('seed/' . $assessment->master->title . '/' . $newTitle . '.txt');
         $existingAssessment = Assessment::where([

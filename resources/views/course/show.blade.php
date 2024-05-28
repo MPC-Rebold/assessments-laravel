@@ -15,7 +15,10 @@ if (!$course) {
 <x-app-layout>
     <livewire:layout.header :routes="[
         ['title' => 'Courses', 'href' => route('course.index')],
-        ['title' => $course->title, 'href' => route('course.show', $course->id)],
+        [
+            'title' => $course->title,
+            'href' => route('course.show', $course->id),
+        ],
     ]" />
 
     <div class="py-10">

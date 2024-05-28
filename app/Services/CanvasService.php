@@ -253,14 +253,14 @@ class CanvasService
      *
      * @throws Exception if any regrade fails
      */
-    public function regradeAssessmentCourses(Collection $assessmentCourses): void
+    public static function regradeAssessmentCourses(Collection $assessmentCourses): void
     {
         foreach ($assessmentCourses as $assessmentCourse) {
             if (! $assessmentCourse->assessment_canvas_id || ! $assessmentCourse->course->master_id) {
                 continue;
             }
 
-            $this->regradeAssessmentCourse($assessmentCourse, false);
+            self::regradeAssessmentCourse($assessmentCourse, false);
         }
     }
 
@@ -273,7 +273,7 @@ class CanvasService
      *
      * @throws Exception if regrade fails
      */
-    public function regradeAssessmentCourse(AssessmentCourse $assessmentCourse, bool $regradePastDue = true): void
+    public static function regradeAssessmentCourse(AssessmentCourse $assessmentCourse, bool $regradePastDue = true): void
     {
         if (! $regradePastDue && $assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast()) {
             return;

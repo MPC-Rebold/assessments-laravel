@@ -26,10 +26,12 @@ new class extends Component {
         <div class="px-6 py-4">
             <ul class="list-disc space-y-1 pl-5">
                 <li>You have ten (10) guesses for each question</li>
-                <li>Feedback for your answer will be given after each attempt</li>
+                <li>Feedback for your answer will be given after each attempt
+                </li>
                 <ul class="list-disc pl-1 sm:list-inside">
                     <li>Correct characters will be green</li>
-                    <li>Additional incorrect characters will have a strikethrough</li>
+                    <li>Additional incorrect characters will have a
+                        strikethrough</li>
                     <li>Missing characters will be marked as underscores</li>
                     <li>
                         Example: if the correct answer is <b>example</b>

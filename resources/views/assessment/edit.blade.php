@@ -17,8 +17,14 @@ if (!$master || !$assessment) {
 <x-app-layout>
     <livewire:layout.header :routes="[
         ['title' => 'Admin', 'href' => route('admin')],
-        ['title' => $master->title, 'href' => route('master.edit', $master->id)],
-        ['title' => $assessment->title, 'href' => route('assessment.show', [$master->id, $assessment->id])],
+        [
+            'title' => $master->title,
+            'href' => route('master.edit', $master->id),
+        ],
+        [
+            'title' => $assessment->title,
+            'href' => route('assessment.show', [$master->id, $assessment->id]),
+        ],
     ]" />
 
     <x-slot:content>

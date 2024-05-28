@@ -6,13 +6,14 @@ use Livewire\Features\SupportRedirects\Redirector;
 use Livewire\Volt\Component;
 use App\Models\Assessment;
 use WireUi\Traits\Actions;
+use App\Services\SyncService;
 
 new class extends Component {
     use Actions;
 
     public Assessment $assessment;
 
-    #[Validate('required|string|max:255')]
+    #[Validate('required|string|max:50')]
     public string $newTitle;
 
     public bool $renameModalOpen;
@@ -66,13 +67,15 @@ new class extends Component {
                     <div class="flex items-center border-b-2 border-warning-200 pb-3">
                         <x-icon name="exclamation" class="h-6 w-6 text-warning-700" />
                         <div class="ml-1 text-lg text-warning-700">
-                            Rename assessment&nbsp;<b>{{ $assessment->title }}</b> on
+                            Rename
+                            assessment&nbsp;<b>{{ $assessment->title }}</b> on
                             course&nbsp;<b>{{ $assessment->master->title }}</b>
                         </div>
                     </div>
                     <div class="mt-2">
                         <p class="text-warning-700">
-                            Renaming the Assessment may disconnect from any associated Canvas assessments.
+                            Renaming the Assessment may disconnect from any
+                            associated Canvas assessments.
                         </p>
                     </div>
                 </div>

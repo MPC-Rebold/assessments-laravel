@@ -33,7 +33,8 @@ new class extends Component {
                 <button class="group w-full bg-gray-200 p-4 shadow sm:rounded-lg sm:px-6" @click="open = !open">
                     <div class="flex items-center justify-between">
                         <div class="text-md">
-                            Show locked assessments ({{ $inactiveAssessmentCourses->count() }})
+                            Show locked assessments
+                            ({{ $inactiveAssessmentCourses->count() }})
                         </div>
                         <div class="flex items-center space-x-2">
                             <div :class="{ 'rotate-180': open }" class="transition-transform ease-in-out">

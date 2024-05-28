@@ -165,7 +165,8 @@ new class extends Component {
         <div class="border-t border-gray-200 pb-1 pt-4">
             <div class="px-4">
                 <div class="text-base font-medium text-gray-200" x-data="{{ json_encode(['name' => auth()->user()->name]) }}"></div>
-                <div class="text-sm font-medium text-gray-400">{{ auth()->user()->email }}</div>
+                <div class="text-sm font-medium text-gray-400">
+                    {{ auth()->user()->email }}</div>
             </div>
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile')" wire:navigate class="flex items-center space-x-1">

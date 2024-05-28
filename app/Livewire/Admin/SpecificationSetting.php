@@ -65,9 +65,8 @@ class SpecificationSetting extends Component
                 'specification_grading_threshold' => $specification_grading_threshold,
             ]);
 
-            $canvasService = new CanvasService();
             $assessmentCourses = AssessmentCourse::where('course_id', $this->course->id)->get();
-            $canvasService->regradeAssessmentCourses($assessmentCourses);
+            CanvasService::regradeAssessmentCourses($assessmentCourses);
 
             $this->specification_grading = $this->course->specification_grading;
 

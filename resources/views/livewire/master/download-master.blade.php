@@ -20,6 +20,11 @@ new class extends Component {
             return null;
         }
 
+        if (count(SeedService::getAssessments($this->master)) === 0) {
+            $this->notification()->error('Error downloading course', "Unable to download course {$this->master->title} with no assessments");
+            return null;
+        }
+
         $assessmentTitles = SeedService::getAssessments($this->master);
         $assessmentPaths = array_map(fn($assessmentTitle) => SeedService::getAssessmentPathByTitles($this->master->title, $assessmentTitle), $assessmentTitles);
 
@@ -30,7 +35,7 @@ new class extends Component {
         $zipPath = storage_path('app/tmp/' . $this->master->title . '.zip');
         $zip = new ZipArchive();
 
-        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+        if (!is_writable(dirname($zipPath)) || $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
             $this->notification()->error('Error downloading course', 'Failed to create zip file.');
             return null;
         }

@@ -80,7 +80,10 @@ new class extends Component {
 
     <livewire:layout.header :routes="[
         ['title' => 'Courses', 'href' => route('course.index')],
-        ['title' => $course->title, 'href' => route('course.show', $course->id)],
+        [
+            'title' => $course->title,
+            'href' => route('course.show', $course->id),
+        ],
         [
             'title' => $assessment->title,
             'href' => route('assessment.show', [$course->id, $assessmentCourse->assessment_canvas_id]),
@@ -145,7 +148,8 @@ new class extends Component {
                     function scrollToQuestion(questionNumber) {
                         const question = document.getElementById('question_' + questionNumber);
                         const navbarHeight = document.querySelector('nav').offsetHeight;
-                        const y = question.getBoundingClientRect().top + window.scrollY - navbarHeight - 20;
+                        const y = question.getBoundingClientRect().top + window.scrollY -
+                            navbarHeight - 20;
                         window.scrollTo({
                             top: y,
                             behavior: 'smooth'
@@ -158,7 +162,8 @@ new class extends Component {
                         {{ $percentage }}%
                     </div>
                     <div :class="{ 'hidden': percentage }">
-                        {{ $points }} / {{ $assessmentCourse->assessment->questionCount() }}
+                        {{ $points }} /
+                        {{ $assessmentCourse->assessment->questionCount() }}
                     </div>
                 </button>
             </div>

@@ -15,7 +15,8 @@ use App\Models\Course;
                 <div class="flex items-center justify-between">
                     <x-avatar xl :src="auth()->user()->avatar" class="mx-auto h-fit" />
                     <div class="ms-4">
-                        <h1 class="text-xl font-bold text-gray-800">{{ auth()->user()->name }}</h1>
+                        <h1 class="text-xl font-bold text-gray-800">
+                            {{ auth()->user()->name }}</h1>
                         <p class="text-gray-600">{{ auth()->user()->email }}</p>
                     </div>
                 </div>
@@ -32,11 +33,13 @@ use App\Models\Course;
         </div>
         <div class="bg-white p-4 shadow sm:rounded-lg sm:p-6">
             <p class="mb-2"><b>Canvas ID:</b>
-                {{ auth()->user()->canvas ? auth()->user()->canvas->canvas_id : 'N/A' }}</p>
+                {{ auth()->user()->canvas ? auth()->user()->canvas->canvas_id : 'N/A' }}
+            </p>
             @if (auth()->user()->is_admin)
                 <div class="space-y-2">
                     <div class="flex">
-                        <h2 class="min-w-fit font-bold text-gray-800">Master Courses:</h2>
+                        <h2 class="min-w-fit font-bold text-gray-800">Master
+                            Courses:</h2>
                         <div class="ms-1 text-wrap">
                             @if (Master::count() > 0)
                                 {{ implode(', ', Master::pluck('title')->toArray()) }}
@@ -46,7 +49,8 @@ use App\Models\Course;
                         </div>
                     </div>
                     <div class="flex">
-                        <h2 class="min-w-fit font-bold text-gray-800">Canvas Courses:</h2>
+                        <h2 class="min-w-fit font-bold text-gray-800">Canvas
+                            Courses:</h2>
                         <div class="ms-1 text-wrap">
                             @if (Course::count() > 0)
                                 {{ implode(', ', Course::pluck('title')->toArray()) }}

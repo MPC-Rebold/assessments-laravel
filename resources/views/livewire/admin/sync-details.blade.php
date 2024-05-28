@@ -8,7 +8,7 @@ use Livewire\Attributes\On;
 
 new class extends Component {
     public string|null $lastSyncedAt;
-    public bool $apiKeyValid;
+    public bool|null $apiKeyValid;
     public string $apiKeyName;
     public array $activeCourses;
     public bool $activeCoursesModalOpen;
@@ -16,8 +16,12 @@ new class extends Component {
     public function mount(): void
     {
         $this->lastSyncedAt = Settings::first()->last_synced_at;
-        $canvasSelf = CanvasService::getSelf();
-        $this->apiKeyValid = $canvasSelf->status() !== 401;
+        try {
+            $canvasSelf = CanvasService::getSelf();
+            $this->apiKeyValid = $canvasSelf->status() !== 401;
+        } catch (Exception $e) {
+            $this->apiKeyValid = null;
+        }
 
         if ($this->apiKeyValid) {
             $this->apiKeyName = $canvasSelf->json()['name'];
@@ -30,7 +34,7 @@ new class extends Component {
         $this->activeCoursesModalOpen = false;
     }
 
-    #[On('updateLastSyncedAt')]
+    #[On('syncUpdate')]
     public function updateLastSyncedAt(): void
     {
         $this->lastSyncedAt = Settings::first()->last_synced_at;
@@ -90,29 +94,36 @@ new class extends Component {
             Api Key Status
         </div>
         <div class="flex items-center">
-            @if ($apiKeyValid)
+            @if ($apiKeyValid === true)
                 <div class="flex text-positive-500"><span>Valid</span>&nbsp;<span
                         class="hidden sm:flex">({{ $apiKeyName }})</span></div>
                 <x-icon name="check" class="h-6 w-6 text-positive-500" />
-            @else
+            @elseif($apiKeyValid === false)
                 <div class="text-negative-500">Invalid</div>
                 <x-icon name="x" class="h-6 w-6 text-negative-500" />
+            @else
+                <div class="text-secondary-500">Unable to fetch</div>
             @endif
         </div>
     </div>
     <hr>
-    <a class="flex cursor-pointer items-center justify-between hover:text-secondary-500 hover:underline"
-        wire:click="openActiveCoursesModal">
+    <div class="flex items-center justify-between">
         <div>
             Active Canvas Courses
         </div>
-        <div class="flex items-center space-x-1">
-            <div>
-                {{ count($activeCourses) }}
-            </div>
-            <x-icon name="information-circle" class="h-6 w-6 text-secondary-500" />
-        </div>
-    </a>
+        @if ($apiKeyValid === true)
+            <a class="cursor-pointer hover:underline" wire:click="openActiveCoursesModal">
+                <div class="flex items-center space-x-1">
+                    <div>
+                        {{ count($activeCourses) }}
+                    </div>
+                    <x-icon name="information-circle" class="h-6 w-6 text-secondary-500" />
+                </div>
+            </a>
+        @else
+            <div class="text-secondary-500">N/A</div>
+        @endif
+    </div>
     <x-modal wire:model.defer="activeCoursesModalOpen">
         <x-card title="View Active Canvas Courses">
             <div class='rounded-lg border border-secondary-600 bg-secondary-50 p-4'>
@@ -136,7 +147,8 @@ new class extends Component {
                 </div>
                 <div class="mt-4">
                     <p>
-                        Active Canvas Courses are courses where you are enrolled as a teacher and are favorited.
+                        Active Canvas Courses are courses where you are enrolled
+                        as a teacher and are favorited.
                         See your <a class="underline hover:text-secondary-500" target="_blank"
                             href="{{ config('canvas.host') . '/courses' }}">Canvas Courses</a>.
                     </p>

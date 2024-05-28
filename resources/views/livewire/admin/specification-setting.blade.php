@@ -18,13 +18,17 @@
                         <div class="flex items-center border-b-2 border-warning-200 pb-3">
                             <x-icon name="exclamation" class="h-6 w-6 text-warning-700" />
                             <span class="ml-1 text-lg text-warning-700">
-                                You are about to change the grading option for&nbsp;<b>{{ $course->title }}</b>
+                                You are about to change the grading option
+                                for&nbsp;<b>{{ $course->title }}</b>
                             </span>
                         </div>
                         <div class="ml-5 mt-2 flex items-center justify-between pl-1">
                             <ul class="list-disc space-y-1 text-warning-700">
-                                <li>This will affect <b>all assessments</b> on <b>{{ $course->title }}</b></li>
-                                <li>Assessments already past due will not be affected</li>
+                                <li>This will affect <b>all assessments</b> on
+                                    <b>{{ $course->title }}</b>
+                                </li>
+                                <li>Assessments already past due will not be
+                                    affected</li>
                             </ul>
                         </div>
                     </div>
