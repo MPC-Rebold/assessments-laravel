@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Master extends Model
 {
-    final public const string NO_SEED = 'NO_SEED';
+    public const NO_SEED = 'NO_SEED';
 
-    final public const string DISCONNECTED = 'DISCONNECTED';
+    public const DISCONNECTED = 'DISCONNECTED';
 
-    final public const string WARNING = 'WARNING';
+    public const WARNING = 'WARNING';
 
-    final public const string OKAY = 'OKAY';
+    public const OKAY = 'OKAY';
 
     protected $fillable = [
         'title',
