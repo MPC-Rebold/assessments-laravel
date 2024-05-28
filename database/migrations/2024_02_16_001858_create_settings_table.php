@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->dateTime('last_synced_at')->nullable()->default(null);
+            $table->dateTime('last_schedule_run_at')->nullable()->default(null);
             $table->boolean('is_syncing')->default(false);
         });
     }

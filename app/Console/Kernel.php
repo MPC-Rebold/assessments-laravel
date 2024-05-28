@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Models\AssessmentCourse;
+use App\Models\Settings;
 use App\Services\CanvasService;
 use App\Services\SeedService;
 use App\Services\SyncService;
@@ -22,16 +23,19 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             Log::info('Schedule: Backing up database');
             SeedService::backupDatabase();
+            self::updateScheduleRunAt();
         })->hourly();
 
         $schedule->call(function () {
             Log::info('Schedule: Syncing with Canvas');
             SyncService::sync();
+            self::updateScheduleRunAt();
         })->everyThirtyMinutes();
 
         $schedule->call(function () {
             Log::info('Schedule: Posting final grades');
             $this->postFinalGrades();
+            self::updateScheduleRunAt();
         })->dailyAt('01:00');
 
     }
@@ -59,6 +63,13 @@ class Kernel extends ConsoleKernel
                 CanvasService::regradeAssessmentCourse($assessmentCourse);
             }
         }
+    }
+
+    public static function updateScheduleRunAt(): void
+    {
+        $settings = Settings::first();
+        $settings->last_schedule_run_at = Carbon::now();
+        $settings->save();
     }
 
     /**
