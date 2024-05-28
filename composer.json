@@ -3,7 +3,7 @@
   "type": "project",
   "description": "MPC Assessments",
   "require": {
-    "php": "^8.3",
+    "php": "^8.2",
     "ext-pdo": "*",
     "ext-zip": "*",
     "doctrine/dbal": "^3.8",
