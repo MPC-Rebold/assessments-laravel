@@ -68,7 +68,8 @@ new class extends Component {
             @click="open = !open">
             <div class="flex items-center justify-between">
                 <div class="flex space-x-4">
-                    <div class="font-bold group-hover:underline"> Question {{ $question->number }}</div>
+                    <div class="font-bold group-hover:underline"> Question
+                        {{ $question->number }}</div>
                     <div class="hidden text-gray-500 sm:flex">
                         Attempts: {{ $attempts->count() }}
                     </div>

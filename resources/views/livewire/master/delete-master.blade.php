@@ -8,12 +8,17 @@ new class extends Component {
     public Master $master;
 
     public bool $deleteModalOpen = false;
-
     public string $confirmDeleteString = '';
+    public bool $deleteConfirmed = false;
 
     public function mount(Master $master): void
     {
         $this->master = $master;
+    }
+
+    public function updated(): void
+    {
+        $this->deleteConfirmed = trim($this->confirmDeleteString) === $this->master->title;
     }
 
     public function openDeleteModal(): void
@@ -47,7 +52,8 @@ new class extends Component {
                     <div class="flex items-center border-b-2 border-negative-200 pb-3">
                         <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
                         <span class="ml-1 text-lg text-negative-600">
-                            You are about to delete the course&nbsp;<b>{{ $master->title }}</b>
+                            You are about to delete the
+                            course&nbsp;<b>{{ $master->title }}</b>
                         </span>
                     </div>
                     <div class="ml-5 mt-2 flex items-center justify-between pl-1">
@@ -70,8 +76,8 @@ new class extends Component {
             <x-slot name="footer">
                 <div class="flex justify-between">
                     <x-button flat label="Cancel" x-on:click="close" />
-                    <x-button spinner label="Confirm" wire:click="deleteMaster" :disabled="$confirmDeleteString !== $master->title" :secondary="$confirmDeleteString !== $master->title"
-                        :negative="$confirmDeleteString === $master->title" />
+                    <x-button spinner label="Confirm" wire:click="deleteMaster" :disabled="!$deleteConfirmed" :secondary="!$deleteConfirmed"
+                        :negative="$deleteConfirmed" />
                 </div>
             </x-slot>
         </x-card>

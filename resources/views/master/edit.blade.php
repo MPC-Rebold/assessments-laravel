@@ -15,7 +15,10 @@ if (!$master) {
 <x-app-layout>
     <livewire:layout.header :routes="[
         ['title' => 'Admin', 'href' => route('admin')],
-        ['title' => $master->title, 'href' => route('master.edit', $master->id)],
+        [
+            'title' => $master->title,
+            'href' => route('master.edit', $master->id),
+        ],
     ]" />
 
     <livewire:master.edit :master="$master" />

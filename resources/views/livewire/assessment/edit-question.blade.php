@@ -117,7 +117,8 @@ new class extends Component {
             </div>
         @else
             <div class="overflow-auto px-4 font-mono text-black md:px-2">
-                <p class="overflow-auto whitespace-pre-wrap text-nowrap">{{ $question->question }}</p>
+                <p class="overflow-auto whitespace-pre-wrap text-nowrap">
+                    {{ $question->question }}</p>
             </div>
         @endif
         <x-slot name="footer">
@@ -142,13 +143,16 @@ new class extends Component {
                             <div class="flex items-center border-b-2 border-negative-200 pb-3">
                                 <x-icon name="exclamation" class="h-6 w-6 text-negative-600" />
                                 <p class="ml-1 flex text-lg text-negative-600">
-                                    You are about to delete&nbsp;<b>Question {{ $question->number }}</b>
+                                    You are about to delete&nbsp;<b>Question
+                                        {{ $question->number }}</b>
                                 </p>
                             </div>
                             <div class="ml-5 mt-2 flex items-center justify-between pl-1">
                                 <ul class="list-disc space-y-1 text-negative-600">
-                                    <li>Any user answers associated with this question will be deleted</li>
-                                    <li>Any active assessments will have their grades changed</li>
+                                    <li>Any user answers associated with this
+                                        question will be deleted</li>
+                                    <li>Any active assessments will have their
+                                        grades changed</li>
                                 </ul>
                             </div>
                         </div>

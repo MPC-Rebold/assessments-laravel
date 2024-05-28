@@ -35,7 +35,8 @@ new class extends Component {
             <div class="flex items-center justify-between">
                 <x-avatar xl :src="$user->avatar" class="mx-auto h-fit" />
                 <div class="ms-4">
-                    <h1 class="text-xl font-bold text-gray-800">{{ $user->name }}</h1>
+                    <h1 class="text-xl font-bold text-gray-800">
+                        {{ $user->name }}</h1>
                     <p class="text-gray-600">{{ $user->email }}</p>
                 </div>
             </div>
@@ -102,8 +103,11 @@ new class extends Component {
                                         {{ $assessment->assessment->title }}
                                     </div>
                                     <div class="flex items-center gap-6">
-                                        <div>{{ $assessment->pointsForUser($user) }} /
-                                            {{ $assessment->assessment->questionCount() }}</div>
+                                        <div>
+                                            {{ $assessment->pointsForUser($user) }}
+                                            /
+                                            {{ $assessment->assessment->questionCount() }}
+                                        </div>
                                         <x-icon name="chevron-right"
                                             class="h-5 text-gray-500 transition-all group-hover:translate-x-1 group-hover:scale-110" />
                                     </div>

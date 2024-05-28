@@ -70,7 +70,8 @@ new class extends Component {
                     </div>
                     <div class="mt-2">
                         <p>
-                            Renaming the course will not affect connected Canvas courses or associated assessments and
+                            Renaming the course will not affect connected Canvas
+                            courses or associated assessments and
                             grades.
                         </p>
                     </div>

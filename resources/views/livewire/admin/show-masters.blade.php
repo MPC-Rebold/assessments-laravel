@@ -40,9 +40,8 @@ new class extends Component {
     #[On('syncUpdate')]
     public function updateMasters(): void
     {
-       $this->mount();
+        $this->mount();
     }
-
 
     public function mount(): void
     {

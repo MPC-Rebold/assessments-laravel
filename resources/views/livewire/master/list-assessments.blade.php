@@ -21,6 +21,7 @@ new class extends Component {
     public bool $showUpload = false;
     public bool $forceModalOpen = false;
     public string $confirmDeleteString = '';
+    public bool $deleteConfirmed = false;
 
     #[Validate(['uploadedAssessments' => 'required', 'uploadedAssessments.*' => 'file|mimes:txt'])]
     public array $uploadedAssessments = [];
@@ -29,6 +30,11 @@ new class extends Component {
     {
         $this->master = $master;
         $this->assessments = $master->assessments->sortBy('title');
+    }
+
+    public function updated(): void
+    {
+        $this->deleteConfirmed = trim($this->confirmDeleteString) === 'I confirm';
     }
 
     public function closeModal(): void
@@ -118,7 +124,8 @@ new class extends Component {
                             </div>
                             <div class="hidden sm:flex">
                                 <span class="text-gray-500">
-                                    Questions: {{ $assessment->questions->count() }}
+                                    Questions:
+                                    {{ $assessment->questions->count() }}
                                 </span>
                             </div>
                         </div>
@@ -154,10 +161,12 @@ new class extends Component {
                                 <input type="file" wire:model="uploadedAssessments" name="uploaded_assessments[]"
                                     multiple>
                                 @error('uploadedAssessments.*')
-                                    <div class="text-negative-500">{{ $message }}</div>
+                                    <div class="text-negative-500">
+                                        {{ $message }}</div>
                                 @enderror
                                 @error('uploadedAssessments')
-                                    <div class="text-negative-500">{{ $message }}</div>
+                                    <div class="text-negative-500">
+                                        {{ $message }}</div>
                                 @enderror
                             </div>
                             {{--                            <!-- Progress Bar --> --}}
@@ -176,18 +185,21 @@ new class extends Component {
                                 <div class="flex items-center border-b-2 border-negative-200 pb-3">
                                     <x-icon name="exclamation" class="h-6 w-6 text-negative-700" />
                                     <div class="ml-1 text-lg text-negative-700">
-                                        The following assessments already exist on <b>{{ $master->title }}</b>
+                                        The following assessments already exist
+                                        on <b>{{ $master->title }}</b>
                                     </div>
                                 </div>
                                 <div class="ml-5 mt-2 flex items-center justify-between pl-1">
                                     <ul class="list-disc space-y-1 text-negative-700">
                                         @foreach ($conflictingNames as $conflictingName)
-                                            <li><b>{{ $conflictingName }}</b></li>
+                                            <li><b>{{ $conflictingName }}</b>
+                                            </li>
                                         @endforeach
                                     </ul>
                                 </div>
                                 <div class="mt-2 text-negative-700">
-                                    Do you want to replace them? This will delete the existing assessments and any
+                                    Do you want to replace them? This will
+                                    delete the existing assessments and any
                                     associated grades.
                                 </div>
                             </div>
@@ -202,8 +214,8 @@ new class extends Component {
                         <x-slot name="footer">
                             <div class="flex justify-between">
                                 <x-button flat label="Cancel" wire:click="closeModal" />
-                                <x-button label="Delete & Replace" wire:click="save(true)" :disabled="$confirmDeleteString !== 'I confirm'"
-                                    :secondary="$confirmDeleteString !== 'I confirm'" :negative="$confirmDeleteString === 'I confirm'" />
+                                <x-button label="Delete & Replace" wire:click="save(true)" :disabled="!$deleteConfirmed"
+                                    :secondary="!$deleteConfirmed" :negative="$deleteConfirmed" />
                             </div>
                         </x-slot>
                     </x-card>
