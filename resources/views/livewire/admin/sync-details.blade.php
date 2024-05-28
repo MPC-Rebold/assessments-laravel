@@ -21,11 +21,12 @@ new class extends Component {
 
         if ($this->apiKeyValid) {
             $this->apiKeyName = $canvasSelf->json()['name'];
+            $this->activeCourses = CanvasService::getCourses();
         } else {
             $this->apiKeyName = '';
+            $this->activeCourses = [];
         }
 
-        $this->activeCourses = CanvasService::getCourses();
         $this->activeCoursesModalOpen = false;
     }
 
