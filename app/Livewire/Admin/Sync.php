@@ -26,7 +26,7 @@ class Sync extends Component
             return;
         }
 
-        $this->dispatch('updateLastSyncedAt');
+        $this->dispatch('syncUpdate');
 
         $this->notification()->success(
             'Sync Complete',

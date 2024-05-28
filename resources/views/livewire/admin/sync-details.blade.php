@@ -30,7 +30,7 @@ new class extends Component {
         $this->activeCoursesModalOpen = false;
     }
 
-    #[On('updateLastSyncedAt')]
+    #[On('syncUpdate')]
     public function updateLastSyncedAt(): void
     {
         $this->lastSyncedAt = Settings::first()->last_synced_at;
@@ -102,16 +102,20 @@ new class extends Component {
     </div>
     <hr>
     <a class="flex cursor-pointer items-center justify-between hover:text-secondary-500 hover:underline"
-        wire:click="openActiveCoursesModal">
+       wire:click="openActiveCoursesModal">
         <div>
             Active Canvas Courses
         </div>
-        <div class="flex items-center space-x-1">
-            <div>
-                {{ count($activeCourses) }}
+        @if ($apiKeyValid)
+            <div class="flex items-center space-x-1">
+                <div>
+                    {{ count($activeCourses) }}
+                </div>
+                <x-icon name="information-circle" class="h-6 w-6 text-secondary-500" />
             </div>
-            <x-icon name="information-circle" class="h-6 w-6 text-secondary-500" />
-        </div>
+        @else
+            <div class="text-secondary-500">N/A</div>
+        @endif
     </a>
     <x-modal wire:model.defer="activeCoursesModalOpen">
         <x-card title="View Active Canvas Courses">
@@ -127,7 +131,7 @@ new class extends Component {
                         @foreach ($activeCourses as $course)
                             <li>
                                 <a class="hover:underline" target="_blank"
-                                    href="{{ config('canvas.host') . '/courses/' . $course['id'] }}">
+                                   href="{{ config('canvas.host') . '/courses/' . $course['id'] }}">
                                     {{ $course['name'] }}
                                 </a>
                             </li>
@@ -138,7 +142,7 @@ new class extends Component {
                     <p>
                         Active Canvas Courses are courses where you are enrolled as a teacher and are favorited.
                         See your <a class="underline hover:text-secondary-500" target="_blank"
-                            href="{{ config('canvas.host') . '/courses' }}">Canvas Courses</a>.
+                                    href="{{ config('canvas.host') . '/courses' }}">Canvas Courses</a>.
                     </p>
                 </div>
             </div>

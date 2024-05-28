@@ -6,6 +6,7 @@ use App\Models\Master;
 use App\Services\SeedService;
 use Livewire\Attributes\Validate;
 use WireUi\Traits\Actions;
+use Livewire\Attributes\On;
 
 new class extends Component {
     use Actions;
@@ -35,6 +36,13 @@ new class extends Component {
         $this->showInput = false;
         $this->masterCourses->push($newMaster);
     }
+
+    #[On('syncUpdate')]
+    public function updateMasters(): void
+    {
+       $this->mount();
+    }
+
 
     public function mount(): void
     {
