@@ -177,7 +177,7 @@ class SeedService
         $title = trim($title);
 
         if ($title === '') {
-            throw new Exception('Course title cannot be empty');
+            throw new UserException('Course title cannot be empty');
         }
 
         $newMasterPath = self::getMasterPath($title);
@@ -185,7 +185,7 @@ class SeedService
         if (! is_dir($newMasterPath)) {
             mkdir($newMasterPath);
         } elseif (Master::where('title', $title)->exists()) {
-            throw new Exception("Course $title already exists");
+            throw new UserException("Course $title already exists");
         }
 
         $master = Master::create(['title' => $title]);
@@ -242,7 +242,7 @@ class SeedService
         $existingMaster = Master::where('title', $newTitle)->first();
 
         if ($existingMaster || is_dir($newPath)) {
-            throw new Exception("Course $newTitle already exists");
+            throw new UserException("Course $newTitle already exists");
         }
 
         rename($oldPath, $newPath);
