@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Livewire\Volt\Component;
 use App\Models\Master;
 use Illuminate\Support\Collection;
@@ -9,6 +10,8 @@ use WireUi\Traits\Actions;
 use App\Livewire\Admin\Sync;
 use App\Models\Assessment;
 use App\Services\CanvasService;
+use App\Services\SyncService;
+use Livewire\Features\SupportRedirects\Redirector;
 
 new class extends Component {
     use WithFileUploads;
@@ -17,11 +20,7 @@ new class extends Component {
     public Master $master;
     public Collection $assessments;
 
-    public array $conflictingNames = [];
     public bool $showUpload = false;
-    public bool $forceModalOpen = false;
-    public string $confirmDeleteString = '';
-    public bool $deleteConfirmed = false;
 
     #[Validate(['uploadedAssessments' => 'required', 'uploadedAssessments.*' => 'file|mimes:txt'])]
     public array $uploadedAssessments;
@@ -33,34 +32,30 @@ new class extends Component {
         $this->uploadedAssessments = [];
     }
 
-    public function updated(): void
-    {
-        $this->deleteConfirmed = trim($this->confirmDeleteString) === 'I confirm';
-    }
-
-    public function closeModal(): void
-    {
-        $this->forceModalOpen = false;
-    }
-
-    public function saveAddedAssessments(bool $force = false): void
+    public function saveAddedAssessments(): Redirector|null
     {
         $this->validate();
 
         $existingNames = $this->assessments->pluck('title')->toArray();
         $uploadedNames = array_map(fn($assessment) => trim(pathinfo($assessment->getClientOriginalName(), PATHINFO_FILENAME)), $this->uploadedAssessments);
 
-        $this->conflictingNames = array_intersect($existingNames, $uploadedNames);
+        if (in_array('', $uploadedNames)) {
+            $this->notification()->error('Failed to upload assessment', 'One or more files have no name');
+            return null;
+        }
 
-        DB::beginTransaction();
-        if ($force) {
-            Assessment::where('master_id', $this->master->id)
-                ->whereIn('title', $this->conflictingNames)
-                ->delete();
-        } elseif (!empty($this->conflictingNames)) {
-            $this->forceModalOpen = true;
-            DB::rollBack();
-            return;
+        if (!empty(array_intersect($existingNames, $uploadedNames))) {
+            $conflictingNames = array_intersect($existingNames, $uploadedNames);
+
+            $this->notification()->error('Failed to upload assessment', 'The assessments: ' . implode(', ', $conflictingNames) . ' have conflicting names');
+            return null;
+        }
+
+        if (count($uploadedNames) !== count(array_unique($uploadedNames))) {
+            $duplicateNames = array_diff_assoc($uploadedNames, array_unique($uploadedNames));
+
+            $this->notification()->error('Failed to upload assessment', 'The assessments: ' . implode(', ', $duplicateNames) . ' have duplicate names');
+            return null;
         }
 
         try {
@@ -74,29 +69,17 @@ new class extends Component {
             }
         } catch (Exception $e) {
             $this->notification()->error('Failed to upload assessment', $e->getMessage());
-            return;
-            DB::rollBack();
+            return null;
         }
-        DB::commit();
 
         try {
-            $sync = new Sync();
-            $sync->sync();
-
-            if ($force) {
-                $assessments = $this->master->courses->flatMap->assessments->whereIn('title', $this->conflictingNames);
-                $assessmentCourses = $assessments->flatMap->assessmentCourses->unique('id');
-                CanvasService::regradeAssessmentCourses($assessmentCourses);
-            }
+            SyncService::sync();
         } catch (Exception $e) {
             $this->notification()->error('Failed to sync new assessments', $e->getMessage());
-            return;
+            return null;
         }
 
-        $this->dispatch('updateMaster', $this->master->id);
-        $this->mount($this->master);
-        $this->notification()->success('Assessment uploaded successfully', implode($uploadedNames) . " uploaded to $master");
-        $this->showUpload = false;
+        return redirect(request()->header('Referer'));
     }
 }; ?>
 
@@ -146,7 +129,6 @@ new class extends Component {
             <div class="overflow-hidden transition-all duration-500"
                 :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
 
-                {{--                <form action="{{ route('assessment.upload') }}" method="POST" enctype="multipart/form-data"> --}}
                 <form wire:submit="saveAddedAssessments">
                     @csrf
 
@@ -156,7 +138,6 @@ new class extends Component {
                             x-on:livewire-upload-cancel="uploading = false"
                             x-on:livewire-upload-error="uploading = false"
                             x-on:livewire-upload-progress="progress = $event.detail.progress;">
-                            <!-- File Input -->
                             <div class="space-y-1">
                                 <input type="file" wire:model.defer="uploadedAssessments"
                                     name="uploaded_assessments[]" multiple accept=".txt">
@@ -180,48 +161,6 @@ new class extends Component {
                         </x-button>
                     </div>
                 </form>
-                <x-modal wire:model.defer="forceModalOpen">
-                    <x-card title="Conflicting Assessment Names">
-                        <div class="space-y-2">
-                            <div class='rounded-lg border border-negative-600 bg-negative-50 p-4'>
-                                <div class="flex items-center border-b-2 border-negative-200 pb-3">
-                                    <x-icon name="exclamation" class="h-6 w-6 text-negative-700" />
-                                    <div class="ml-1 text-lg text-negative-700">
-                                        The following assessments already exist
-                                        on <b>{{ $master->title }}</b>
-                                    </div>
-                                </div>
-                                <div class="ml-5 mt-2 flex items-center justify-between pl-1">
-                                    <ul class="list-disc space-y-1 text-negative-700">
-                                        @foreach ($conflictingNames as $conflictingName)
-                                            <li><b>{{ $conflictingName }}</b>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                <div class="mt-2 text-negative-700">
-                                    Do you want to replace them? This will
-                                    delete the existing assessments and any
-                                    associated grades.
-                                </div>
-                            </div>
-                            <div class="space-y-1">
-                                <div>
-                                    Type <b>I confirm</b> below to confirm
-                                </div>
-                                <x-input class="font-mono font-bold" placeholder="I confirm"
-                                    wire:model.live="confirmDeleteString" />
-                            </div>
-                        </div>
-                        <x-slot name="footer">
-                            <div class="flex justify-between">
-                                <x-button flat label="Cancel" wire:click="closeModal" />
-                                <x-button label="Delete & Replace" wire:click="saveAddedAssessments(true)"
-                                    :disabled="!$deleteConfirmed" :secondary="!$deleteConfirmed" :negative="$deleteConfirmed" />
-                            </div>
-                        </x-slot>
-                    </x-card>
-                </x-modal>
             </div>
         </div>
     </div>

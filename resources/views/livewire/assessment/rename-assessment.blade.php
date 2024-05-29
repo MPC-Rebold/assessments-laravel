@@ -28,13 +28,20 @@ new class extends Component {
         $this->validate();
 
         try {
-            SeedService::renameAssessment($this->assessment, $this->newTitle);
+            $updatedAssessment = SeedService::renameAssessment($this->assessment, $this->newTitle);
         } catch (Exception $e) {
-            $this->notification()->error('Failed to rename course', $e->getMessage());
+            $this->notification()->error('Failed to rename assessment', $e->getMessage());
             return null;
         } finally {
             $this->newTitle = '';
             $this->renameModalOpen = false;
+        }
+
+        try {
+            SyncService::syncUpdatedAssessments($this->assessment->master, [$updatedAssessment->title]);
+        } catch (Exception $e) {
+            $this->notification()->error('Failed to sync assessment', $e->getMessage());
+            return null;
         }
 
         return redirect(request()->header('Referer'));

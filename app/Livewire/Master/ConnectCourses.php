@@ -6,11 +6,10 @@ use App\Models\Course;
 use App\Models\Master;
 use App\Models\User;
 use App\Services\SyncService;
-use DB;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
-use Livewire\Attributes\On;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 
@@ -80,14 +79,11 @@ class ConnectCourses extends Component
         } else {
             $this->notification()->warning('Course connections saved with warnings');
         }
-    }
 
-    #[On('updateStatus')]
-    public function updateStatus(): void
-    {
-        $this->statusStrings = $this->master->statusStrings();
         $this->missingCourses = $this->master->status->missing_courses;
         $this->missingAssessments = $this->master->status->missing_assessments;
+
+        $this->dispatch('refreshConnectedCourses', $this->missingCourses, $this->missingAssessments);
     }
 
     public function render(): View

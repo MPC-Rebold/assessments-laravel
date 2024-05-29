@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\UserException;
 use App\Models\Assessment;
 use App\Models\Master;
 use Exception;
@@ -253,16 +254,20 @@ class SeedService
      *
      * @param Assessment $assessment the assessment to rename
      * @param string $newTitle the new title of the assessment
-     * @return void
+     * @return Assessment the renamed assessment
      *
      * @throws Exception if an Assessment with new title in the same course already exists
      */
-    public static function renameAssessment(Assessment $assessment, string $newTitle): void
+    public static function renameAssessment(Assessment $assessment, string $newTitle): Assessment
     {
         $newTitle = trim($newTitle);
 
         if ($newTitle === '') {
-            throw new Exception('Assessment title cannot be empty');
+            throw new UserException('Assessment title cannot be empty');
+        }
+
+        if (! preg_match('/^[a-zA-Z0-9\-_ ]+$/', $newTitle)) {
+            throw new UserException('Assessment title can only contain letters, numbers, spaces, hyphens, and underscores');
         }
 
         $oldPath = self::getAssessmentPath($assessment);
@@ -273,11 +278,13 @@ class SeedService
         ])->first();
 
         if ($existingAssessment || file_exists($newPath)) {
-            throw new Exception("Assessment $newTitle already exists on " . $assessment->master->title);
+            throw new UserException("Assessment $newTitle already exists on " . $assessment->master->title);
         }
 
         rename($oldPath, $newPath);
         $assessment->update(['title' => $newTitle]);
+
+        return $assessment;
     }
 
     /**

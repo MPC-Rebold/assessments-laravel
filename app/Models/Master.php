@@ -66,11 +66,4 @@ class Master extends Model
 
         return $statusStrings;
     }
-
-    public function courseForUser(User $user): Course
-    {
-        return $this->courses()->whereHas('users', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->first();
-    }
 }

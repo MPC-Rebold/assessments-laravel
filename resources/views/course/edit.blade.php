@@ -11,7 +11,7 @@ if (!$master || !$course) {
     abort(404);
 }
 
-$missingAssessments = $master->status->missing_assessments;
+$missingAssessments = $master->status->missing_assessments->where('pivot.course_id', $course->id);
 ?>
 
 @section('title', 'Edit Course')
@@ -35,6 +35,6 @@ $missingAssessments = $master->status->missing_assessments;
         <livewire:layout.section-header :header="$course->title . ' (' . $master->title . ')'" />
         <livewire:admin.specification-setting :course="$course" />
         <livewire:course.assessments-stats :course="$course" />
-        <livewire:user.all-users :course="$course" />
+        <livewire:user.list-users :course="$course" />
     </x-slot:content>
 </x-app-layout>

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\UserException;
 use App\Models\Assessment;
 use App\Models\AssessmentCourse;
 use App\Models\Course;
@@ -14,20 +15,24 @@ use App\Models\UserCanvas;
 use Carbon\Carbon;
 use DB;
 use Exception;
+use Illuminate\Support\Collection;
 
 class SyncService
 {
     /**
-     * Syncs the local information with the Canvas API
+     * Runs a function with protection from race conditions while syncing
      *
-     * @throws Exception if the sync fails
+     * @param callable $func the function to run
+     * @return void
+     *
+     * @throws UserException|Exception if the sync fails
      */
-    public static function sync(): void
+    public static function withOverrideProtection(callable $func): void
     {
         $settings = Settings::firstOrNew();
 
         if ($settings->is_syncing && Carbon::parse($settings->last_synced_at)->diffInMinutes(Carbon::now()) < 30) {
-            throw new Exception('Sync is already in progress, please try again later.');
+            throw new UserException('Sync is already in progress, please try again later.');
         }
 
         $settings->update([
@@ -37,12 +42,7 @@ class SyncService
         try {
             DB::beginTransaction();
 
-            self::validateCanvasKey();
-            self::createMasters();
-            self::checkMasterSeeds();
-            self::syncCourses();
-            self::syncAssessmentCourses();
-            self::connectUserCourses();
+            $func();
 
             $settings->update([
                 'last_synced_at' => Carbon::now(),
@@ -59,18 +59,54 @@ class SyncService
 
             throw $e;
         }
+    }
 
+    /**
+     * Syncs the local information with the Canvas API
+     *
+     * @throws Exception if the sync fails
+     */
+    public static function sync(): void
+    {
+        self::withOverrideProtection(function () {
+            self::validateCanvasKey();
+            self::createMasters();
+            self::checkMasterSeeds();
+            self::checkAssessmentSeeds();
+            self::syncCourses();
+            self::syncAssessmentCourses();
+            self::connectUserCourses();
+        });
+    }
+
+    /**
+     * Syncs an updated assessment
+     *
+     * @throws Exception if the sync fails
+     */
+    public static function syncUpdatedAssessments(Master $master, array $assessmentTitles): void
+    {
+        self::withOverrideProtection(function () use ($master, $assessmentTitles) {
+            self::validateCanvasKey();
+
+            $createdAssessments = self::createAssessments($master);
+            $assessments = $createdAssessments->whereIn('title', $assessmentTitles);
+
+            $assessments->each(function ($assessment) {
+                self::syncAssessmentCourse($assessment);
+            });
+        });
     }
 
     /**
      * Check if the Canvas API Key is valid
      *
-     * @throws Exception if the Canvas API Key is invalid
+     * @throws UserException if the Canvas API Key is invalid
      */
     private static function validateCanvasKey(): void
     {
         if (CanvasService::getSelf()->status() === 401) {
-            throw new Exception('Invalid Canvas API Key');
+            throw new UserException('Invalid Canvas API Key');
         }
     }
 
@@ -108,16 +144,16 @@ class SyncService
      *
      * @return void
      *
-     * @throws Exception if the number of Canvas courses is invalid
+     * @throws UserException if the number of Canvas courses is invalid
      */
     public static function syncCourses(): void
     {
         $canvasCourses = CanvasService::getCourses();
 
         if (empty($canvasCourses)) {
-            throw new Exception('No active courses found in Canvas');
+            throw new UserException('No active courses found in Canvas');
         } elseif (count($canvasCourses) > 10) {
-            throw new Exception('Too many active courses found in Canvas, please filter the courses in Canvas to 10 or less');
+            throw new UserException('Too many active courses found in Canvas, please filter the courses in Canvas to 10 or less');
         }
 
         foreach ($canvasCourses as $canvasCourse) {
@@ -148,13 +184,13 @@ class SyncService
     {
         $masters = Master::all();
         foreach ($masters as $master) {
-            $masterCoursesIds = $master->courses->pluck('id')->toArray();
+            $status = Status::where('master_id', $master->id)->first();
 
+            $masterCoursesIds = $master->courses->pluck('id')->toArray();
             $canvasCoursesIds = array_column($courses, 'id');
 
             foreach ($masterCoursesIds as $masterCourseId) {
                 if (! in_array($masterCourseId, $canvasCoursesIds)) {
-                    $status = Status::where('master_id', $master->id)->first();
                     $status->missing_courses()->attach($masterCourseId);
                 }
             }
@@ -183,8 +219,6 @@ class SyncService
                 'has_seed' => false,
             ]);
         }
-
-        self::checkAssessmentSeeds();
     }
 
     /**
@@ -197,6 +231,8 @@ class SyncService
     {
         $masters = Master::all();
         foreach ($masters as $master) {
+            $status = Status::where('master_id', $master->id)->first();
+
             $assessments = SeedService::getAssessments($master->title);
             $dbAssessments = $master->assessments->pluck('title')->toArray();
 
@@ -204,7 +240,6 @@ class SyncService
 
             foreach ($diff as $assessment) {
                 $assessmentModel = Assessment::where('title', $assessment)->first();
-                $status = Status::where('master_id', $master->id)->first();
                 $status->missing_assessment_seeds()->attach($assessmentModel->id);
             }
         }
@@ -214,18 +249,22 @@ class SyncService
      * Creates the Assessments and associated Questions for a master
      *
      * @param Master $master the master object
-     * @return void
+     * @return Collection of created assessments
      */
-    public static function createAssessments(Master $master): void
+    public static function createAssessments(Master $master): Collection
     {
-        $assessments = SeedService::getAssessments($master->title);
+        $assessmentTitles = SeedService::getAssessments($master->title);
 
-        foreach ($assessments as $assessment) {
+        $createdAssessments = [];
+
+        foreach ($assessmentTitles as $assessmentTitle) {
             $assessmentModel = Assessment::updateOrCreate(
-                ['title' => $assessment, 'master_id' => $master->id]
+                ['title' => $assessmentTitle, 'master_id' => $master->id]
             );
 
-            $questions = SeedService::getQuestions($master->title, $assessment);
+            $createdAssessments[] = $assessmentModel;
+
+            $questions = SeedService::getQuestions($master->title, $assessmentTitle);
 
             foreach ($questions as $question) {
                 Question::updateOrCreate(
@@ -237,6 +276,8 @@ class SyncService
                 );
             }
         }
+
+        return collect($createdAssessments);
     }
 
     /**
@@ -249,40 +290,55 @@ class SyncService
         $masters = Master::all();
 
         foreach ($masters as $master) {
-            $courses = $master->courses;
+            $assessments = Assessment::where('master_id', $master->id)->get();
 
-            foreach ($courses as $course) {
-                $assessments = Assessment::where('master_id', $master->id)->get();
-                $validAssessments = $course->valid_assessments;
+            foreach ($assessments as $assessment) {
+                self::syncAssessmentCourse($assessment);
+            }
 
-                foreach ($assessments as $assessment) {
-                    $assessment_canvas_id = -1;
-                    $due_at = null;
+        }
+    }
 
-                    foreach ($validAssessments as $validAssessment) {
-                        if ($assessment->title === $validAssessment['title']) {
-                            $assessment_canvas_id = $validAssessment['canvas_id'];
-                            $due_at = $validAssessment['due_at'];
-                            break;
-                        }
-                    }
+    /**
+     * Syncs the AssessmentCourses of an Assessment with the Canvas course
+     * Updates the status of missing assessments
+     *
+     * @param Assessment $assessment the Assessment to sync
+     * @return void
+     */
+    public static function syncAssessmentCourse(Assessment $assessment): void
+    {
+        $status = Status::where('master_id', $assessment->master->id)->first();
+        $courses = $assessment->master->courses;
 
-                    $assessmentCourse = AssessmentCourse::updateOrCreate(
-                        ['assessment_id' => $assessment->id, 'course_id' => $course->id],
-                        [
-                            'assessment_canvas_id' => $assessment_canvas_id,
-                            'due_at' => $due_at,
-                        ]
-                    );
+        $status->missing_assessments()->detach($assessment->id);
 
-                    if ($assessment_canvas_id === -1) {
-                        $status = Status::where('master_id', $master->id)->first();
-                        $status->missing_assessments()->attach($assessment->id, ['course_id' => $course->id]);
-                    } else {
-                        CanvasService::setMaxPoints($assessmentCourse);
-                    }
+        foreach ($courses as $course) {
+            $validAssessments = $course->valid_assessments;
 
+            $assessment_canvas_id = -1;
+            $due_at = null;
+
+            foreach ($validAssessments as $validAssessment) {
+                if ($assessment->title === $validAssessment['title']) {
+                    $assessment_canvas_id = $validAssessment['canvas_id'];
+                    $due_at = $validAssessment['due_at'];
+                    break;
                 }
+            }
+
+            $assessmentCourse = AssessmentCourse::updateOrCreate(
+                ['assessment_id' => $assessment->id, 'course_id' => $course->id],
+                [
+                    'assessment_canvas_id' => $assessment_canvas_id,
+                    'due_at' => $due_at,
+                ]
+            );
+
+            if ($assessment_canvas_id === -1) {
+                $status->missing_assessments()->attach($assessment->id, ['course_id' => $course->id]);
+            } else {
+                CanvasService::setMaxPoints($assessmentCourse);
             }
         }
     }

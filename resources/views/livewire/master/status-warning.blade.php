@@ -1,12 +1,26 @@
 <?php
 
+use Livewire\Attributes\On;
 use Livewire\Volt\Component;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use App\Models\Course;
+use App\Models\Assessment;
 
 new class extends Component {
     public Collection $missingAssessments;
     public Collection $missingCourses;
+
+    public function mount(Collection $missingCourses, Collection $missingAssessments): void
+    {
+        $this->missingCourses = $missingCourses->sortBy('title');
+        $this->missingAssessments = $missingAssessments->sortBy('pivot.course_id');
+    }
+
+    #[On('refreshConnectedCourses')]
+    public function refreshConnectedCourses(array $missingCourses, array $missingAssessments): void
+    {
+        $this->mount(Course::hydrate($missingCourses), Assessment::hydrate($missingAssessments));
+    }
 }; ?>
 
 <div class='border border-warning-500 bg-warning-50 p-4 text-warning-800 sm:rounded-lg'>
@@ -30,7 +44,7 @@ new class extends Component {
                 <li>
                     <div>
                         The assessment <b>{{ $assessment->title }}</b> of course
-                        <b>{{ Course::find($assessment->pivot->course_id)->title }}</b>
+                        <b>{{ Course::find($assessment->pivot->course_id ?? $assessment->pivot['course_id'])->title }}</b>
                         was not found in Canvas. It will not be available to
                         students.
                     </div>
