@@ -158,8 +158,8 @@ new class extends Component {
                             x-on:livewire-upload-progress="progress = $event.detail.progress;">
                             <!-- File Input -->
                             <div class="space-y-1">
-                                <input type="file" wire:model.defer="uploadedAssessments" name="uploaded_assessments[]"
-                                    multiple accept=".txt">
+                                <input type="file" wire:model.defer="uploadedAssessments"
+                                    name="uploaded_assessments[]" multiple accept=".txt">
                                 @error('uploadedAssessments.*')
                                     <div class="text-negative-500">
                                         {{ $message }}</div>
