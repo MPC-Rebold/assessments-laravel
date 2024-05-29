@@ -21,5 +21,7 @@ if (!$master) {
         ],
     ]" />
 
-    <livewire:master.edit :master="$master" />
+    <x-slot:content>
+        <livewire:master.edit :master="$master" />
+    </x-slot:content>
 </x-app-layout>
