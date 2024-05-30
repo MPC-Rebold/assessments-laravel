@@ -65,25 +65,20 @@ class SpecificationSetting extends Component
                 'specification_grading_threshold' => $specification_grading_threshold,
             ]);
 
-            $assessmentCourses = AssessmentCourse::where('course_id', $this->course->id)->get();
+            $assessmentCourses = $this->course->assessmentCourses;
             CanvasService::regradeAssessmentCourses($assessmentCourses);
 
             $this->specification_grading = $this->course->specification_grading;
 
+            DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-            $this->notification()->error(
-                'Failed to update specification grading with error ' . $e->getMessage(),
-            );
+            $this->notification()->error('Failed to update specification grading', $e->getMessage(),);
 
             return;
         }
 
-        $this->notification()->success(
-            'Specification Grading Turned ' . ($specification_grading ? 'On' : 'Off'),
-        );
-
-        DB::commit();
+        $this->notification()->success('Specification Grading Turned ' . ($specification_grading ? 'On' : 'Off'),);
 
         $this->modalOpen = false;
     }

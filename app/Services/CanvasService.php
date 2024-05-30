@@ -163,7 +163,7 @@ class CanvasService
                     'posted_grade' => $grade,
                 ],
                 'comment' => [
-                    'text_comment' => self::gradeAssessmentCommentForUser($assessmentCourse, $user, $grade),
+                    'text_comment' => self::assessmentGradeCommentForUser($assessmentCourse, $user, $grade),
                 ],
             ]
         );
@@ -177,7 +177,7 @@ class CanvasService
      * @param int|string $grade the grade for the user
      * @return string the comment for the grade
      */
-    private static function gradeAssessmentCommentForUser(AssessmentCourse $assessmentCourse, User $user, int|string $grade): string
+    private static function assessmentGradeCommentForUser(AssessmentCourse $assessmentCourse, User $user, int|string $grade): string
     {
         $comment = '';
         foreach ($assessmentCourse->assessment->questions as $question) {
@@ -256,7 +256,7 @@ class CanvasService
     public static function regradeAssessmentCourses(Collection $assessmentCourses): void
     {
         foreach ($assessmentCourses as $assessmentCourse) {
-            if (! $assessmentCourse->assessment_canvas_id || ! $assessmentCourse->course->master_id) {
+            if ($assessmentCourse->assessment_canvas_id === -1 || ! $assessmentCourse->course->master_id) {
                 continue;
             }
 

@@ -64,12 +64,13 @@ new class extends Component {
             $gradeResponse = CanvasService::gradeAssessmentForUser($this->assessmentCourse, auth()->user());
 
             if ($gradeResponse->status() !== 200) {
-                throw new Exception('Status: ' . $gradeResponse->status());
+                throw new Exception('Status: ' . $gradeResponse->status() . '. Ensure you are enrolled in the associated course.');
             }
         } catch (Exception $e) {
             $this->notification()->error('Failed to submit to Canvas', $e->getMessage());
             return;
         }
+        $this->notification()->success('Submitted to Canvas', 'Grade: ' . $gradeResponse->json('grade'));
     }
 };
 

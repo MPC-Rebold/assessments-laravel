@@ -26,7 +26,7 @@ new class extends Component {
                 ->format('M j, g:i A T')
             : 'No due date';
 
-        $this->isMissing = $assessmentCourse->course->master->status->missing_assessments->contains($assessmentCourse->assessment);
+        $this->isMissing = $assessmentCourse->assessment_canvas_id === -1;
     }
 
     public function changeIsActive(): void

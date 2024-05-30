@@ -4,12 +4,10 @@ namespace App\Livewire\Master;
 
 use App\Models\Course;
 use App\Models\Master;
-use App\Models\User;
 use App\Services\SyncService;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 
@@ -51,7 +49,8 @@ class ConnectCourses extends Component
         try {
             SyncService::syncUpdateConnectedCourses($this->master, $this->connectedCourses);
         } catch (Exception $e) {
-            $this->notification()->error('Course connections failed with error ' . $e->getMessage());
+            $this->notification()->error('Saving course connections failed', $e->getMessage());
+
             return;
         }
 

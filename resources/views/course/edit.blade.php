@@ -34,7 +34,7 @@ $missingAssessments = $master->status->missing_assessments->where('pivot.course_
         @endif
         <livewire:layout.section-header :header="$course->title . ' (' . $master->title . ')'" />
         <livewire:admin.specification-setting :course="$course" />
-        <livewire:course.assessments-stats :course="$course" />
+        <livewire:course.list-assessment-courses :course="$course" />
         <livewire:user.list-users :course="$course" />
     </x-slot:content>
 </x-app-layout>
