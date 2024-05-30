@@ -19,8 +19,8 @@ new class extends Component {
     }
 }; ?>
 
-<a class="group flex items-center p-4 transition-all hover:bg-gray-200 hover:shadow rounded-lg" href="{{route('master.edit', $masterCourse->id)}}"
-   wire:navigate>
+<a class="group flex items-center rounded-lg p-4 transition-all hover:bg-gray-200 hover:shadow"
+    href="{{ route('master.edit', $masterCourse->id) }}" wire:navigate>
     <div class="flex w-1/4 items-center space-x-4">
         @if (in_array(Master::NO_SEED, $statusStrings))
             <x-icon negative name="exclamation" class="h-6 w-6 text-negative-500" />
@@ -46,8 +46,8 @@ new class extends Component {
             {{ implode(', ', $connectedCourses->pluck('title')->all()) }}
         @endif
     </div>
-<div class="transition-all w-1/12 group-hover:scale-105 justify-end flex">
-        <x-button.circle secondary icon="pencil" class="flex sm:hidden"/>
+    <div class="flex w-1/12 justify-end transition-all group-hover:scale-105">
+        <x-button.circle secondary icon="pencil" class="flex sm:hidden" />
         <x-button secondary icon="pencil" class="hidden sm:flex">
             Edit
         </x-button>

@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\AssessmentCourse;
 use App\Models\Course;
 use App\Services\CanvasService;
 use DB;
@@ -73,12 +72,12 @@ class SpecificationSetting extends Component
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-            $this->notification()->error('Failed to update specification grading', $e->getMessage(),);
+            $this->notification()->error('Failed to update specification grading', $e->getMessage());
 
             return;
         }
 
-        $this->notification()->success('Specification Grading Turned ' . ($specification_grading ? 'On' : 'Off'),);
+        $this->notification()->success('Specification Grading Turned ' . ($specification_grading ? 'On' : 'Off'));
 
         $this->modalOpen = false;
     }

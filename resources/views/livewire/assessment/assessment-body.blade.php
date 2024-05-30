@@ -104,7 +104,7 @@ new class extends Component {
 
         <livewire:assessment.instructions />
         @foreach ($questions as $question)
-            <livewire:assessment.question :question="$question" :course="$course" :key="$question->id"  />
+            <livewire:assessment.question :question="$question" :course="$course" :key="$question->id" />
         @endforeach
 
         <div class="flex flex-wrap items-center justify-between gap-2 px-2 sm:px-0">
@@ -132,7 +132,7 @@ new class extends Component {
                         style="width: {{ $percentage }}%">
                     </div>
                 </div>
-                <div class="hidden w-full items-center md:flex {{ $questions->count() > 50 ? 'gap-1' : 'gap-3' }}">
+                <div class="{{ $questions->count() > 50 ? 'gap-1' : 'gap-3' }} hidden w-full items-center md:flex">
                     @foreach ($questions as $question)
                         <button
                             class="{{ $question->isCorrect(auth()->user(), $course)
