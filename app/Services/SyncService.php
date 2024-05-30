@@ -73,7 +73,8 @@ class SyncService
             self::createMasters();
             self::checkMasterSeeds();
             self::checkAssessmentSeeds();
-            self::syncCourses();
+            $courses = self::syncCourses();
+            self::checkMastersCourses($courses);
             self::syncAssessmentCoursesForMasters();
             self::connectUserCourses();
         });
@@ -95,6 +96,37 @@ class SyncService
             $assessments->each(function ($assessment) {
                 self::syncAssessmentCoursesForAssessment($assessment);
             });
+        });
+    }
+
+    /**
+     * Updates the connected courses for a master
+     *
+     * @throws UserException
+     */
+    public static function syncUpdateConnectedCourses(Master $master, array $connectedCourses): void
+    {
+        self::withOverrideProtection(function () use ($master, $connectedCourses) {
+            $previousConnected = $master->courses->pluck('title')->toArray();
+
+            $master->courses()->update(['master_id' => null]);
+
+            $courses = Course::whereIn('title', $connectedCourses);
+            $courses->update(['master_id' => $master->id]);
+
+            $changedCourses = array_merge(array_diff($connectedCourses, $previousConnected), array_diff($previousConnected, $connectedCourses));
+
+            $courses = self::syncCourses();
+            self::checkMastersCourses($courses);
+            self::syncAssessmentCoursesForMaster($master);
+
+            $users = User::whereHas('courses', function ($query) use ($changedCourses) {
+                $query->whereIn('title', $changedCourses);
+            })->get();
+
+            foreach ($users as $user) {
+                $user->connectCourses();
+            }
         });
     }
 
@@ -142,11 +174,11 @@ class SyncService
      * Synchronizes the local courses with Canvas courses
      * Checks statuses for missing courses and assessments
      *
-     * @return void
+     * @return array of Canvas courses
      *
      * @throws UserException if the number of Canvas courses is invalid
      */
-    public static function syncCourses(): void
+    public static function syncCourses(): array
     {
         $canvasCourses = CanvasService::getCourses();
 
@@ -170,7 +202,7 @@ class SyncService
             );
         }
 
-        self::checkMastersCourses($canvasCourses);
+        return $canvasCourses;
     }
 
     /**
@@ -281,7 +313,7 @@ class SyncService
     }
 
     /**
-     * Synchronizes the AssessmentCourses with their associated Canvas courses
+     * Synchronizes the AssessmentCourses for all Masters with their associated Canvas courses
      *
      * @return void
      */
@@ -290,12 +322,22 @@ class SyncService
         $masters = Master::all();
 
         foreach ($masters as $master) {
-            $assessments = Assessment::where('master_id', $master->id)->get();
+            self::syncAssessmentCoursesForMaster($master);
+        }
+    }
 
-            foreach ($assessments as $assessment) {
-                self::syncAssessmentCoursesForAssessment($assessment);
-            }
+    /**
+     * Syncs the AssessmentCourses for a Master
+     *
+     * @param Master $master the master to sync AssessmentCourses for
+     * @return void
+     */
+    public static function syncAssessmentCoursesForMaster(Master $master): void
+    {
+        $assessments = Assessment::where('master_id', $master->id)->get();
 
+        foreach ($assessments as $assessment) {
+            self::syncAssessmentCoursesForAssessment($assessment);
         }
     }
 

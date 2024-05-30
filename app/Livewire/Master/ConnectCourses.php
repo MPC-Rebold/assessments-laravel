@@ -49,25 +49,9 @@ class ConnectCourses extends Component
     public function saveConnectedCourses(): void
     {
         try {
-            DB::beginTransaction();
-
-            $this->master->courses()->update(['master_id' => null]);
-
-            $courses = Course::whereIn('title', $this->connectedCourses);
-            $courses->update(['master_id' => $this->master->id]);
-
-            $users = User::all();
-            foreach ($users as $user) {
-                $user->connectCourses();
-            }
-
-            DB::commit();
-
-            SyncService::sync();
+            SyncService::syncUpdateConnectedCourses($this->master, $this->connectedCourses);
         } catch (Exception $e) {
-            DB::rollBack();
             $this->notification()->error('Course connections failed with error ' . $e->getMessage());
-
             return;
         }
 
