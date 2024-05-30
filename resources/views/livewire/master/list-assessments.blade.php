@@ -12,6 +12,7 @@ use App\Models\Assessment;
 use App\Services\CanvasService;
 use App\Services\SyncService;
 use Livewire\Features\SupportRedirects\Redirector;
+use App\Services\SeedService;
 
 new class extends Component {
     use WithFileUploads;
@@ -20,15 +21,28 @@ new class extends Component {
     public Master $master;
     public Collection $assessments;
 
-    public bool $showUpload = false;
-
     #[Validate(['uploadedAssessments' => 'required', 'uploadedAssessments.*' => 'file|mimes:txt'])]
     public array $uploadedAssessments;
 
     public function mount(Master $master): void
     {
         $this->master = $master;
-        $this->assessments = $master->assessments->sortBy('title');
+        $this->assessments = $master->assessments->sort(function ($a, $b) {
+            preg_match('/(\d+)$/', $a->title, $matchesA);
+            preg_match('/(\d+)$/', $b->title, $matchesB);
+
+            $numA = isset($matchesA[1]) ? (int) $matchesA[1] : 0;
+            $numB = isset($matchesB[1]) ? (int) $matchesB[1] : 0;
+
+            $titleA = preg_replace('/\d+$/', '', $a->title);
+            $titleB = preg_replace('/\d+$/', '', $b->title);
+
+            if ($titleA === $titleB) {
+                return $numA <=> $numB;
+            }
+
+            return strcmp($titleA, $titleB);
+        });
         $this->uploadedAssessments = [];
     }
 
@@ -36,46 +50,11 @@ new class extends Component {
     {
         $this->validate();
 
-        $existingNames = $this->assessments->pluck('title')->toArray();
-        $uploadedNames = array_map(fn($assessment) => trim(pathinfo($assessment->getClientOriginalName(), PATHINFO_FILENAME)), $this->uploadedAssessments);
-
-        if (in_array('', $uploadedNames)) {
-            $this->notification()->error('Failed to upload assessment', 'One or more files have no name');
-            return null;
-        }
-
-        if (!empty(array_intersect($existingNames, $uploadedNames))) {
-            $conflictingNames = array_intersect($existingNames, $uploadedNames);
-
-            $this->notification()->error('Failed to upload assessment', 'The assessments: ' . implode(', ', $conflictingNames) . ' have conflicting names');
-            return null;
-        }
-
-        if (count($uploadedNames) !== count(array_unique($uploadedNames))) {
-            $duplicateNames = array_diff_assoc($uploadedNames, array_unique($uploadedNames));
-
-            $this->notification()->error('Failed to upload assessment', 'The assessments: ' . implode(', ', $duplicateNames) . ' have duplicate names');
-            return null;
-        }
-
         try {
-            foreach ($this->uploadedAssessments as $uploadedAssessment) {
-                $fileName = $uploadedAssessment->getClientOriginalName();
-                $master = $this->master->title;
-
-                $uploadedAssessment->storeAs("tmp/$master", $fileName);
-                rename(storage_path("app/tmp/$master/$fileName"), database_path("seed/$master/$fileName"));
-                rmdir(storage_path("app/tmp/$master"));
-            }
+            $uploadedNames = SeedService::uploadAssessments($this->master, $this->uploadedAssessments);
+            SyncService::syncUpdatedAssessments($this->master, $uploadedNames);
         } catch (Exception $e) {
-            $this->notification()->error('Failed to upload assessment', $e->getMessage());
-            return null;
-        }
-
-        try {
-            SyncService::sync();
-        } catch (Exception $e) {
-            $this->notification()->error('Failed to sync new assessments', $e->getMessage());
+            $this->notification()->error('Failed to upload Assessments', $e->getMessage());
             return null;
         }
 
@@ -120,41 +99,30 @@ new class extends Component {
                 <hr class="mx-4 sm:mx-6">
             @endforeach
         @endif
-        <div class="w-full p-4 sm:px-6" x-data="{ open: @entangle('showUpload') }">
+        <div class="w-full" x-data="{ open: false }">
             <div @click="open = true" :class="open ? 'hidden' : 'block'">
-                <x-button icon="plus" class="w-full hover:!bg-secondary-500 hover:text-white">
+                <x-button icon="plus" class="w-full rounded-t-none hover:!bg-secondary-500 hover:text-white">
                     Add Assessments
                 </x-button>
             </div>
             <div class="overflow-hidden transition-all duration-500"
-                :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
+                :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh] p-4 sm:px-6': open }">
 
                 <form wire:submit="saveAddedAssessments">
                     @csrf
 
                     <div class="flex items-center justify-between">
-                        <div x-data="{ uploading: false, progress: 0 }" x-on:livewire-upload-start="uploading = true"
-                            x-on:livewire-upload-finish="uploading = false"
-                            x-on:livewire-upload-cancel="uploading = false"
-                            x-on:livewire-upload-error="uploading = false"
-                            x-on:livewire-upload-progress="progress = $event.detail.progress;">
-                            <div class="space-y-1">
-                                <input type="file" wire:model.defer="uploadedAssessments"
-                                    name="uploaded_assessments[]" multiple accept=".txt">
-                                @error('uploadedAssessments.*')
-                                    <div class="text-negative-500">
-                                        {{ $message }}</div>
-                                @enderror
-                                @error('uploadedAssessments')
-                                    <div class="text-negative-500">
-                                        {{ $message }}</div>
-                                @enderror
-                            </div>
-                            {{--                            <!-- Progress Bar --> --}}
-                            {{--                            <div x-show="uploading" class="w-full"> --}}
-                            {{--                                <progress max="100" x-bind:value="progress"></progress> --}}
-                            {{--                            </div> --}}
-
+                        <div class="space-y-1">
+                            <input type="file" wire:model.defer="uploadedAssessments" name="uploaded_assessments[]"
+                                multiple accept=".txt">
+                            @error('uploadedAssessments.*')
+                                <div class="text-negative-500">
+                                    {{ $message }}</div>
+                            @enderror
+                            @error('uploadedAssessments')
+                                <div class="text-negative-500">
+                                    {{ $message }}</div>
+                            @enderror
                         </div>
                         <x-button positive type="submit" class="min-w-20">
                             Upload

@@ -74,7 +74,7 @@ class SyncService
             self::checkMasterSeeds();
             self::checkAssessmentSeeds();
             self::syncCourses();
-            self::syncAssessmentCourses();
+            self::syncAssessmentCoursesForMasters();
             self::connectUserCourses();
         });
     }
@@ -93,7 +93,7 @@ class SyncService
             $assessments = $createdAssessments->whereIn('title', $assessmentTitles);
 
             $assessments->each(function ($assessment) {
-                self::syncAssessmentCourse($assessment);
+                self::syncAssessmentCoursesForAssessment($assessment);
             });
         });
     }
@@ -285,7 +285,7 @@ class SyncService
      *
      * @return void
      */
-    public static function syncAssessmentCourses(): void
+    public static function syncAssessmentCoursesForMasters(): void
     {
         $masters = Master::all();
 
@@ -293,7 +293,7 @@ class SyncService
             $assessments = Assessment::where('master_id', $master->id)->get();
 
             foreach ($assessments as $assessment) {
-                self::syncAssessmentCourse($assessment);
+                self::syncAssessmentCoursesForAssessment($assessment);
             }
 
         }
@@ -306,7 +306,7 @@ class SyncService
      * @param Assessment $assessment the Assessment to sync
      * @return void
      */
-    public static function syncAssessmentCourse(Assessment $assessment): void
+    public static function syncAssessmentCoursesForAssessment(Assessment $assessment): void
     {
         $status = Status::where('master_id', $assessment->master->id)->first();
         $courses = $assessment->master->courses;

@@ -19,7 +19,8 @@ new class extends Component {
     }
 }; ?>
 
-<div class="flex flex-row items-center">
+<a class="group flex items-center p-4 transition-all hover:bg-gray-200 hover:shadow rounded-lg" href="{{route('master.edit', $masterCourse->id)}}"
+   wire:navigate>
     <div class="flex w-1/4 items-center space-x-4">
         @if (in_array(Master::NO_SEED, $statusStrings))
             <x-icon negative name="exclamation" class="h-6 w-6 text-negative-500" />
@@ -34,8 +35,7 @@ new class extends Component {
             {{ $masterCourse->title }}
         </div>
     </div>
-
-    <div class="invisible grow overflow-hidden text-ellipsis text-nowrap pe-4 text-gray-500 sm:visible sm:flex">
+    <div class="invisible w-1/2 grow overflow-hidden text-ellipsis text-nowrap pe-4 text-gray-500 sm:visible">
         @if (in_array(Master::NO_SEED, $statusStrings))
             <div class="text-red-500">
                 Missing seed
@@ -46,12 +46,10 @@ new class extends Component {
             {{ implode(', ', $connectedCourses->pluck('title')->all()) }}
         @endif
     </div>
-    <div class="basis-1/12">
-        <div class="flex justify-end">
-            <x-button.circle secondary icon="pencil" class="flex md:hidden" :href="route('master.edit', $masterCourse->id)" wire:navigate />
-            <x-button secondary icon="pencil" class="hidden md:flex" :href="route('master.edit', $masterCourse->id)" wire:navigate>
-                Edit
-            </x-button>
-        </div>
+<div class="transition-all w-1/12 group-hover:scale-105 justify-end flex">
+        <x-button.circle secondary icon="pencil" class="flex sm:hidden"/>
+        <x-button secondary icon="pencil" class="hidden sm:flex">
+            Edit
+        </x-button>
     </div>
-</div>
+</a>

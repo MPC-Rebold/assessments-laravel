@@ -6,6 +6,7 @@ use App\Exceptions\UserException;
 use App\Models\Assessment;
 use App\Models\Master;
 use Exception;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SeedService
 {
@@ -52,8 +53,20 @@ class SeedService
      */
     public static function getQuestions(string $masterTitle, string $assessmentTitle): array
     {
-        $questions_txt = file_get_contents(database_path('seed/' . $masterTitle . '/' . $assessmentTitle . '.txt'));
-        $exploded = explode('@@', $questions_txt);
+        $questions_txt = file_get_contents(self::getAssessmentPathByTitles($masterTitle, $assessmentTitle));
+
+        return self::getQuestionsFromContent($questions_txt);
+    }
+
+    /**
+     * Returns the questions and answers from string content
+     *
+     * @param string $content the content to extract questions from
+     * @return array of questions
+     */
+    public static function getQuestionsFromContent(string $content): array
+    {
+        $exploded = explode('@@', $content);
 
         $res = [];
         for ($i = 0; $i < count($exploded) - 1; $i += 2) {
@@ -247,6 +260,58 @@ class SeedService
 
         rename($oldPath, $newPath);
         $master->update(['title' => $newTitle]);
+    }
+
+    /**
+     * @param Master $master the master to add assessments to
+     * @param TemporaryUploadedFile[] $assessments the assessments to add
+     * @return array of the created assessments' titles
+     *
+     * @throws Exception|UserException if assessments fail to be created
+     */
+    public static function uploadAssessments(Master $master, array $assessments): array
+    {
+        $existingNames = $master->assessments->pluck('title')->toArray();
+        $uploadedNames = array_map(fn ($assessment) => trim(pathinfo($assessment->getClientOriginalName(), PATHINFO_FILENAME)), $assessments);
+
+        if (in_array('', $uploadedNames)) {
+            throw new UserException('Assessment title cannot be empty');
+        }
+
+        $conflictingNames = array_intersect($existingNames, $uploadedNames);
+        if (! empty($conflictingNames)) {
+            throw new UserException('The assessments: ' . implode(', ', $conflictingNames) . ' have conflicting names');
+        }
+
+        $duplicateNames = array_diff_assoc($uploadedNames, array_unique($uploadedNames));
+        if (! empty($duplicateNames)) {
+            throw new UserException('The assessments: ' . implode(', ', $duplicateNames) . ' have duplicate names');
+        }
+
+        foreach ($assessments as $assessment) {
+            $content = $assessment->getContent();
+            $questions = self::getQuestionsFromContent($content);
+
+            if (count($questions) > 100) {
+                throw new UserException('The assessment ' . $assessment->getClientOriginalName() . ' has more than the limit of 100 questions');
+            }
+        }
+
+        foreach ($assessments as $assessment) {
+            $assessmentFileName = $assessment->getClientOriginalName();
+            $assessmentTitle = trim(pathinfo($assessmentFileName, PATHINFO_FILENAME));
+            $assessmentPath = self::getAssessmentPathByTitles($master->title, $assessmentTitle);
+
+            if (file_exists($assessmentPath)) {
+                throw new UserException("Assessment $assessmentTitle already exists on " . $master->title . '. Try syncing.');
+            }
+
+            $assessment->storeAs("tmp/$master->title", $assessmentFileName);
+            rename(storage_path("app/tmp/$master->title/$assessmentFileName"), database_path("seed/$master->title/$assessmentFileName"));
+            rmdir(storage_path("app/tmp/$master->title"));
+        }
+
+        return $uploadedNames;
     }
 
     /**

@@ -42,6 +42,24 @@ new class extends Component {
     {
         $this->editingQuestion = null;
     }
+
+    public function placeholder(): string
+    {
+        return <<<'HTML'
+        <div class="bg-slate-100 shadow sm:rounded-lg">
+            <div class=" w-full bg-white p-4 sm:rounded-lg sm:px-6 sm:py-5">
+                <div class="flex items-center justify-between">
+                    <div class="text-lg font-bold">
+                        Edit Questions
+                    </div>
+                    <div>
+                        <x-spinner class="h-5 w-5" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        HTML;
+    }
 }; ?>
 
 <div x-data="{ open: false }">
@@ -50,7 +68,7 @@ new class extends Component {
             @click="open = !open">
             <div class="flex items-center justify-between">
                 <div class="text-lg font-bold">
-                    Edit Questions
+                    Edit Questions ({{ $assessment->questions->count() }})
                 </div>
                 <div class="flex items-center space-x-2">
                     <div :class="{ 'rotate-180': open }" class="transition-transform ease-in-out">
@@ -59,7 +77,7 @@ new class extends Component {
                 </div>
             </div>
         </button>
-        <div :class="{ 'max-h-0 invisible': !open, 'max-h-[999vh] py-4': open }"
+        <div :class="{ 'max-h-0 invisible': !open, 'max-h-[99999vh] py-4': open }"
             class="overflow-hidden transition-all duration-300 ease-in-out">
             <div class="space-y-4 p-4 sm:px-6">
                 @if ($assessment->questions->isEmpty())
@@ -86,3 +104,4 @@ new class extends Component {
         </div>
     </div>
 </div>
+

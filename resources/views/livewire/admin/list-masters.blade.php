@@ -53,7 +53,7 @@ new class extends Component {
     }
 }; ?>
 
-<div class="space-y-4 p-4 sm:p-6">
+<div>
     @if ($masterCourses->isEmpty())
         <div class="text-center">
             <p class="text-lg font-bold text-gray-400">
@@ -62,18 +62,18 @@ new class extends Component {
         </div>
     @else
         @foreach ($masterCourses as $masterCourse)
-            <livewire:admin.course-status :masterCourse="$masterCourse" key="{{ now() }}" />
+            <livewire:admin.master-status :masterCourse="$masterCourse" key="{{ now() }}" />
             <hr />
         @endforeach
     @endif
     <div class="w-full" x-data="{ open: @entangle('showInput') }">
         <div @click="open = true" :class="open ? 'hidden' : 'block'">
-            <x-button icon="plus" class="w-full hover:!bg-secondary-500 hover:text-white">
+            <x-button icon="plus" class="w-full rounded-t-none hover:!bg-secondary-500 hover:text-white">
                 Add Course
             </x-button>
         </div>
         <div class="overflow-hidden transition-all duration-500"
-            :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh]': open }">
+            :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh] p-4': open }">
 
             <form wire:submit="saveNewMaster">
                 @csrf
