@@ -10,6 +10,7 @@ class Admin
 {
     /**
      * Handle an incoming request.
+     * 401 for non-admin users.
      *
      * @param  Closure(Request): (Response)  $next
      */
@@ -19,6 +20,6 @@ class Admin
             return $next($request);
         }
 
-        return redirect('dashboard');
+        abort(401);
     }
 }

@@ -2,8 +2,21 @@
 
 use App\Models\User;
 
-test('that true is true', function () {
+test('GET /admin is 200 for admin', function () {
     $admin = User::factory()->create();
 
-    expect(true)->toBeTrue();
+    $this->actingAs($admin)
+        ->withSession(['foo' => 'bar'])
+        ->get('/admin')
+        ->assertOk();
+});
+
+
+test('GET /admin is 401 for non-admin', function () {
+    $nonAdmin = User::factory()->create();
+
+    $this->actingAs($nonAdmin)
+        ->withSession(['foo' => 'bar'])
+        ->get('/admin')
+        ->assertStatus(401);
 });
