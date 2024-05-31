@@ -74,6 +74,7 @@ class User extends Authenticatable
                 return in_array($this->email, $course->valid_students);
             });
         }
+
         $this->courses()->sync($courses);
     }
 

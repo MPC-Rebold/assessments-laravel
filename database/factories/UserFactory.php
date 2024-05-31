@@ -31,4 +31,9 @@ class UserFactory extends Factory
     {
         return $this->state(fn () => ['is_admin' => true]);
     }
+
+    public function nonAdmin(): UserFactory
+    {
+        return $this->state(fn () => ['is_admin' => false]);
+    }
 }
