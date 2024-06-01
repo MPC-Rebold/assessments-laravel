@@ -135,7 +135,7 @@ class SyncService
      *
      * @throws UserException if the Canvas API Key is invalid
      */
-    private static function validateCanvasKey(): void
+    public static function validateCanvasKey(): void
     {
         if (CanvasService::getSelf()->status() === 401) {
             throw new UserException('Invalid Canvas API Key');
@@ -444,5 +444,29 @@ class SyncService
         }
 
         return $validAssessments;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function updateSpecificationGrading(Course $course, float $threshold): void
+    {
+        DB::beginTransaction();
+        try {
+
+            $specification_grading = $threshold != -1;
+
+            $course->update([
+                'specification_grading' => $specification_grading,
+                'specification_grading_threshold' => $threshold,
+            ]);
+
+            $assessmentCourses = $course->assessmentCourses;
+            CanvasService::regradeAssessmentCourses($assessmentCourses);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

@@ -3,8 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Course;
-use App\Services\CanvasService;
-use DB;
+use App\Services\SyncService;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -57,28 +56,15 @@ class SpecificationSetting extends Component
             $specification_grading_threshold = -1;
         }
 
-        DB::beginTransaction();
         try {
-            $this->course->update([
-                'specification_grading' => $specification_grading,
-                'specification_grading_threshold' => $specification_grading_threshold,
-            ]);
-
-            $assessmentCourses = $this->course->assessmentCourses;
-            CanvasService::regradeAssessmentCourses($assessmentCourses);
-
-            $this->specification_grading = $this->course->specification_grading;
-
-            DB::commit();
+            SyncService::updateSpecificationGrading($this->course, $specification_grading_threshold);
         } catch (Exception $e) {
-            DB::rollBack();
-            $this->notification()->error('Failed to update specification grading', $e->getMessage());
+            $this->notification()->error('Failed to update Specification Grading', $e->getMessage());
 
             return;
         }
 
         $this->notification()->success('Specification Grading Turned ' . ($specification_grading ? 'On' : 'Off'));
-
         $this->modalOpen = false;
     }
 

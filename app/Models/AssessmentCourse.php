@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AssessmentCourse extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'assessment_id',
         'course_id',
