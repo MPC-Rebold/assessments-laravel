@@ -8,10 +8,10 @@ use Livewire\Volt\Volt;
 
 test('SeedService createMaster creates Master in database and storage', function () {
 
-    $createdMaster = SeedService::createMaster('New Master');
+    $createdMaster = SeedService::createMaster('__New Master1');
 
     expect(Master::count())->toBe(1)
-        ->and($createdMaster->title)->toBe('New Master')
+        ->and($createdMaster->title)->toBe('__New Master1')
         ->and($createdMaster->exists())->toBeTrue()
         ->and($createdMaster->status->exists())->toBeTrue();
 
@@ -19,7 +19,7 @@ test('SeedService createMaster creates Master in database and storage', function
 });
 
 test('SeedService deleteMaster deletes Master', function () {
-    $createdMaster = SeedService::createMaster('New Master');
+    $createdMaster = SeedService::createMaster('__New Master2');
     SeedService::deleteMaster($createdMaster);
 
     expect(Master::count())->toBe(0)
@@ -30,9 +30,9 @@ test('SeedService deleteMaster deletes Master', function () {
 test('admin.create-master creates Master', function () {
     Master::factory()->count(3)->create();
 
-    Volt::test('admin.create-master')->set('newMasterTitle', 'New Master')->call('createNewMaster');
+    Volt::test('admin.create-master')->set('newMasterTitle', '__New Master3')->call('createNewMaster');
 
-    $createdMaster = Master::where('title', 'New Master')->first();
+    $createdMaster = Master::where('title', '__New Master3')->first();
 
     expect(Master::count())->toBe(4)
         ->and($createdMaster->exists())->toBeTrue()

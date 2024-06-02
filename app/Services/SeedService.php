@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\UserException;
 use App\Models\Assessment;
 use App\Models\Master;
+use App\Util\FileHelper;
 use Exception;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -30,7 +31,7 @@ class SeedService
     {
         return array_map(function ($file) {
             return pathinfo($file, PATHINFO_FILENAME);
-        }, glob(self::getMasterPath($master) . '/*.txt'));
+        }, glob(FileHelper::getMasterPath($master) . '/*.txt'));
     }
 
     /**
@@ -41,7 +42,7 @@ class SeedService
      */
     public static function isValidMaster(string|Master $master): bool
     {
-        return is_dir(self::getMasterPath($master));
+        return is_dir(FileHelper::getMasterPath($master));
     }
 
     /**
@@ -53,7 +54,7 @@ class SeedService
      */
     public static function getQuestions(string $masterTitle, string $assessmentTitle): array
     {
-        $questions_txt = file_get_contents(self::getAssessmentPathByTitles($masterTitle, $assessmentTitle));
+        $questions_txt = file_get_contents(FileHelper::getAssessmentPathByTitles($masterTitle, $assessmentTitle));
 
         return self::getQuestionsFromContent($questions_txt);
     }
@@ -118,7 +119,7 @@ class SeedService
             $questionsText .= $question->question . "\n@@" . $question->answer . "@@\n\n";
         }
 
-        $assessmentPath = self::getAssessmentPath($assessment);
+        $assessmentPath = FileHelper::getAssessmentPath($assessment);
         file_put_contents($assessmentPath, $questionsText);
     }
 
@@ -130,7 +131,7 @@ class SeedService
      */
     public static function deleteAssessment(Assessment $assessment): void
     {
-        $assessmentPath = self::getAssessmentPath($assessment);
+        $assessmentPath = FileHelper::getAssessmentPath($assessment);
         unlink($assessmentPath);
         $assessment->delete();
     }
@@ -193,7 +194,7 @@ class SeedService
             throw new UserException('Course title cannot be empty');
         }
 
-        $newMasterPath = self::getMasterPath($title);
+        $newMasterPath = FileHelper::getMasterPath($title);
 
         if (! is_dir($newMasterPath)) {
             mkdir($newMasterPath);
@@ -215,26 +216,9 @@ class SeedService
      */
     public static function deleteMaster(Master $master): void
     {
-        $masterPath = self::getMasterPath($master);
-        self::rmrf($masterPath);
+        $masterPath = FileHelper::getMasterPath($master);
+        FileHelper::rmrf($masterPath);
         $master->delete();
-    }
-
-    public static function rmrf($dir): void
-    {
-        if (is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object != '.' && $object != '..') {
-                    if (is_dir($dir. DIRECTORY_SEPARATOR .$object) && ! is_link($dir.'/'.$object)) {
-                        self::rmrf($dir . DIRECTORY_SEPARATOR . $object);
-                    } else {
-                        unlink($dir. DIRECTORY_SEPARATOR .$object);
-                    }
-                }
-            }
-            rmdir($dir);
-        }
     }
 
     /**
@@ -250,8 +234,8 @@ class SeedService
     {
         $newTitle = trim($newTitle);
 
-        $oldPath = self::getMasterPath($master);
-        $newPath = self::getMasterPath($newTitle);
+        $oldPath = FileHelper::getMasterPath($master);
+        $newPath = FileHelper::getMasterPath($newTitle);
         $existingMaster = Master::where('title', $newTitle)->first();
 
         if ($existingMaster || is_dir($newPath)) {
@@ -300,7 +284,7 @@ class SeedService
         foreach ($assessments as $assessment) {
             $assessmentFileName = $assessment->getClientOriginalName();
             $assessmentTitle = trim(pathinfo($assessmentFileName, PATHINFO_FILENAME));
-            $assessmentPath = self::getAssessmentPathByTitles($master->title, $assessmentTitle);
+            $assessmentPath = FileHelper::getAssessmentPathByTitles($master->title, $assessmentTitle);
 
             if (file_exists($assessmentPath)) {
                 throw new UserException("Assessment $assessmentTitle already exists on " . $master->title . '. Try syncing.');
@@ -335,7 +319,7 @@ class SeedService
             throw new UserException('Assessment title can only contain letters, numbers, spaces, hyphens, and underscores');
         }
 
-        $oldPath = self::getAssessmentPath($assessment);
+        $oldPath = FileHelper::getAssessmentPath($assessment);
         $newPath = database_path('seed/' . $assessment->master->title . '/' . $newTitle . '.txt');
         $existingAssessment = Assessment::where([
             ['title', $newTitle],
@@ -350,43 +334,5 @@ class SeedService
         $assessment->update(['title' => $newTitle]);
 
         return $assessment;
-    }
-
-    /**
-     * Returns the path of the assessment in the seed directory
-     *
-     * @param Assessment $assessment the assessment to get the path of
-     * @return string the path of the assessment
-     */
-    public static function getAssessmentPath(Assessment $assessment): string
-    {
-        return self::getAssessmentPathByTitles($assessment->master->title, $assessment->title);
-    }
-
-    /**
-     * Returns the path of the assessment in the seed directory
-     *
-     * @param string $masterTitle the title of the master
-     * @param string $assessmentTitle the title of the assessment
-     * @return string the path of the assessment in the seed directory
-     */
-    public static function getAssessmentPathByTitles(string $masterTitle, string $assessmentTitle): string
-    {
-        return database_path('seed/' . $masterTitle . '/' . $assessmentTitle . '.txt');
-    }
-
-    /**
-     * Returns the path of the master in the seed directory
-     *
-     * @param Master|string $master the master to get the path of as a title string or a Master object
-     * @return string the path of the master in the seed directory
-     */
-    public static function getMasterPath(Master|string $master): string
-    {
-        if ($master instanceof Master) {
-            return database_path('seed/' . $master->title);
-        }
-
-        return database_path('seed/' . $master);
     }
 }
