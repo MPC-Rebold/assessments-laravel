@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('settings', SettingsController::class);
+Route::get('settings', SettingsController::class)->name('settings');
 
 Route::prefix('auth')->group(function () {
     Route::get('/{provider}/redirect', [ProviderController::class, 'redirect'])->name('auth.redirect');

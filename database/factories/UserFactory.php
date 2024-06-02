@@ -18,7 +18,7 @@ class UserFactory extends Factory
             'updated_at' => Carbon::now(),
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'avatar' => $this->faker->word(),
+            'avatar' => $this->faker->url(),
             'is_admin' => $this->faker->boolean(),
             'provider' => $this->faker->word(),
             'provider_id' => $this->faker->word(),

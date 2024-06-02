@@ -6,6 +6,11 @@ use App\Models\Question;
 use App\Models\Status;
 use App\Models\User;
 
+test('GET /settings is 200', function () {
+    $this->get(route('settings'))
+        ->assertOk();
+});
+
 test('GET / is 302 for non-authenticated', function () {
     $this->get('/')->assertStatus(302);
 });

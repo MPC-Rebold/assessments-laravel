@@ -15,7 +15,7 @@ class MasterFactory extends Factory
         return [
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
-            'title' => $this->faker->word(),
+            'title' => $this->faker->unique()->word(),
         ];
     }
 }

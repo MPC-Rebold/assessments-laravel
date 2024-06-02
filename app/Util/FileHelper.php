@@ -4,8 +4,10 @@ namespace App\Util;
 
 use App\Models\Assessment;
 use App\Models\Master;
+use Exception;
 
-class FileHelper {
+class FileHelper
+{
     /**
      * Recursively delete a directory or file
      *
@@ -28,6 +30,33 @@ class FileHelper {
         } else {
             unlink($path);
         }
+    }
+
+    /**
+     * Recursively copy a directory
+     *
+     * @param string $source the source directory
+     * @param string $destination the destination directory
+     * @return void
+     */
+    public static function recurseCopy(string $source, string $destination): void
+    {
+
+        $dir = opendir($source);
+
+        @mkdir($destination);
+
+        while (false !== ($file = readdir($dir))) {
+            if (($file != '.') && ($file != '..')) {
+                if (is_dir($source . '/' . $file)) {
+                    self::recurseCopy($source . '/' . $file, $destination . '/' . $file);
+                } else {
+                    copy($source . '/' . $file, $destination . '/' . $file);
+                }
+            }
+        }
+
+        closedir($dir);
     }
 
     /**
@@ -58,13 +87,20 @@ class FileHelper {
      *
      * @param Master|string $master the master to get the path of as a title string or a Master object
      * @return string the path of the master in the seed directory
+     * @throws Exception if the master title is empty
      */
     public static function getMasterPath(Master|string $master): string
     {
         if ($master instanceof Master) {
-            return database_path('seed/' . $master->title);
+            $masterTitle = $master->title;
+        } else {
+            $masterTitle = $master;
         }
 
-        return database_path('seed/' . $master);
+        if (! trim($masterTitle)) {
+            throw new Exception('Master title is required');
+        }
+
+        return database_path('seed/' . $masterTitle);
     }
 }

@@ -38,5 +38,5 @@ new class extends Component {
             <hr />
         @endforeach
     @endif
-    <livewire:admin.create-master />
+    <livewire:master.create-master />
 </div>

@@ -16,7 +16,7 @@ class CourseFactory extends Factory
         return [
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
-            'title' => $this->faker->word(),
+            'title' => $this->faker->unique()->word(),
             'valid_students' => $this->faker->words(),
             'valid_assessments' => $this->faker->words(),
             'specification_grading' => $this->faker->boolean(),
