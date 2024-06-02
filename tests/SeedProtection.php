@@ -7,9 +7,10 @@ use Exception;
 
 class SeedProtection extends TestCase
 {
-
     private static string $SEED_PATH = __DIR__ . '/../database/seed';
+
     private static string $BACKUP_PATH = __DIR__ . '/../storage/tmp/seed_backup';
+
     private static bool $isBackedUp = false;
 
     /**

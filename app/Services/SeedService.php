@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Exceptions\UserException;
 use App\Models\Assessment;
 use App\Models\Master;
+use App\Models\Question;
 use App\Util\FileHelper;
 use Exception;
+use Illuminate\Support\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SeedService
@@ -124,19 +126,6 @@ class SeedService
     }
 
     /**
-     * Deletes the assessment from the seed directory
-     *
-     * @param Assessment $assessment
-     * @return void
-     */
-    public static function deleteAssessment(Assessment $assessment): void
-    {
-        $assessmentPath = FileHelper::getAssessmentPath($assessment);
-        unlink($assessmentPath);
-        $assessment->delete();
-    }
-
-    /**
      * Returns the emails of all admins
      *
      * @return array
@@ -251,11 +240,11 @@ class SeedService
     /**
      * @param Master $master the master to add assessments to
      * @param TemporaryUploadedFile[] $assessments the assessments to add
-     * @return array of the created assessments' titles
+     * @return Collection<Assessment> of the created Assessments
      *
      * @throws Exception|UserException if assessments fail to be created
      */
-    public static function uploadAssessments(Master $master, array $assessments): array
+    public static function uploadAssessments(Master $master, array $assessments): Collection
     {
         $existingNames = $master->assessments->pluck('title')->toArray();
         $uploadedNames = array_map(fn ($assessment) => trim(pathinfo($assessment->getClientOriginalName(), PATHINFO_FILENAME)), $assessments);
@@ -283,6 +272,8 @@ class SeedService
             }
         }
 
+        $createdAssessments = [];
+
         foreach ($assessments as $assessment) {
             $assessmentFileName = $assessment->getClientOriginalName();
             $assessmentTitle = trim(pathinfo($assessmentFileName, PATHINFO_FILENAME));
@@ -292,12 +283,60 @@ class SeedService
                 throw new UserException("Assessment $assessmentTitle already exists on " . $master->title . '. Try syncing.');
             }
 
-            $assessment->storeAs("tmp/$master->title", $assessmentFileName);
-            rename(storage_path("app/tmp/$master->title/$assessmentFileName"), database_path("seed/$master->title/$assessmentFileName"));
-            rmdir(storage_path("app/tmp/$master->title"));
+            $createdAssessments[] = self::createAssessment($master->title, $assessmentTitle, $assessment->getContent());
         }
 
-        return $uploadedNames;
+        return collect($createdAssessments);
+    }
+
+    /**
+     * Creates a new Assessment in the seed directory and database
+     *
+     * @param string $masterTitle
+     * @param string $assessmentTitle
+     * @param string $assessmentContents
+     * @return Assessment
+     *
+     * @throws UserException if the assessment fails to be created
+     */
+    public static function createAssessment(string $masterTitle, string $assessmentTitle, string $assessmentContents): Assessment
+    {
+        $assessmentTitle = trim($assessmentTitle);
+
+        if ($assessmentTitle === '') {
+            throw new UserException('Assessment title cannot be empty');
+        }
+
+        if (! preg_match('/^[a-zA-Z0-9\-_ ]+$/', $assessmentTitle)) {
+            throw new UserException('Assessment title can only contain letters, numbers, spaces, hyphens, and underscores');
+        }
+
+        $assessmentPath = FileHelper::getAssessmentPathByTitles($masterTitle, $assessmentTitle);
+
+        if (file_exists($assessmentPath)) {
+            throw new UserException("Assessment $assessmentTitle already exists on " . $masterTitle);
+        }
+
+        file_put_contents($assessmentPath, $assessmentContents);
+
+        $master = Master::where('title', $masterTitle)->first();
+        $assessment = $master->assessments()->create(['title' => $assessmentTitle]);
+        SeedService::seedQuestions($master, $assessment);
+
+        return $assessment;
+    }
+
+    /**
+     * Deletes the assessment from the seed directory
+     *
+     * @param Assessment $assessment
+     * @return void
+     */
+    public static function deleteAssessment(Assessment $assessment): void
+    {
+        $assessmentPath = FileHelper::getAssessmentPath($assessment);
+        unlink($assessmentPath);
+        $assessment->delete();
     }
 
     /**
@@ -336,5 +375,20 @@ class SeedService
         $assessment->update(['title' => $newTitle]);
 
         return $assessment;
+    }
+
+    public static function seedQuestions(Master $master, Assessment $assessment): void
+    {
+        $questions = SeedService::getQuestions($master->title, $assessment->title);
+
+        foreach ($questions as $question) {
+            Question::updateOrCreate(
+                ['number' => $question['number'], 'assessment_id' => $assessment->id],
+                [
+                    'question' => $question['question'],
+                    'answer' => $question['answer'],
+                ]
+            );
+        }
     }
 }

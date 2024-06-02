@@ -38,7 +38,7 @@ new class extends Component {
         }
 
         try {
-            SyncService::syncUpdatedAssessments($this->assessment->master, [$updatedAssessment->title]);
+            SyncService::syncAssessmentCoursesForAssessment($updatedAssessment);
         } catch (Exception $e) {
             $this->notification()->error('Failed to sync assessment', $e->getMessage());
             return null;

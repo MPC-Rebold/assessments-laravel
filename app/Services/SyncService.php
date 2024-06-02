@@ -7,7 +7,6 @@ use App\Models\Assessment;
 use App\Models\AssessmentCourse;
 use App\Models\Course;
 use App\Models\Master;
-use App\Models\Question;
 use App\Models\Settings;
 use App\Models\Status;
 use App\Models\User;
@@ -85,13 +84,10 @@ class SyncService
      *
      * @throws Exception if the sync fails
      */
-    public static function syncUpdatedAssessments(Master $master, array $assessmentTitles): void
+    public static function syncUpdatedAssessments(Collection $assessments): void
     {
-        self::withOverrideProtection(function () use ($master, $assessmentTitles) {
+        self::withOverrideProtection(function () use ($assessments) {
             self::validateCanvasKey();
-
-            $createdAssessments = self::createAssessments($master);
-            $assessments = $createdAssessments->whereIn('title', $assessmentTitles);
 
             $assessments->each(function ($assessment) {
                 self::syncAssessmentCoursesForAssessment($assessment);
@@ -296,17 +292,7 @@ class SyncService
 
             $createdAssessments[] = $assessmentModel;
 
-            $questions = SeedService::getQuestions($master->title, $assessmentTitle);
-
-            foreach ($questions as $question) {
-                Question::updateOrCreate(
-                    ['number' => $question['number'], 'assessment_id' => $assessmentModel->id],
-                    [
-                        'question' => $question['question'],
-                        'answer' => $question['answer'],
-                    ]
-                );
-            }
+            SeedService::seedQuestions($master, $assessmentModel);
         }
 
         return collect($createdAssessments);
