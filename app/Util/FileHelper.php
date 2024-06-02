@@ -87,6 +87,7 @@ class FileHelper
      *
      * @param Master|string $master the master to get the path of as a title string or a Master object
      * @return string the path of the master in the seed directory
+     *
      * @throws Exception if the master title is empty
      */
     public static function getMasterPath(Master|string $master): string

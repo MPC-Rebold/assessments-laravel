@@ -5,6 +5,15 @@
 use App\Models\Master;
 use App\Services\SeedService;
 use Livewire\Volt\Volt;
+use Tests\SeedProtection;
+
+beforeEach(function () {
+    SeedProtection::preTest();
+});
+
+afterEach(function () {
+    SeedProtection::postTest();
+});
 
 test('SeedService createMaster creates Master in database and storage', function () {
 

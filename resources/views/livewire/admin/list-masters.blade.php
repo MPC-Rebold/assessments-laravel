@@ -27,7 +27,7 @@ new class extends Component {
 
 <div>
     @if ($masterCourses->isEmpty())
-        <div class="text-center p-4">
+        <div class="p-4 text-center">
             <p class="text-lg font-bold text-gray-400">
                 No courses found
             </p>

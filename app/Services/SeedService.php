@@ -213,6 +213,7 @@ class SeedService
      *
      * @param Master $master the master to delete
      * @return void
+     *
      * @throws Exception if the master fails to be deleted
      */
     public static function deleteMaster(Master $master): void
