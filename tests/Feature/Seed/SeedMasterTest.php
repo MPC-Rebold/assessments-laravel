@@ -7,6 +7,10 @@ use App\Services\SeedService;
 use Livewire\Volt\Volt;
 use Tests\SeedProtection;
 
+beforeAll(function () {
+    SeedProtection::backupSeed();
+});
+
 beforeEach(function () {
     SeedProtection::preTest();
 });
@@ -15,12 +19,15 @@ afterEach(function () {
     SeedProtection::postTest();
 });
 
-test('SeedService createMaster creates Master in database and storage', function () {
+afterAll(function () {
+    SeedProtection::restoreSeed();
+});
 
-    $createdMaster = SeedService::createMaster('__New Master1');
+test('SeedService createMaster creates Master in database and storage', function () {
+    $createdMaster = SeedService::createMaster('__NewMaster');
 
     expect(Master::count())->toBe(1)
-        ->and($createdMaster->title)->toBe('__New Master1')
+        ->and($createdMaster->title)->toBe('__NewMaster')
         ->and($createdMaster->exists())->toBeTrue()
         ->and($createdMaster->status->exists())->toBeTrue();
 
@@ -28,7 +35,7 @@ test('SeedService createMaster creates Master in database and storage', function
 });
 
 test('SeedService deleteMaster deletes Master', function () {
-    $createdMaster = SeedService::createMaster('__New Master2');
+    $createdMaster = SeedService::createMaster('__NewMaster');
     SeedService::deleteMaster($createdMaster);
 
     expect(Master::count())->toBe(0)
@@ -39,9 +46,9 @@ test('SeedService deleteMaster deletes Master', function () {
 test('master.create-master creates Master', function () {
     Master::factory()->count(3)->create();
 
-    Volt::test('master.create-master')->set('newMasterTitle', '__New Master3')->call('createNewMaster');
+    Volt::test('master.create-master')->set('newMasterTitle', '__NewMaster')->call('createNewMaster');
 
-    $createdMaster = Master::where('title', '__New Master3')->first();
+    $createdMaster = Master::where('title', '__NewMaster')->first();
 
     expect(Master::count())->toBe(4)
         ->and($createdMaster->exists())->toBeTrue()
@@ -51,10 +58,7 @@ test('master.create-master creates Master', function () {
 });
 
 test('master.delete-master deletes Master', function () {
-    $createdMaster = SeedService::createMaster('__New Master4');
-
-    expect(Master::count())->toBe(1)
-        ->and($createdMaster->exists())->toBeTrue();
+    $createdMaster = SeedService::createMaster('__NewMaster');
 
     Volt::test('master.delete-master', ['master' => $createdMaster])
         ->assertSet('master', $createdMaster)

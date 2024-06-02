@@ -41,7 +41,6 @@ class FileHelper
      */
     public static function recurseCopy(string $source, string $destination): void
     {
-
         $dir = opendir($source);
 
         @mkdir($destination);

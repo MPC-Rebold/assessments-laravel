@@ -7,27 +7,52 @@ use Exception;
 
 class SeedProtection extends TestCase
 {
+
+    private static string $SEED_PATH = __DIR__ . '/../database/seed';
+    private static string $BACKUP_PATH = __DIR__ . '/../storage/tmp/seed_backup';
+    private static bool $isBackedUp = false;
+
+    /**
+     * @throws Exception if the seed directory has not been backed up
+     */
     public static function preTest(): void
     {
-        if (! is_dir(storage_path('tmp'))) {
-            mkdir(storage_path('tmp'));
+        if (! self::$isBackedUp) {
+            throw new Exception('Seed files have not been backed up');
         }
 
-        FileHelper::recurseCopy(database_path('seed'), storage_path('tmp/backup_seed'));
+        FileHelper::rmrf(self::$SEED_PATH);
+        mkdir(self::$SEED_PATH);
+    }
+
+    public static function postTest(): void
+    {
+        $postTestFiles = array_diff(scandir(self::$SEED_PATH), ['.', '..']);
+
+        if (! empty($postTestFiles)) {
+            self::fail('Seed files have not been restored to their original state: ' . implode(', ', $postTestFiles));
+        }
+    }
+
+    public static function backupSeed(): void
+    {
+        FileHelper::recurseCopy(self::$SEED_PATH, self::$BACKUP_PATH);
+        self::$isBackedUp = true;
     }
 
     /**
-     * @throws Exception if seed files have not been restored to their original state
+     * @throws Exception if the seed directory has not been backed up
      */
-    public static function postTest(): void
+    public static function restoreSeed(): void
     {
-        $backupFiles = scandir(storage_path('tmp/backup_seed'));
-        $postTestFiles = scandir(database_path('seed'));
+        if (! self::$isBackedUp) {
+            throw new Exception('Seed files have not been backed up');
+        }
 
-        FileHelper::rmrf(database_path('seed'));
-        FileHelper::recurseCopy(storage_path('tmp/backup_seed'), database_path('seed'));
-        FileHelper::rmrf(storage_path('tmp/backup_seed'));
+        FileHelper::rmrf(self::$SEED_PATH);
+        FileHelper::recurseCopy(self::$BACKUP_PATH, self::$SEED_PATH);
+        FileHelper::rmrf(self::$BACKUP_PATH);
 
-        self::assertEquals($backupFiles, $postTestFiles);
+        self::$isBackedUp = false;
     }
 }
