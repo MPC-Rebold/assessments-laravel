@@ -47,7 +47,8 @@ class ConnectCourses extends Component
     public function saveConnectedCourses(): void
     {
         try {
-            SyncService::syncUpdateConnectedCourses($this->master, $this->connectedCourses);
+            $connectedCoursesModels = Course::whereIn('title', $this->connectedCourses)->get();
+            SyncService::updateConnectedCourses($this->master, $connectedCoursesModels);
         } catch (Exception $e) {
             $this->notification()->error('Saving course connections failed', $e->getMessage());
 

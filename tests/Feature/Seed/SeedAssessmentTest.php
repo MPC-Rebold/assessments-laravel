@@ -63,6 +63,7 @@ test('master.upload-assessments creates single Assessment', function () {
 
     expect(Assessment::count())->toBe(1)
         ->and($master->assessments->count())->toBe(1)
+        ->and($master->assessments->first()->title)->toBe('__NewAssessment')
         ->and($master->assessments->first()->questions->count())->toBe(1);
 
     SeedService::deleteMaster($master);

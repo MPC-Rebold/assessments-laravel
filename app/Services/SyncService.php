@@ -97,32 +97,31 @@ class SyncService
 
     /**
      * Updates the connected courses for a master
+     * 1) Disconnects the previous connected courses
+     * 2) Connects the new courses
+     * 3) Syncs AssessmentCourses for master
+     * 4) Connects the users to their enrolled/unenrolled courses
      *
+     * @param Master $master the master to update connected courses for
+     * @param Collection $courses the titles of the connected courses
      * @throws UserException
      */
-    public static function syncUpdateConnectedCourses(Master $master, array $connectedCourses): void
+    public static function updateConnectedCourses(Master $master, Collection $courses): void
     {
-        self::withOverrideProtection(function () use ($master, $connectedCourses) {
-            $previousConnected = $master->courses->pluck('title')->toArray();
-
+        self::withOverrideProtection(function () use ($master, $courses) {
+            // Disconnect previous connected courses
             $master->courses()->update(['master_id' => null]);
 
-            $courses = Course::whereIn('title', $connectedCourses);
-            $courses->update(['master_id' => $master->id]);
-
-            $changedCourses = array_merge(array_diff($connectedCourses, $previousConnected), array_diff($previousConnected, $connectedCourses));
+            // Connect new courses
+            $courseTitlesToConnect = $courses->pluck('title')->toArray();
+            Course::whereIn('title', $courseTitlesToConnect)->update(['master_id' => $master->id]);
 
             $courses = self::syncCourses();
             self::checkMastersCourses($courses);
             self::syncAssessmentCoursesForMaster($master);
 
-            $users = User::whereHas('courses', function ($query) use ($changedCourses) {
-                $query->whereIn('title', $changedCourses);
-            })->get();
-
-            foreach ($users as $user) {
-                $user->connectCourses();
-            }
+            // Connect users to their enrolled/unenrolled courses
+            self::connectUserCourses();
         });
     }
 

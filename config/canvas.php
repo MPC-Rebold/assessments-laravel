@@ -20,4 +20,34 @@ return [
     |
     */
     'host' => env('CANVAS_API_HOST'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Canvas API Testing Course ID
+    |--------------------------------------------------------------------------
+    |
+    | This value is the course name for testing
+    |
+    */
+    'testing_course_id' => (int) env('TESTING_CANVAS_COURSE_ID'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Canvas API Testing Course ID
+    |--------------------------------------------------------------------------
+    |
+    | This value is the course name for testing
+    |
+    */
+    'testing_course_name' => env('TESTING_CANVAS_COURSE_NAME'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Canvas API Testing Assessment Name
+    |--------------------------------------------------------------------------
+    |
+    | This value is the assessment name for testing
+    |
+    */
+    'testing_assessment_name' => env('TESTING_CANVAS_ASSESSMENT_NAME', '__TestAssessment'),
 ];
