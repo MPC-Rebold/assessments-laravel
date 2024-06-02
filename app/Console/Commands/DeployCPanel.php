@@ -79,7 +79,7 @@ class DeployCPanel extends Command
             exit();
         }
 
-        if (CanvasService::getSelf()->status() != 200) {
+        if (! CanvasService::isTokenValid()) {
             $this->error('The Canvas API is unauthorized/unreachable. Check the CANVAS_API_HOST and CANVAS_API_TOKEN in .env');
             $this->error('Skipping deployment');
 

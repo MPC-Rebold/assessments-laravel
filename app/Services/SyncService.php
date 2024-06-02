@@ -137,7 +137,7 @@ class SyncService
      */
     public static function validateCanvasKey(): void
     {
-        if (CanvasService::getSelf()->status() === 401) {
+        if (! CanvasService::isTokenValid()) {
             throw new UserException('Invalid Canvas API Key');
         }
     }

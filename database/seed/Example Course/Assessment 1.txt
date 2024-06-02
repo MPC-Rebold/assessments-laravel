@@ -1,0 +1,66 @@
+1. Write a statement that declares three double precision variables:
+	a, b, c.
+@@double_a, b, c;@@
+
+2.  Write a statement that assigns the value of b/c to variable a
+    using floating point division (a is a double, b & c are int)
+@@a = (double) b / c;@@
+
+3.  Assume t=4.01 Write a statement that displays   "t = 4.01 sec"
+    (using variable t)
+@@System.out.println("t_=_" + t + "_sec");@@
+
+4.  What does 17%2 =  _
+@@1@@
+
+5.  What does 50.0/20 = ___
+@@2.5@@
+
+6.  Assume q is an integer. Set up an if-statement that displays
+    "even" if q is an even number.
+
+    ______________________
+         System.out.println("even");
+@@if (q % 2 == 0)@@
+
+7.  Fill in the blank. This is an if statement that displays
+    "out of range" if q is outside the range 10 to 30
+
+    _____________________// fill in blank
+         System.out.println("out of range");
+@@if_(q_<_10_||_q_>_30)@@
+
+8.  What is the output of the following code segment?
+
+     int a = 5, b = 3, c = 9, d = 10;
+
+     System.out.print("----");
+     if (b != a)
+          if (c == d)
+             System.out.print("****");
+          else
+             System.out.print("++++");
+     System.out.println("====");
+@@----++++====@@
+
+9.  This is a while-loop that displays variable x and
+     subtracts 2.0 from it while  x is larger than 0 and
+     the number of iterations k is less
+     than 25. Fill in the blank. (Use a compound Boolean)
+
+     int k = 0;
+     int x = 30;
+
+     _____________________// fill in blank
+     {
+          x = x - 2;
+          k = k + 1;
+     }
+@@while (x > 0 && k < 25)@@
+
+10.  This is a for-loop that displays "hello" 100 times, using
+     k for the loop counter. Fill in the blank.
+
+     ________________________// fill in blank
+          System.out.println("hello");
+@@for (int_k = 0; k < 100; k++)@@

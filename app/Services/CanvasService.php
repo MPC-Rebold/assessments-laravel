@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\AssessmentCourse;
-use App\Models\Course;
 use App\Models\QuestionUser;
 use App\Models\User;
 use Carbon\Carbon;
@@ -42,7 +41,7 @@ class CanvasService
             ->withHeaders([
                 'Accept' => 'application/json',
             ])->withQueryParameters(
-                ['per_page' => 1000] + $query
+                ['per_page' => 10_000] + $query
             )->get(self::$apiUrl . '/api/v1/' . $path);
     }
 
@@ -80,6 +79,14 @@ class CanvasService
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ])->post(self::$apiUrl . '/api/v1/' . $path, $data);
+    }
+
+    /**
+     * @return bool whether the CANVAS_API_TOKEN is valid
+     */
+    public static function isTokenValid(): bool
+    {
+        return self::get('users/self')->status() === 200;
     }
 
     /**

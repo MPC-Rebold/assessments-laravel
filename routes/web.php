@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\ProviderController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('settings', SettingsController::class);
 
 Route::prefix('auth')->group(function () {
     Route::get('/{provider}/redirect', [ProviderController::class, 'redirect'])->name('auth.redirect');
