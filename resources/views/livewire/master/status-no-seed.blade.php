@@ -53,15 +53,13 @@ new class extends Component {
         return redirect()->route('admin');
     }
 
-    public function deleteAssessments(): void
+    public function deleteAssessments(): Redirector
     {
         foreach ($this->missingAssessmentSeeds as $assessment) {
             $assessment->delete();
         }
 
-        $this->dispatch('refresh');
-
-        $this->notification()->success('Assessments deleted');
+        return redirect(request()->header('Referer'));
     }
 }; ?>
 

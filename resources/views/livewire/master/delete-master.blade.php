@@ -67,7 +67,7 @@ new class extends Component {
                 </div>
                 <div class="space-y-1">
                     <div>
-                        Type <b>{{ $master->title }}</b> below to confirm
+                        Type "<b>{{ $master->title }}</b>" below to confirm
                     </div>
                     <x-input class="font-mono font-bold" placeholder="{{ $master->title }}"
                         wire:model.live="confirmDeleteString" />

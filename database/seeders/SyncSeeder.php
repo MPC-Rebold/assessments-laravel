@@ -2,15 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\Settings;
 use App\Services\SyncService;
+use Exception;
 use Illuminate\Database\Seeder;
 
 class SyncSeeder extends Seeder
 {
     /**
      * Run the sync
-     * @throws \Exception
+     *
+     * @throws Exception
      */
     public function run(): void
     {

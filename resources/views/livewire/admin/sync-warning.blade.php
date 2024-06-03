@@ -15,9 +15,8 @@ new class extends Component {
     }
 }; ?>
 
-
 <div>
-    @if(!$scheduleIsRunning)
+    @if (!$scheduleIsRunning)
         <div class='rounded-lg border border-warning-600 bg-warning-50 p-4'>
             <div class="flex items-center border-b-2 border-warning-200 pb-3">
                 <x-icon name="exclamation" class="h-6 w-6 text-warning-700" />
@@ -25,7 +24,7 @@ new class extends Component {
                     <b>Auto Syncing disabled</b>
                 </div>
             </div>
-            <div class="ml-5 mt-2  pl-1">
+            <div class="ml-5 mt-2 pl-1">
                 <p class="text-warning-700">
                     Background tasks are not enabled. The following will have not run:
                 </p>

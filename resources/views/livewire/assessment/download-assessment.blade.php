@@ -7,6 +7,7 @@ use Livewire\Attributes\Validate;
 use Livewire\Features\SupportRedirects\Redirector;
 use WireUi\Traits\Actions;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Util\FileHelper;
 
 new class extends Component {
     use Actions;
@@ -15,7 +16,7 @@ new class extends Component {
 
     public function downloadAssessment(): BinaryFileResponse|null
     {
-        $assessmentPath = SeedService::getAssessmentPath($this->assessment);
+        $assessmentPath = FileHelper::getAssessmentPath($this->assessment);
 
         if (!file_exists($assessmentPath)) {
             $this->notification()->error('Error downloading assessment', 'Assessment file not found.');

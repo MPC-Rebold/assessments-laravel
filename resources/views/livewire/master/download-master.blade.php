@@ -7,6 +7,7 @@ use Livewire\Attributes\Validate;
 use Livewire\Features\SupportRedirects\Redirector;
 use WireUi\Traits\Actions;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Util\FileHelper;
 
 new class extends Component {
     use Actions;
@@ -26,7 +27,7 @@ new class extends Component {
         }
 
         $assessmentTitles = SeedService::getAssessments($this->master);
-        $assessmentPaths = array_map(fn($assessmentTitle) => SeedService::getAssessmentPathByTitles($this->master->title, $assessmentTitle), $assessmentTitles);
+        $assessmentPaths = array_map(fn($assessmentTitle) => FileHelper::getAssessmentPathByTitles($this->master->title, $assessmentTitle), $assessmentTitles);
 
         if (!is_dir(storage_path('app/tmp'))) {
             mkdir(storage_path('app/tmp'));

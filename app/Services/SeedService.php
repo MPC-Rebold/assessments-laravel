@@ -2,9 +2,14 @@
 
 namespace App\Services;
 
+use App\Exceptions\UserException;
 use App\Models\Assessment;
 use App\Models\Master;
+use App\Models\Question;
+use App\Util\FileHelper;
 use Exception;
+use Illuminate\Support\Collection;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SeedService
 {
@@ -28,7 +33,7 @@ class SeedService
     {
         return array_map(function ($file) {
             return pathinfo($file, PATHINFO_FILENAME);
-        }, glob(self::getMasterPath($master) . '/*.txt'));
+        }, glob(FileHelper::getMasterPath($master) . '/*.txt'));
     }
 
     /**
@@ -39,7 +44,7 @@ class SeedService
      */
     public static function isValidMaster(string|Master $master): bool
     {
-        return is_dir(self::getMasterPath($master));
+        return is_dir(FileHelper::getMasterPath($master));
     }
 
     /**
@@ -51,8 +56,20 @@ class SeedService
      */
     public static function getQuestions(string $masterTitle, string $assessmentTitle): array
     {
-        $questions_txt = file_get_contents(database_path('seed/' . $masterTitle . '/' . $assessmentTitle . '.txt'));
-        $exploded = explode('@@', $questions_txt);
+        $questions_txt = file_get_contents(FileHelper::getAssessmentPathByTitles($masterTitle, $assessmentTitle));
+
+        return self::getQuestionsFromContent($questions_txt);
+    }
+
+    /**
+     * Returns the questions and answers from string content
+     *
+     * @param string $content the content to extract questions from
+     * @return array of questions
+     */
+    public static function getQuestionsFromContent(string $content): array
+    {
+        $exploded = explode('@@', $content);
 
         $res = [];
         for ($i = 0; $i < count($exploded) - 1; $i += 2) {
@@ -104,21 +121,8 @@ class SeedService
             $questionsText .= $question->question . "\n@@" . $question->answer . "@@\n\n";
         }
 
-        $assessmentPath = self::getAssessmentPath($assessment);
+        $assessmentPath = FileHelper::getAssessmentPath($assessment);
         file_put_contents($assessmentPath, $questionsText);
-    }
-
-    /**
-     * Deletes the assessment from the seed directory
-     *
-     * @param Assessment $assessment
-     * @return void
-     */
-    public static function deleteAssessment(Assessment $assessment): void
-    {
-        $assessmentPath = self::getAssessmentPath($assessment);
-        unlink($assessmentPath);
-        $assessment->delete();
     }
 
     /**
@@ -176,15 +180,15 @@ class SeedService
         $title = trim($title);
 
         if ($title === '') {
-            throw new Exception('Course title cannot be empty');
+            throw new UserException('Course title cannot be empty');
         }
 
-        $newMasterPath = self::getMasterPath($title);
+        $newMasterPath = FileHelper::getMasterPath($title);
 
         if (! is_dir($newMasterPath)) {
             mkdir($newMasterPath);
         } elseif (Master::where('title', $title)->exists()) {
-            throw new Exception("Course $title already exists");
+            throw new UserException("Course $title already exists");
         }
 
         $master = Master::create(['title' => $title]);
@@ -198,29 +202,14 @@ class SeedService
      *
      * @param Master $master the master to delete
      * @return void
+     *
+     * @throws Exception if the master fails to be deleted
      */
     public static function deleteMaster(Master $master): void
     {
-        $masterPath = self::getMasterPath($master);
-        self::rmrf($masterPath);
+        $masterPath = FileHelper::getMasterPath($master);
+        FileHelper::rmrf($masterPath);
         $master->delete();
-    }
-
-    public static function rmrf($dir): void
-    {
-        if (is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object != '.' && $object != '..') {
-                    if (is_dir($dir. DIRECTORY_SEPARATOR .$object) && ! is_link($dir.'/'.$object)) {
-                        self::rmrf($dir . DIRECTORY_SEPARATOR . $object);
-                    } else {
-                        unlink($dir. DIRECTORY_SEPARATOR .$object);
-                    }
-                }
-            }
-            rmdir($dir);
-        }
     }
 
     /**
@@ -236,12 +225,12 @@ class SeedService
     {
         $newTitle = trim($newTitle);
 
-        $oldPath = self::getMasterPath($master);
-        $newPath = self::getMasterPath($newTitle);
+        $oldPath = FileHelper::getMasterPath($master);
+        $newPath = FileHelper::getMasterPath($newTitle);
         $existingMaster = Master::where('title', $newTitle)->first();
 
         if ($existingMaster || is_dir($newPath)) {
-            throw new Exception("Course $newTitle already exists");
+            throw new UserException("Course $newTitle already exists");
         }
 
         rename($oldPath, $newPath);
@@ -249,23 +238,129 @@ class SeedService
     }
 
     /**
+     * @param Master $master the master to add assessments to
+     * @param TemporaryUploadedFile[] $assessments the assessments to add
+     * @return Collection<Assessment> of the created Assessments
+     *
+     * @throws Exception|UserException if assessments fail to be created
+     */
+    public static function uploadAssessments(Master $master, array $assessments): Collection
+    {
+        $existingNames = $master->assessments->pluck('title')->toArray();
+        $uploadedNames = array_map(fn ($assessment) => trim(pathinfo($assessment->getClientOriginalName(), PATHINFO_FILENAME)), $assessments);
+
+        if (in_array('', $uploadedNames)) {
+            throw new UserException('Assessment title cannot be empty');
+        }
+
+        $conflictingNames = array_intersect($existingNames, $uploadedNames);
+        if (! empty($conflictingNames)) {
+            throw new UserException('The assessments: ' . implode(', ', $conflictingNames) . ' have conflicting names');
+        }
+
+        $duplicateNames = array_diff_assoc($uploadedNames, array_unique($uploadedNames));
+        if (! empty($duplicateNames)) {
+            throw new UserException('The assessments: ' . implode(', ', $duplicateNames) . ' have duplicate names');
+        }
+
+        foreach ($assessments as $assessment) {
+            $content = $assessment->getContent();
+            $questions = self::getQuestionsFromContent($content);
+
+            if (count($questions) > 100) {
+                throw new UserException('The assessment ' . $assessment->getClientOriginalName() . ' has more than the limit of 100 questions');
+            }
+        }
+
+        $createdAssessments = [];
+
+        foreach ($assessments as $assessment) {
+            $assessmentFileName = $assessment->getClientOriginalName();
+            $assessmentTitle = trim(pathinfo($assessmentFileName, PATHINFO_FILENAME));
+            $assessmentPath = FileHelper::getAssessmentPathByTitles($master->title, $assessmentTitle);
+
+            if (file_exists($assessmentPath)) {
+                throw new UserException("Assessment $assessmentTitle already exists on " . $master->title . '. Try syncing.');
+            }
+
+            $createdAssessments[] = self::createAssessment($master->title, $assessmentTitle, $assessment->getContent());
+        }
+
+        return collect($createdAssessments);
+    }
+
+    /**
+     * Creates a new Assessment in the seed directory and database
+     *
+     * @param string $masterTitle
+     * @param string $assessmentTitle
+     * @param string $assessmentContents
+     * @return Assessment
+     *
+     * @throws UserException if the assessment fails to be created
+     */
+    public static function createAssessment(string $masterTitle, string $assessmentTitle, string $assessmentContents): Assessment
+    {
+        $assessmentTitle = trim($assessmentTitle);
+
+        if ($assessmentTitle === '') {
+            throw new UserException('Assessment title cannot be empty');
+        }
+
+        if (! preg_match('/^[a-zA-Z0-9\-_ ]+$/', $assessmentTitle)) {
+            throw new UserException('Assessment title can only contain letters, numbers, spaces, hyphens, and underscores');
+        }
+
+        $assessmentPath = FileHelper::getAssessmentPathByTitles($masterTitle, $assessmentTitle);
+
+        if (file_exists($assessmentPath)) {
+            throw new UserException("Assessment $assessmentTitle already exists on " . $masterTitle);
+        }
+
+        file_put_contents($assessmentPath, $assessmentContents);
+
+        $master = Master::where('title', $masterTitle)->first();
+        $assessment = $master->assessments()->create(['title' => $assessmentTitle]);
+        SeedService::seedQuestions($master, $assessment);
+
+        return $assessment;
+    }
+
+    /**
+     * Deletes the assessment from the seed directory
+     *
+     * @param Assessment $assessment
+     * @return void
+     */
+    public static function deleteAssessment(Assessment $assessment): void
+    {
+        $assessmentPath = FileHelper::getAssessmentPath($assessment);
+        unlink($assessmentPath);
+        $assessment->delete();
+    }
+
+    /**
      * Renames the assessment in the seed directory and database
      *
      * @param Assessment $assessment the assessment to rename
      * @param string $newTitle the new title of the assessment
-     * @return void
+     * @return Assessment the renamed assessment
      *
      * @throws Exception if an Assessment with new title in the same course already exists
      */
-    public static function renameAssessment(Assessment $assessment, string $newTitle): void
+    public static function renameAssessment(Assessment $assessment, string $newTitle): Assessment
     {
         $newTitle = trim($newTitle);
 
         if ($newTitle === '') {
-            throw new Exception('Assessment title cannot be empty');
+            throw new UserException('Assessment title cannot be empty');
         }
 
-        $oldPath = self::getAssessmentPath($assessment);
+        if (! preg_match('/^[a-zA-Z0-9\-_ ]+$/', $newTitle)) {
+            throw new UserException('Assessment title can only contain letters, numbers, spaces, hyphens, and underscores');
+        }
+
+        $oldPath = FileHelper::getAssessmentPath($assessment);
         $newPath = database_path('seed/' . $assessment->master->title . '/' . $newTitle . '.txt');
         $existingAssessment = Assessment::where([
             ['title', $newTitle],
@@ -273,48 +368,27 @@ class SeedService
         ])->first();
 
         if ($existingAssessment || file_exists($newPath)) {
-            throw new Exception("Assessment $newTitle already exists on " . $assessment->master->title);
+            throw new UserException("Assessment $newTitle already exists on " . $assessment->master->title);
         }
 
         rename($oldPath, $newPath);
         $assessment->update(['title' => $newTitle]);
+
+        return $assessment;
     }
 
-    /**
-     * Returns the path of the assessment in the seed directory
-     *
-     * @param Assessment $assessment the assessment to get the path of
-     * @return string the path of the assessment
-     */
-    public static function getAssessmentPath(Assessment $assessment): string
+    public static function seedQuestions(Master $master, Assessment $assessment): void
     {
-        return self::getAssessmentPathByTitles($assessment->master->title, $assessment->title);
-    }
+        $questions = SeedService::getQuestions($master->title, $assessment->title);
 
-    /**
-     * Returns the path of the assessment in the seed directory
-     *
-     * @param string $masterTitle the title of the master
-     * @param string $assessmentTitle the title of the assessment
-     * @return string the path of the assessment in the seed directory
-     */
-    public static function getAssessmentPathByTitles(string $masterTitle, string $assessmentTitle): string
-    {
-        return database_path('seed/' . $masterTitle . '/' . $assessmentTitle . '.txt');
-    }
-
-    /**
-     * Returns the path of the master in the seed directory
-     *
-     * @param Master|string $master the master to get the path of as a title string or a Master object
-     * @return string the path of the master in the seed directory
-     */
-    public static function getMasterPath(Master|string $master): string
-    {
-        if ($master instanceof Master) {
-            return database_path('seed/' . $master->title);
+        foreach ($questions as $question) {
+            Question::updateOrCreate(
+                ['number' => $question['number'], 'assessment_id' => $assessment->id],
+                [
+                    'question' => $question['question'],
+                    'answer' => $question['answer'],
+                ]
+            );
         }
-
-        return database_path('seed/' . $master);
     }
 }

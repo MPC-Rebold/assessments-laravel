@@ -6,7 +6,7 @@
         <div class="flex items-center space-x-4">
             <div class="w-28">
                 <x-select :searchable="false" :clearable="false" :options="['OFF', '65%', '70%', '75%', '80%', '85%', '90%', '95%']"
-                    wire:model="specification_grading_threshold" />
+                    wire:model="specificationGradingThreshold" />
             </div>
             <x-button disabled secondary spinner class="min-w-28" wire:dirty.attr.remove="disabled"
                 wire:dirty.class="!bg-positive-500" wire:click="openModal">

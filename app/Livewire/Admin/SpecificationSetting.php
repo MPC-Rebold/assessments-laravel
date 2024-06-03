@@ -2,10 +2,8 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\AssessmentCourse;
 use App\Models\Course;
-use App\Services\CanvasService;
-use DB;
+use App\Services\SyncService;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -17,9 +15,9 @@ class SpecificationSetting extends Component
 
     public Course $course;
 
-    public bool $specification_grading;
+    public bool $specificationGrading;
 
-    public string $specification_grading_threshold;
+    public string $specificationGradingThreshold;
 
     public bool $modalOpen = false;
 
@@ -27,12 +25,12 @@ class SpecificationSetting extends Component
     {
         $this->course = $course;
 
-        $this->specification_grading = $this->course->specification_grading;
+        $this->specificationGrading = $this->course->specification_grading;
 
-        if ($this->specification_grading) {
-            $this->specification_grading_threshold = $this->course->specification_grading_threshold * 100 . '%';
+        if ($this->specificationGrading) {
+            $this->specificationGradingThreshold = $this->course->specification_grading_threshold * 100 . '%';
         } else {
-            $this->specification_grading_threshold = 'OFF';
+            $this->specificationGradingThreshold = 'OFF';
         }
     }
 
@@ -50,41 +48,23 @@ class SpecificationSetting extends Component
 
     public function updateSpecificationGrading(): void
     {
-        $specification_grading = $this->specification_grading_threshold !== 'OFF';
+        $specificationGrading = $this->specificationGradingThreshold !== 'OFF';
 
-        if ($specification_grading) {
-            $specification_grading_threshold = (int) $this->specification_grading_threshold / 100;
+        if ($specificationGrading) {
+            $specificationGradingThreshold = (int) $this->specificationGradingThreshold / 100;
         } else {
-            $specification_grading_threshold = -1;
+            $specificationGradingThreshold = -1;
         }
 
-        DB::beginTransaction();
         try {
-            $this->course->update([
-                'specification_grading' => $specification_grading,
-                'specification_grading_threshold' => $specification_grading_threshold,
-            ]);
-
-            $assessmentCourses = AssessmentCourse::where('course_id', $this->course->id)->get();
-            CanvasService::regradeAssessmentCourses($assessmentCourses);
-
-            $this->specification_grading = $this->course->specification_grading;
-
+            SyncService::updateSpecificationGrading($this->course, $specificationGradingThreshold);
         } catch (Exception $e) {
-            DB::rollBack();
-            $this->notification()->error(
-                'Failed to update specification grading with error ' . $e->getMessage(),
-            );
+            $this->notification()->error('Failed to update Specification Grading', $e->getMessage());
 
             return;
         }
 
-        $this->notification()->success(
-            'Specification Grading Turned ' . ($specification_grading ? 'On' : 'Off'),
-        );
-
-        DB::commit();
-
+        $this->notification()->success('Specification Grading Turned ' . ($specificationGrading ? 'On' : 'Off'));
         $this->modalOpen = false;
     }
 

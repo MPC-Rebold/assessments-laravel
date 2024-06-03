@@ -76,7 +76,7 @@ new class extends Component {
                 <div class="space-y-1">
                     <div>
                         Type
-                        <b>{{ $assessment->master->title }}/{{ $assessment->title }}</b>
+                        "<b>{{ $assessment->master->title }}/{{ $assessment->title }}</b>"
                         below to confirm
                     </div>
                     <x-input class="font-mono font-bold"

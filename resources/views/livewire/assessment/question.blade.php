@@ -23,8 +23,11 @@ new class extends Component {
     public bool $isPastDue;
     public int $dueAt;
 
-    public function mount(): void
+    public function mount(Question $question, Course $course): void
     {
+        $this->question = $question;
+        $this->course = $course;
+
         $this->isCorrect = $this->question->isCorrect(auth()->user(), $this->course);
         $this->guessesLeft = $this->question->getGuessesLeft(auth()->user(), $this->course);
         $this->feedback = str_repeat('_', strlen($this->question->answer));
@@ -106,8 +109,7 @@ new class extends Component {
             </div>
         </x-slot>
         <div class="overflow-auto px-4 font-mono text-black md:px-2">
-            <p class="select-none overflow-auto whitespace-pre-wrap text-nowrap">
-                {{ $question->question }}</p>
+            <p class="select-none overflow-auto whitespace-pre-wrap text-nowrap">{{ $question->question }}</p>
             <div class="mt-4 w-fit overflow-auto text-nowrap rounded-md bg-slate-200 px-2 py-1 tracking-widest">
                 {!! $feedback !!}
             </div>

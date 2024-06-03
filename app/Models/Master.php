@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Master extends Model
 {
+    use HasFactory;
+
     public const NO_SEED = 'NO_SEED';
 
     public const DISCONNECTED = 'DISCONNECTED';
@@ -65,12 +68,5 @@ class Master extends Model
         }
 
         return $statusStrings;
-    }
-
-    public function courseForUser(User $user): Course
-    {
-        return $this->courses()->whereHas('users', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->first();
     }
 }
