@@ -4,13 +4,10 @@ namespace App\Livewire\Master;
 
 use App\Models\Course;
 use App\Models\Master;
-use App\Models\User;
 use App\Services\SyncService;
-use DB;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
-use Livewire\Attributes\On;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 
@@ -50,24 +47,10 @@ class ConnectCourses extends Component
     public function saveConnectedCourses(): void
     {
         try {
-            DB::beginTransaction();
-
-            $this->master->courses()->update(['master_id' => null]);
-
-            $courses = Course::whereIn('title', $this->connectedCourses);
-            $courses->update(['master_id' => $this->master->id]);
-
-            $users = User::all();
-            foreach ($users as $user) {
-                $user->connectCourses();
-            }
-
-            DB::commit();
-
-            SyncService::sync();
+            $connectedCoursesModels = Course::whereIn('title', $this->connectedCourses)->get();
+            SyncService::updateConnectedCourses($this->master, $connectedCoursesModels);
         } catch (Exception $e) {
-            DB::rollBack();
-            $this->notification()->error('Course connections failed with error ' . $e->getMessage());
+            $this->notification()->error('Saving course connections failed', $e->getMessage());
 
             return;
         }
@@ -80,14 +63,11 @@ class ConnectCourses extends Component
         } else {
             $this->notification()->warning('Course connections saved with warnings');
         }
-    }
 
-    #[On('updateStatus')]
-    public function updateStatus(): void
-    {
-        $this->statusStrings = $this->master->statusStrings();
         $this->missingCourses = $this->master->status->missing_courses;
         $this->missingAssessments = $this->master->status->missing_assessments;
+
+        $this->dispatch('refreshConnectedCourses', $this->missingCourses, $this->missingAssessments);
     }
 
     public function render(): View

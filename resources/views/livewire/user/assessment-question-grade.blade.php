@@ -93,7 +93,7 @@ new class extends Component {
                 </div>
             </div>
         </button>
-        <div :class="{ 'max-h-0 invisible': !open, 'max-h-[999vh] py-4': open }"
+        <div :class="{ 'max-h-0 invisible': !open, 'max-h-[9999vh] py-4': open }"
             class="overflow-hidden transition-all duration-300 ease-in-out">
             <div class="space-y-2 px-4 sm:px-6">
                 @if ($attempts->isEmpty())

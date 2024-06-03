@@ -117,8 +117,7 @@ new class extends Component {
             </div>
         @else
             <div class="overflow-auto px-4 font-mono text-black md:px-2">
-                <p class="overflow-auto whitespace-pre-wrap text-nowrap">
-                    {{ $question->question }}</p>
+                <p class="overflow-auto whitespace-pre-wrap text-nowrap">{{ $question->question }}</p>
             </div>
         @endif
         <x-slot name="footer">

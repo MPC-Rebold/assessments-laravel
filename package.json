@@ -6,6 +6,9 @@
     "reformat": "npm run reformat:prettier && npm run reformat:pint",
     "reformat:prettier": "prettier --write .",
     "reformat:pint": "php ./vendor/bin/pint",
+    "test": "php artisan test",
+    "test:bare": "php artisan test --exclude-group=sync",
+    "test:sync": "php artisan test --group=sync",
     "serve": "php artisan serve",
     "dev": "vite",
     "build": "vite build"

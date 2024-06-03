@@ -18,7 +18,7 @@ new class extends Component {
         $this->lastSyncedAt = Settings::first()->last_synced_at;
         try {
             $canvasSelf = CanvasService::getSelf();
-            $this->apiKeyValid = $canvasSelf->status() !== 401;
+            $this->apiKeyValid = $canvasSelf->status() === 200;
         } catch (Exception $e) {
             $this->apiKeyValid = null;
         }

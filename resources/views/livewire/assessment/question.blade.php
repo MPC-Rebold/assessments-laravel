@@ -23,8 +23,11 @@ new class extends Component {
     public bool $isPastDue;
     public int $dueAt;
 
-    public function mount(): void
+    public function mount(Question $question, Course $course): void
     {
+        $this->question = $question;
+        $this->course = $course;
+
         $this->isCorrect = $this->question->isCorrect(auth()->user(), $this->course);
         $this->guessesLeft = $this->question->getGuessesLeft(auth()->user(), $this->course);
         $this->feedback = str_repeat('_', strlen($this->question->answer));

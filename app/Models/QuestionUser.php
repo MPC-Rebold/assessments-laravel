@@ -118,17 +118,17 @@ class QuestionUser extends Model
         return str_replace(' ', '&nbsp;', strrev($result));
     }
 
-    private static function delimitKeep(string $string): string
+    public static function delimitKeep(string $string): string
     {
         return strrev('</keep__>') . "$string" . strrev('<keep__>');
     }
 
-    private static function delimitDelete(string $string): string
+    public static function delimitDelete(string $string): string
     {
         return strrev('</delete__>') . "$string" . strrev('<delete__>');
     }
 
-    private static function delimitMissing(): string
+    public static function delimitMissing(): string
     {
         return strrev('</missing__>') . '_' . strrev('<missing__>');
     }

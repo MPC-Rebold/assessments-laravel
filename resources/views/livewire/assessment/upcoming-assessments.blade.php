@@ -24,15 +24,13 @@ new class extends Component {
             $this->assessmentCourses = auth()
                 ->user()
                 ->courses->find($this->courseId)
-                ->assessmentCourses->filter(fn($assessmentCourse) => !$assessmentCourse->isPastDue())
+                ->assessmentCourses->where('assessment_canvas_id', '!=', '-1')
+                ->filter(fn($assessmentCourse) => !$assessmentCourse->isPastDue())
                 ->sortBy('due_at');
         } else {
             $assessmentCourses = auth()->user()->courses->flatMap->assessmentCourses;
-
-            $this->assessmentCourses = $assessmentCourses->filter(fn($assessmentCourse) => !$assessmentCourse->isPastDue())->flatten()->sortBy('due_at');
+            $this->assessmentCourses = $assessmentCourses->where('assessment_canvas_id', '!=', '-1')->filter(fn($assessmentCourse) => !$assessmentCourse->isPastDue())->flatten()->sortBy('due_at');
         }
-
-        $this->assessmentCourses = $this->assessmentCourses->take(4);
     }
 }; ?>
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Exceptions\UserException;
 use App\Services\SyncService;
 use Exception;
 use Illuminate\Contracts\View\View;
@@ -12,25 +13,26 @@ class Sync extends Component
 {
     use Actions;
 
+    /**
+     * @throws Exception if sync fails
+     */
     public function sync(): void
     {
 
         try {
             SyncService::sync();
         } catch (Exception $e) {
-            $this->notification()->error(
-                'Sync Failed',
-                $e->getMessage(),
-            );
+            if (is_a($e, UserException::class)) {
+                $this->notification()->error('Sync Failed', $e->getMessage());
 
-            return;
+                return;
+            }
+            throw $e;
         }
 
         $this->dispatch('syncUpdate');
 
-        $this->notification()->success(
-            'Sync Complete',
-        );
+        $this->notification()->success('Sync Complete');
     }
 
     public function render(): View

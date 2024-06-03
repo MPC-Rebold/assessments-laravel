@@ -27,6 +27,11 @@ new class extends Component {
 
     public function addQuestion(): void
     {
+        if ($this->assessment->questions->count() >= 100) {
+            $this->notification()->error('Cannot add more than 100 questions');
+            return;
+        }
+
         $this->dispatch('incrementFrom', $this->number);
         $this->isAdding = true;
     }

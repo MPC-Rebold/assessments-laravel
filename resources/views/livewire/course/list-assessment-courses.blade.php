@@ -11,9 +11,10 @@ new class extends Component {
 
     public Collection $assessmentCourses;
 
-    public function mount(): void
+    public function mount(Course $course): void
     {
-        $this->assessmentCourses = AssessmentCourse::where('course_id', $this->course->id)->get();
+        $this->course = $course;
+        $this->assessmentCourses = $course->assessmentCourses;
     }
 }; ?>
 
@@ -22,13 +23,13 @@ new class extends Component {
         Assessments
     </div>
     <div class="space-y-4 p-4 sm:px-6">
-        @if ($course->assessments->isEmpty())
+        @if ($assessmentCourses->isEmpty())
             <div class="text-gray-500">
                 No assessments found
             </div>
         @endif
         @foreach ($assessmentCourses as $assessmentCourse)
-            <livewire:course.assessment-status :assessmentCourse="$assessmentCourse" wire:key="{{ now()->toDateTimeString() }}" />
+            <livewire:course.assessment-course :assessmentCourse="$assessmentCourse" wire:key="{{ now()->toDateTimeString() }}" />
             @if (!$loop->last)
                 <hr>
             @endif

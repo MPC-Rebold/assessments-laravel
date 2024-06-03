@@ -56,6 +56,10 @@ class Kernel extends ConsoleKernel
                 continue;
             }
 
+            if ($assessmentCourse->is_active === false) {
+                continue;
+            }
+
             $dueAt = Carbon::parse($assessmentCourse->due_at);
 
             // if it was due within the last day, post the final grade

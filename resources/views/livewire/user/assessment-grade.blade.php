@@ -24,7 +24,7 @@ new class extends Component {
             $gradeResponse = CanvasService::gradeAssessmentForUser($this->assessmentCourse, auth()->user());
 
             if ($gradeResponse->status() !== 200) {
-                throw new Exception('Status: ' . $gradeResponse->status());
+                throw new Exception('Status: ' . $gradeResponse->status() . '. Ensure the user is enrolled in the associated course.');
             }
         } catch (Exception $e) {
             $this->notification()->error('Failed to submit to Canvas', $e->getMessage());
