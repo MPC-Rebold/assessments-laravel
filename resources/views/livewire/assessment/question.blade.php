@@ -50,9 +50,6 @@ new class extends Component {
 
     public function submit(): void
     {
-        \Log::info('submit');
-        \Log::info(auth()->user());
-
         if ($this->answer === '') {
             $this->notification()->warning('Answer cannot be empty');
             return;

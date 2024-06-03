@@ -210,7 +210,7 @@ class CanvasService
     /**
      * Edit an assignment
      *
-     * @param AssessmentCourse|array $assessmentCourse
+     * @param AssessmentCourse|array $assessmentCourse the AssessmentCourse to edit or an array with the course id and assignment id
      * @param array $data
      * @return Response
      */

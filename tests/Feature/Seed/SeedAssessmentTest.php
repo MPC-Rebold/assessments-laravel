@@ -69,8 +69,6 @@ test('master.upload-assessments creates single Assessment', function () {
     SeedService::deleteMaster($master);
 });
 
-// TODO uploading assessment to connected course changes the max points on canvas
-
 test('master.upload-assessments creates multiple Assessments', function () {
     $master = SeedService::createMaster('__NewMaster');
 
