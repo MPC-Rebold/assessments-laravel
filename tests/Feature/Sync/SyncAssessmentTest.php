@@ -10,6 +10,8 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\Volt\Volt;
 use Tests\SeedProtection;
 
+uses()->group('sync');
+
 beforeAll(function () {
     SeedProtection::backupSeed();
 });
@@ -74,4 +76,3 @@ test('master.upload-assessments creates single Assessment on connected Course an
 
     SeedService::deleteMaster($master);
 });
-

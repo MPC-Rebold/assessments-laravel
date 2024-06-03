@@ -157,6 +157,3 @@ test('Submitting Assessment to Canvas submits incomplete grade for Course with S
 
     SeedService::deleteMaster($master);
 });
-
-
-
