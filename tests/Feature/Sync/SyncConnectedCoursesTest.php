@@ -35,6 +35,7 @@ test('TESTING_CANVAS_COURSE to exist on canvas', function () {
     expect($availableCourseIds)->toContain(config('canvas.testing_course_id'))
         ->and($availableCourses->firstWhere('id', config('canvas.testing_course_id'))['name'])->toBe(config('canvas.testing_course_name'))
         ->and($availableAssessments->pluck('name'))->toContain(config('canvas.testing_assessment_name'))
+        ->and($availableAssessments->pluck('id'))->toContain(config('canvas.testing_assessment_id'))
         ->and($availableAssessments->pluck('name'))->not()->toContain('__NewAssessment');
 });
 
@@ -124,7 +125,57 @@ test('SyncService updateConnectedCourses disconnects Courses', function () {
     SeedService::deleteMaster($master);
 });
 
-test('Removing course from Canvas', function () {
-    SyncService::syncCourses();
+describe('Affecting Canvas Courses', function () {
+    afterEach(
+        function () {
+            // Refavorite Course
+            $favorite = CanvasService::favoriteCourse(config('canvas.testing_course_id'));
+            expect($favorite->status())->toBe(200);
+        }
+    );
 
+    test('Adding course in Canvas adds Course', function () {
+        // Unfavorite Course
+        $unfavorite = CanvasService::favoriteCourse(config('canvas.testing_course_id'), unfavorite: true);
+        expect($unfavorite->status())->toBe(200);
+
+        SyncService::syncCourses();
+
+        expect(Course::count())->toBe(0);
+
+        // Favorite Course
+        $favorite = CanvasService::favoriteCourse(config('canvas.testing_course_id'));
+        expect($favorite->status())->toBe(200);
+
+        SyncService::syncCourses();
+
+        expect(Course::count())->toBe(1)
+            ->and(Course::first()->title)->toBe(config('canvas.testing_course_name'));
+    });
+
+    test('Removing course from Canvas assigns missing course status to Master', function () {
+        // Favorite Course
+        $favorite = CanvasService::favoriteCourse(config('canvas.testing_course_id'));
+        expect($favorite->status())->toBe(200);
+
+        SyncService::syncCourses();
+
+        // Connect Course
+        $master = SeedService::createMaster('__NewMaster');
+        SeedService::createAssessment('__NewMaster', config('canvas.testing_assessment_name'), 'question@@answer@@question@@answer@@');
+        $testCourse = Course::firstWhere('title', config('canvas.testing_course_name'));
+        SyncService::updateConnectedCourses($master, collect([$testCourse]));
+
+        // Unfavorite Course
+        $unfavorite = CanvasService::favoriteCourse(config('canvas.testing_course_id'), unfavorite: true);
+        expect($unfavorite->status())->toBe(200);
+
+        // Sync
+        SyncService::sync();
+
+        $master->refresh();
+        expect($master->status->missing_courses->count())->toBe(1);
+
+        SeedService::deleteMaster($master);
+    });
 });

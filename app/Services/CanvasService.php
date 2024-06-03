@@ -79,7 +79,7 @@ class CanvasService
      * @param array $data
      * @return Response
      */
-    public static function post(string $path, array $data): Response
+    public static function post(string $path, array $data = []): Response
     {
         self::initialize();
 
@@ -88,6 +88,22 @@ class CanvasService
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ])->post(self::$apiUrl . '/api/v1/' . $path, $data);
+    }
+
+    /**
+     * Send a DELETE request to the Canvas API
+     *
+     * @param string $path
+     * @return Response
+     */
+    private static function delete(string $path): Response
+    {
+        self::initialize();
+
+        return Http::withToken(self::$apiToken)
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])->delete(self::$apiUrl . '/api/v1/' . $path);
     }
 
     /**
@@ -119,6 +135,11 @@ class CanvasService
             'courses',
             ['enrollment_type' => 'teacher', 'include[]' => 'favorites']
         );
+
+        if (config('app.env') === 'testing') {
+            \Log::info($teacherCourses->json());
+            return array_filter($teacherCourses->json(), (fn ($course) => $course['is_favorite'] && $course['name'] === config('canvas.testing_course_name')));
+        }
 
         return array_filter($teacherCourses->json(), (fn ($course) => $course['is_favorite']));
     }
@@ -177,6 +198,15 @@ class CanvasService
         }
 
         return self::put("courses/$courseId/assignments/$assignmentId", ['assignment' => $data]);
+    }
+
+    public static function favoriteCourse(int $courseId, bool $unfavorite = false): Response
+    {
+        if ($unfavorite) {
+            return self::delete("users/self/favorites/courses/$courseId");
+        }
+
+        return self::post("users/self/favorites/courses/$courseId");
     }
 
     /**
