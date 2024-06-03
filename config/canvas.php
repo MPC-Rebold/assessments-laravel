@@ -49,5 +49,16 @@ return [
     | This value is the assessment name for testing
     |
     */
+    'testing_assessment_id' => (int) env('TESTING_CANVAS_ASSESSMENT_ID', '__TestAssessment'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Canvas API Testing Assessment Name
+    |--------------------------------------------------------------------------
+    |
+    | This value is the assessment name for testing
+    |
+    */
     'testing_assessment_name' => env('TESTING_CANVAS_ASSESSMENT_NAME', '__TestAssessment'),
+
 ];

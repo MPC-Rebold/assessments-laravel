@@ -7,10 +7,10 @@ use App\Models\QuestionUser;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
+use GuzzleHttp\Promise\Promise;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use GuzzleHttp\Promise\Promise;
 
 /**
  * See https://canvas.instructure.com/doc/api/
@@ -124,6 +124,18 @@ class CanvasService
     }
 
     /**
+     * Gets an assignment from a course
+     *
+     * @param int $courseId
+     * @param int $assessmentId
+     * @return Response
+     */
+    public static function getAssignment(int $courseId, int $assessmentId): Response
+    {
+        return self::get("courses/$courseId/assignments/$assessmentId");
+    }
+
+    /**
      * Get the enrollments for a course
      *
      * @param int $courseId
@@ -150,14 +162,19 @@ class CanvasService
     /**
      * Edit an assignment
      *
-     * @param AssessmentCourse $assessmentCourse
+     * @param AssessmentCourse|array $assessmentCourse
      * @param array $data
      * @return Response
      */
-    public static function editAssignment(AssessmentCourse $assessmentCourse, array $data): Response
+    public static function editAssignment(AssessmentCourse|array $assessmentCourse, array $data): Response
     {
-        $courseId = $assessmentCourse->course->id;
-        $assignmentId = $assessmentCourse->assessment_canvas_id;
+        if (is_array($assessmentCourse)) {
+            $courseId = $assessmentCourse[0];
+            $assignmentId = $assessmentCourse[1];
+        } else {
+            $courseId = $assessmentCourse->course->id;
+            $assignmentId = $assessmentCourse->assessment_canvas_id;
+        }
 
         return self::put("courses/$courseId/assignments/$assignmentId", ['assignment' => $data]);
     }

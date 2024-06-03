@@ -8,7 +8,6 @@ use App\Livewire\Admin\Sync;
 use App\Models\Assessment;
 
 new class extends Component {
-
     public Master $master;
     public Collection $assessments;
 

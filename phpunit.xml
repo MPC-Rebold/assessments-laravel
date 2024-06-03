@@ -30,6 +30,7 @@
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="TESTING_CANVAS_COURSE_ID" value="9893"/>
         <env name="TESTING_CANVAS_COURSE_NAME" value="ENGR 20 Pilot"/>
+        <env name="TESTING_CANVAS_ASSESSMENT_ID" value="474326"/>
         <env name="TESTING_CANVAS_ASSESSMENT_NAME" value="__TestAssessment"/>
     </php>
 </phpunit>

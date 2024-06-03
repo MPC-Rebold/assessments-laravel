@@ -35,8 +35,9 @@ new class extends Component {
             @foreach ($missingCourses as $course)
                 <li>
                     <div>
-                        The course <b>{{ $course->title }}</b>
-                        was not found in Canvas. Try disconnecting it.
+                        The course <b>{{ $course->title }}</b>was not found in Canvas. Try adding it to <a
+                            target="_blank" href="{{ config('canvas.host') . '/courses' }}" class="underline">your
+                            favorites</a> or disconnecting it.
                     </div>
                 </li>
             @endforeach

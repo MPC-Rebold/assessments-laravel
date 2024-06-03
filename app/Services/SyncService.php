@@ -420,7 +420,6 @@ class SyncService
             ];
         }
 
-
         return $res;
     }
 

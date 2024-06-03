@@ -9,7 +9,6 @@ use App\Services\SyncService;
 use App\Services\SeedService;
 use Livewire\WithFileUploads;
 
-
 new class extends Component {
     use Actions;
     use WithFileUploads;
@@ -47,7 +46,7 @@ new class extends Component {
         </x-button>
     </div>
     <div class="overflow-hidden transition-all duration-500"
-         :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh] p-4 sm:px-6': open }">
+        :class="{ 'max-h-0 invisible': !open, 'max-h-[100vh] p-4 sm:px-6': open }">
 
         <form wire:submit="saveUploadedAssessments">
             @csrf
@@ -55,14 +54,14 @@ new class extends Component {
             <div class="flex items-center justify-between">
                 <div class="space-y-1">
                     <input type="file" wire:model.defer="uploadedAssessments" name="uploaded_assessments[]" multiple
-                           accept=".txt">
+                        accept=".txt">
                     @error('uploadedAssessments.*')
-                    <div class="text-negative-500">
-                        {{ $message }}</div>
+                        <div class="text-negative-500">
+                            {{ $message }}</div>
                     @enderror
                     @error('uploadedAssessments')
-                    <div class="text-negative-500">
-                        {{ $message }}</div>
+                        <div class="text-negative-500">
+                            {{ $message }}</div>
                     @enderror
                 </div>
                 <x-button positive type="submit" class="min-w-20">
