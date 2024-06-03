@@ -31,12 +31,14 @@ test('TESTING_CANVAS_COURSE to exist on canvas', function () {
     $availableCourses = collect(CanvasService::getCourses());
     $availableCourseIds = $availableCourses->pluck('id')->toArray();
     $availableAssessments = collect(CanvasService::getCourseAssignments(config('canvas.testing_course_id'))->json());
+    $enrolledUsers = CanvasService::getCourseEnrollments(config('canvas.testing_course_id'))->json();
 
     expect($availableCourseIds)->toContain(config('canvas.testing_course_id'))
         ->and($availableCourses->firstWhere('id', config('canvas.testing_course_id'))['name'])->toBe(config('canvas.testing_course_name'))
         ->and($availableAssessments->pluck('name'))->toContain(config('canvas.testing_assessment_name'))
         ->and($availableAssessments->pluck('id'))->toContain(config('canvas.testing_assessment_id'))
-        ->and($availableAssessments->pluck('name'))->not()->toContain('__NewAssessment');
+        ->and($availableAssessments->pluck('name'))->not()->toContain('__NewAssessment')
+        ->and(collect($enrolledUsers)->pluck('user.login_id')->toArray())->toContain(config('canvas.testing_enrolled_user_email'));
 });
 
 test('SyncService updateConnectedCourses connects Courses for non-existent canvas course', function () {
@@ -71,9 +73,8 @@ test('SyncService updateConnectedCourses connects Courses for existing canvas co
     SeedService::createAssessment('__NewMaster', config('canvas.testing_assessment_name'), 'question@@answer@@question@@answer@@');
 
     $testCourse = Course::firstWhere('title', config('canvas.testing_course_name'));
-    $enrolledUser = User::factory()->create();
-
-    $testCourse->update(['valid_students' => [$enrolledUser->email]]);
+    $enrolledUser = User::factory()->nonAdmin()->create(['email' => config('canvas.testing_enrolled_user_email')]);
+    $notEnrolledUser = User::factory()->nonAdmin()->create();
 
     SyncService::updateConnectedCourses($master, collect([$testCourse]));
 
@@ -91,7 +92,8 @@ test('SyncService updateConnectedCourses connects Courses for existing canvas co
 
         // Connects valid users
         ->and($testCourse->users->count())->toBe(1)
-        ->and($testCourse->users->first()->id)->toBe($enrolledUser->id);
+        ->and($testCourse->users->contains($enrolledUser))->toBeTrue()
+        ->and($testCourse->users->contains($notEnrolledUser))->toBeFalse();
 
     $canvasAssessment = CanvasService::getAssignment($testCourse->id, $testCourse->assessments->first()->pivot->assessment_canvas_id);
 

@@ -49,7 +49,7 @@ return [
     | This value is the assessment name for testing
     |
     */
-    'testing_assessment_id' => (int) env('TESTING_CANVAS_ASSESSMENT_ID', '__TestAssessment'),
+    'testing_assessment_id' => (int) env('TESTING_CANVAS_ASSESSMENT_ID'),
 
     /*
     |--------------------------------------------------------------------------
@@ -60,5 +60,15 @@ return [
     |
     */
     'testing_assessment_name' => env('TESTING_CANVAS_ASSESSMENT_NAME', '__TestAssessment'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Canvas API Testing Enrolled User Email
+    |--------------------------------------------------------------------------
+    |
+    | This value is the assessment name for testing
+    |
+    */
+    'testing_enrolled_user_email' => env('TESTING_CANVAS_ENROLL_USER_EMAIL'),
 
 ];
