@@ -56,6 +56,7 @@ test('SyncService updateConnectedCourses connects Courses for non-existent canva
     expect($master->courses->count())->toBe(1)
         ->and($master->courses->first()->title)->toBe(config('canvas.testing_course_name'))
         ->and($testCourse->master->title)->toBe('__NewMaster')
+        ->and($testCourse->assessmentCourses->count())->toBe(1)
         ->and($testCourse->assessments->count())->toBe(1)
         ->and($testCourse->assessments->first()->title)->toBe('__NewAssessment')
         ->and($testCourse->assessments->first()->pivot->assessment_canvas_id)->toBe(-1);
@@ -87,7 +88,7 @@ test('SyncService updateConnectedCourses connects Courses for existing canvas co
         // Connects to Master's Assessments
         ->and($testCourse->assessments->count())->toBe(1)
         ->and($testCourse->assessments->first()->title)->toBe(config('canvas.testing_assessment_name'))
-        ->and($testCourse->assessments->first()->pivot->assessment_canvas_id)->toBeGreaterThan(0)
+        ->and($testCourse->assessments->first()->pivot->assessment_canvas_id)->toBe(config('canvas.testing_assessment_id'))
         ->and($testCourse->id)->toBe(config('canvas.testing_course_id'))
 
         // Connects valid users
@@ -96,7 +97,6 @@ test('SyncService updateConnectedCourses connects Courses for existing canvas co
         ->and($testCourse->users->contains($notEnrolledUser))->toBeFalse();
 
     $canvasAssessment = CanvasService::getAssignment($testCourse->id, $testCourse->assessments->first()->pivot->assessment_canvas_id);
-
     expect($canvasAssessment->json()['points_possible'])->toBe(2.0);
 
     SeedService::deleteMaster($master);

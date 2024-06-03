@@ -23,8 +23,11 @@ new class extends Component {
     public bool $isPastDue;
     public int $dueAt;
 
-    public function mount(): void
+    public function mount(Question $question, Course $course): void
     {
+        $this->question = $question;
+        $this->course = $course;
+
         $this->isCorrect = $this->question->isCorrect(auth()->user(), $this->course);
         $this->guessesLeft = $this->question->getGuessesLeft(auth()->user(), $this->course);
         $this->feedback = str_repeat('_', strlen($this->question->answer));
@@ -47,6 +50,9 @@ new class extends Component {
 
     public function submit(): void
     {
+        \Log::info('submit');
+        \Log::info(auth()->user());
+
         if ($this->answer === '') {
             $this->notification()->warning('Answer cannot be empty');
             return;

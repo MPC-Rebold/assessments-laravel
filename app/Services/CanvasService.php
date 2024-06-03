@@ -91,6 +91,34 @@ class CanvasService
     }
 
     /**
+     * Awaits an async Canvas API request
+     *
+     * @throws Exception
+     */
+    public static function await(Response $response): Response
+    {
+        if ($response->status() !== 200) {
+            throw new Exception('Failed to await non OK response');
+        }
+
+        $url = $response->json()['url'];
+        $urlPath = str_replace('/api/v1/', '', parse_url($url, PHP_URL_PATH));
+
+        $startTimer = microtime(true);
+        $timeout = 30;
+
+        while (microtime(true) - $startTimer < $timeout) {
+            $response = self::get($urlPath);
+
+            if ($response->json()['workflow_state'] === 'completed') {
+                return $response;
+            }
+        }
+
+        throw new Exception('Timeout');
+    }
+
+    /**
      * Send a DELETE request to the Canvas API
      *
      * @param string $path
@@ -137,7 +165,6 @@ class CanvasService
         );
 
         if (config('app.env') === 'testing') {
-            \Log::info($teacherCourses->json());
             return array_filter($teacherCourses->json(), (fn ($course) => $course['is_favorite'] && $course['name'] === config('canvas.testing_course_name')));
         }
 
@@ -264,12 +291,26 @@ class CanvasService
     }
 
     /**
+     * Get the grade for a specific user in an assessment of a course
+     *
+     * @param int $courseId the course id
+     * @param int $assignmentId the assignment id
+     * @param int $userId the user id
+     * @return Response the response from the API
+     */
+    public static function getGrade(int $courseId, int $assignmentId, int $userId): Response
+    {
+        return self::get("courses/$courseId/assignments/$assignmentId/submissions/$userId");
+    }
+
+    /**
      * Grade an assessment for all users in the course
      *
      * @param AssessmentCourse $assessmentCourse the AssessmentCourse to grade
+     * @param bool $reset whether to reset the grades
      * @return Response the response from the API
      */
-    public static function gradeAssessment(AssessmentCourse $assessmentCourse): Response
+    public static function gradeAssessmentCourseForAllUsers(AssessmentCourse $assessmentCourse, bool $reset = false): Response
     {
         $users = $assessmentCourse->course->users;
 
@@ -278,7 +319,12 @@ class CanvasService
 
         $gradeData = [];
         foreach ($users as $user) {
-            $grade = $assessmentCourse->gradeForUser($user);
+            if ($reset) {
+                $grade = -1;
+            } else {
+                $grade = $assessmentCourse->gradeForUser($user);
+            }
+
             $userId = $user->canvas->canvas_id;
 
             $gradeData[$userId] = [
@@ -286,8 +332,7 @@ class CanvasService
             ];
         }
 
-        return self::post(
-            "courses/$courseId/assignments/$assignmentId/submissions/update_grades",
+        return self::post("courses/$courseId/assignments/$assignmentId/submissions/update_grades",
             [
                 'grade_data' => $gradeData,
             ]
@@ -326,6 +371,10 @@ class CanvasService
                 continue;
             }
 
+            if ($assessmentCourse->course->users->isEmpty()) {
+                continue;
+            }
+
             self::regradeAssessmentCourse($assessmentCourse, false);
         }
     }
@@ -346,10 +395,12 @@ class CanvasService
         }
 
         CanvasService::setMaxPoints($assessmentCourse);
-        $gradeAssessmentResponse = CanvasService::gradeAssessment($assessmentCourse);
 
-        if ($gradeAssessmentResponse->status() !== 200) {
-            throw new Exception('Failed to grade assessment');
-        }
+        $resetRequest = CanvasService::gradeAssessmentCourseForAllUsers($assessmentCourse, reset: true);
+        CanvasService::await($resetRequest);
+
+        $regradeRequest = CanvasService::gradeAssessmentCourseForAllUsers($assessmentCourse);
+        CanvasService::await($regradeRequest);
+
     }
 }

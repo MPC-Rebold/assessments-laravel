@@ -26,10 +26,10 @@ new class extends Component {
     public int $percentage;
     public int $points;
 
-    public function mount(): void
+    public function mount(AssessmentCourse $assessmentCourse): void
     {
-        $this->assessment_canvas_id = request()->route('assessmentId');
-        $this->assessmentCourse = AssessmentCourse::firstWhere('assessment_canvas_id', $this->assessment_canvas_id);
+        $this->assessment_canvas_id = $assessmentCourse->assessment_canvas_id;
+        $this->assessmentCourse = $assessmentCourse;
 
         $this->assessment = $this->assessmentCourse->assessment;
         $this->course = $this->assessmentCourse->course;
@@ -43,12 +43,10 @@ new class extends Component {
             $this->dueAt = null;
         }
 
-        $this->assessment_canvas_id = request()->route('assessmentId');
+        $this->isPastDue = $this->dueAt !== null && Carbon::parse($this->dueAt)->isPast();
 
         $this->points = $this->assessmentCourse->pointsForUser(auth()->user());
         $this->percentage = $this->assessmentCourse->percentageForUser(auth()->user()) * 100;
-
-        $this->isPastDue = $this->assessmentCourse->due_at !== null && Carbon::parse($this->assessmentCourse->due_at)->isPast();
     }
 
     #[On('refreshFooter')]
@@ -147,13 +145,13 @@ new class extends Component {
                 </div>
                 <script>
                     function scrollToQuestion(questionNumber) {
-                        const question = document.getElementById('question_' + questionNumber);
-                        const navbarHeight = document.querySelector('nav').offsetHeight;
+                        const question = document.getElementById("question_" + questionNumber);
+                        const navbarHeight = document.querySelector("nav").offsetHeight;
                         const y = question.getBoundingClientRect().top + window.scrollY -
                             navbarHeight - 20;
                         window.scrollTo({
                             top: y,
-                            behavior: 'smooth'
+                            behavior: "smooth"
                         });
                     }
                 </script>
