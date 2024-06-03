@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Promise\Promise;
 
 /**
  * See https://canvas.instructure.com/doc/api/
@@ -31,18 +32,26 @@ class CanvasService
      *
      * @param $path string the path to the API endpoint
      * @param $query array the query parameters
-     * @return Response the response from the API
+     * @param bool $async
+     * @return Response|Promise the response from the API
      */
-    public static function get(string $path, array $query = []): Response
+    public static function get(string $path, array $query = [], bool $async = false): Response|Promise
     {
         self::initialize();
 
-        return Http::withToken(self::$apiToken)
+        if ($async) {
+            $http = Http::async()->withToken(self::$apiToken);
+        } else {
+            $http = Http::withToken(self::$apiToken);
+        }
+
+        return $http
             ->withHeaders([
                 'Accept' => 'application/json',
             ])->withQueryParameters(
                 ['per_page' => 10_000] + $query
             )->get(self::$apiUrl . '/api/v1/' . $path);
+
     }
 
     /**
@@ -118,22 +127,24 @@ class CanvasService
      * Get the enrollments for a course
      *
      * @param int $courseId
-     * @return Response
+     * @param bool $async
+     * @return Response|Promise
      */
-    public static function getCourseEnrollments(int $courseId): Response
+    public static function getCourseEnrollments(int $courseId, bool $async = false): Response|Promise
     {
-        return self::get("courses/$courseId/enrollments");
+        return self::get("courses/$courseId/enrollments", async: $async);
     }
 
     /**
      * Get the assignments for a course
      *
      * @param int $courseId
-     * @return Response
+     * @param bool $async
+     * @return Response|Promise
      */
-    public static function getCourseAssignments(int $courseId): Response
+    public static function getCourseAssignments(int $courseId, bool $async = false): Response|Promise
     {
-        return self::get("courses/$courseId/assignments");
+        return self::get("courses/$courseId/assignments", async: $async);
     }
 
     /**

@@ -14,7 +14,9 @@ use App\Models\UserCanvas;
 use Carbon\Carbon;
 use DB;
 use Exception;
+use GuzzleHttp\Promise\Utils;
 use Illuminate\Support\Collection;
+use Throwable;
 
 class SyncService
 {
@@ -104,6 +106,7 @@ class SyncService
      *
      * @param Master $master the master to update connected courses for
      * @param Collection $courses the titles of the connected courses
+     *
      * @throws UserException
      */
     public static function updateConnectedCourses(Master $master, Collection $courses): void
@@ -172,20 +175,24 @@ class SyncService
      * @return array of Canvas courses
      *
      * @throws UserException if the number of Canvas courses is invalid
+     * @throws Throwable
      */
     public static function syncCourses(): array
     {
-        $canvasCourses = CanvasService::getCourses();
+        $canvasCourses = collect(CanvasService::getCourses());
 
-        if (empty($canvasCourses)) {
+        if ($canvasCourses->isEmpty()) {
             throw new UserException('No active courses found in Canvas');
-        } elseif (count($canvasCourses) > 10) {
+        } elseif ($canvasCourses->count() > 10) {
             throw new UserException('Too many active courses found in Canvas, please filter the courses in Canvas to 10 or less');
         }
 
+        $validStudentsCoursesForAllCourses = self::getValidStudentsAssessments($canvasCourses->pluck('id')->toArray());
+
         foreach ($canvasCourses as $canvasCourse) {
-            $validStudents = self::getValidStudents($canvasCourse);
-            $validAssessments = self::getValidAssessments($canvasCourse);
+            $validStudentsCourses = $validStudentsCoursesForAllCourses[$canvasCourse['id']];
+            $validStudents = $validStudentsCourses['valid_students'];
+            $validAssessments = $validStudentsCourses['valid_assessments'];
 
             Course::updateOrCreate(
                 ['id' => $canvasCourse['id']],
@@ -197,7 +204,7 @@ class SyncService
             );
         }
 
-        return $canvasCourses;
+        return $canvasCourses->toArray();
     }
 
     /**
@@ -385,14 +392,47 @@ class SyncService
     }
 
     /**
+     * @throws Throwable
+     */
+    private static function getValidStudentsAssessments(array $courseIds): array
+    {
+        $promises = [];
+
+        foreach ($courseIds as $courseId) {
+            $promises[] = CanvasService::getCourseEnrollments($courseId, true);
+            $promises[] = CanvasService::getCourseAssignments($courseId, true);
+        }
+
+        $responses = Utils::unwrap($promises);
+
+        $res = [];
+
+        for ($i = 0; $i < count($courseIds); $i++) {
+            $enrolled = $responses[$i * 2]->json();
+            $validStudents = self::getValidStudents($enrolled);
+
+            $canvasAssignments = $responses[$i * 2 + 1]->json();
+            $validAssessments = self::getValidAssessments($canvasAssignments);
+
+            $res[$courseIds[$i]] = [
+                'valid_students' => $validStudents,
+                'valid_assessments' => $validAssessments,
+            ];
+        }
+
+
+        return $res;
+    }
+
+    /**
      * Returns the valid students for a Canvas course
+     * Updates UserCanvas with the users
      *
-     * @param array $course the Canvas course object
+     * @param array $enrolled the enrolled students response
      * @return array of valid students on the Canvas course
      */
-    private static function getValidStudents(array $course): array
+    private static function getValidStudents(array $enrolled): array
     {
-        $enrolled = CanvasService::getCourseEnrollments($course['id'])->json();
         $validStudents = [];
         foreach ($enrolled as $enrollment) {
             $validStudents[] = $enrollment['user']['login_id'];
@@ -409,13 +449,13 @@ class SyncService
     /**
      * Returns the valid assessments for a Canvas course
      *
-     * @param array $course the Canvas course object
+     * @param array $canvasAssignments the Canvas assignments response
      * @return array of valid assessments on the Canvas course
      */
-    private static function getValidAssessments(array $course): array
+    private static function getValidAssessments(array $canvasAssignments): array
     {
         $validAssessments = [];
-        $canvasAssignments = CanvasService::getCourseAssignments($course['id'])->json();
+
         $canvasAssignmentsPublished = array_filter($canvasAssignments, function ($assignment) {
             return $assignment['published'];
         });

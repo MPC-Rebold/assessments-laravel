@@ -34,11 +34,12 @@ test('TESTING_CANVAS_COURSE to exist on canvas', function () {
 
     expect($availableCourseIds)->toContain(config('canvas.testing_course_id'))
         ->and($availableCourses->firstWhere('id', config('canvas.testing_course_id'))['name'])->toBe(config('canvas.testing_course_name'))
-        ->and($availableAssessments->pluck('name'))->toContain(config('canvas.testing_assessment_name'));
+        ->and($availableAssessments->pluck('name'))->toContain(config('canvas.testing_assessment_name'))
+        ->and($availableAssessments->pluck('name'))->not()->toContain('__NewAssessment');
 });
 
 test('SyncService updateConnectedCourses connects Courses', function () {
-    SyncService::sync();
+    SyncService::syncCourses();
 
     $master = SeedService::createMaster('__NewMaster');
     SeedService::createAssessment('__NewMaster', '__NewAssessment', 'question@@answer@@');
@@ -53,7 +54,9 @@ test('SyncService updateConnectedCourses connects Courses', function () {
         ->and($master->courses->first()->title)->toBe(config('canvas.testing_course_name'))
         ->and($testCourse->master->title)->toBe('__NewMaster')
         ->and($testCourse->assessments->count())->toBe(1)
-        ->and($testCourse->assessments->first()->title)->toBe('__NewAssessment');
+        ->and($testCourse->assessments->first()->title)->toBe('__NewAssessment')
+        ->and($testCourse->assessments->first()->pivot->assessment_canvas_id)->toBe(-1);
 
     SeedService::deleteMaster($master);
 });
+
