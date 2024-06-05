@@ -21,6 +21,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->call(function () {
+            Log::info('Schedule: attempted run');
+        })->everyMinute();
+
+        $schedule->call(function () {
             Log::info('Schedule: Backing up database');
             SeedService::backupDatabase();
             self::updateScheduleRunAt();

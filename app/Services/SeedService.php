@@ -247,6 +247,14 @@ class SeedService
     public static function uploadAssessments(Master $master, array $assessments): Collection
     {
         $existingNames = $master->assessments->pluck('title')->toArray();
+        $uploadedNamesExtensions = array_map(fn ($assessment) => pathinfo($assessment->getClientOriginalName(), PATHINFO_EXTENSION), $assessments);
+
+        foreach ($uploadedNamesExtensions as $extension) {
+            if ($extension !== 'txt') {
+                throw new UserException('Only .txt files are allowed');
+            }
+        }
+
         $uploadedNames = array_map(fn ($assessment) => trim(pathinfo($assessment->getClientOriginalName(), PATHINFO_FILENAME)), $assessments);
 
         if (in_array('', $uploadedNames)) {

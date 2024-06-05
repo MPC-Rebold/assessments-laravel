@@ -13,7 +13,7 @@ new class extends Component {
     use Actions;
     use WithFileUploads;
 
-    #[Validate(['uploadedAssessments' => 'required', 'uploadedAssessments.*' => 'file|mimes:txt'])]
+    #[Validate(['uploadedAssessments' => 'required', 'uploadedAssessments.*' => 'file'])]
     public array $uploadedAssessments;
 
     public Master $master;
