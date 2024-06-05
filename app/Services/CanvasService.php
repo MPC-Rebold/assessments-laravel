@@ -375,7 +375,11 @@ class CanvasService
                 continue;
             }
 
-            self::regradeAssessmentCourse($assessmentCourse, false);
+            if ($assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast()) {
+                continue;
+            }
+
+            self::regradeAssessmentCourse($assessmentCourse);
         }
     }
 
@@ -383,17 +387,12 @@ class CanvasService
      * Regrades the given assessment course
      *
      * @param AssessmentCourse $assessmentCourse
-     * @param bool $regradePastDue whether to regrade past due assessments
      * @return void
      *
      * @throws Exception if regrade fails
      */
-    public static function regradeAssessmentCourse(AssessmentCourse $assessmentCourse, bool $regradePastDue = true): void
+    public static function regradeAssessmentCourse(AssessmentCourse $assessmentCourse): void
     {
-        if (! $regradePastDue && $assessmentCourse->due_at && Carbon::parse($assessmentCourse->due_at)->isPast()) {
-            return;
-        }
-
         CanvasService::setMaxPoints($assessmentCourse);
 
         $resetRequest = CanvasService::gradeAssessmentCourseForAllUsers($assessmentCourse, reset: true);
