@@ -16,8 +16,12 @@ class ProviderController extends Controller
      * @param  $email  string the email to check
      * @return bool true if the email is an admin
      */
-    private function isAdmin(string $email): bool
+    public static function isAdmin(string $email): bool
     {
+        if (! $email) {
+            return false;
+        }
+
         $admins = file_get_contents(database_path('seed/admins.txt'));
         $admins = explode("\n", $admins);
         $admins = array_map('trim', $admins);

@@ -181,8 +181,8 @@ class SyncService
     {
         $canvasCourses = collect(CanvasService::getCourses());
 
-        if ($canvasCourses->count() > 10) {
-            throw new UserException('Too many active courses found in Canvas, please filter the courses in Canvas to 10 or less');
+        if ($canvasCourses->count() > 15) {
+            throw new UserException('Too many active courses found in Canvas, please filter the courses in Canvas to 15 or less');
         }
 
         $validStudentsCoursesForAllCourses = self::getValidStudentsAssessments($canvasCourses->pluck('id')->toArray());

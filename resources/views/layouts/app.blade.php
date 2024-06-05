@@ -7,9 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @hasSection('title')
-        <title>{{ config('app.name', 'Rebold') }} - @yield('title')</title>
+        <title>{{ config('app.name', 'Assessem') }} - @yield('title')</title>
     @else
-        <title>{{ config('app.name', 'Rebold') }}</title>
+        <title>{{ config('app.name', 'Assessem') }}</title>
     @endif
 
     <!-- Fonts -->

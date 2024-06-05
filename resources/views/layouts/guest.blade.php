@@ -7,9 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @hasSection('title')
-        <title>{{ config('app.name', 'Rebold') }} - @yield('title')</title>
+        <title>{{ config('app.name', 'Assessem') }} - @yield('title')</title>
     @else
-        <title>{{ config('app.name', 'Rebold') }}</title>
+        <title>{{ config('app.name', 'Assessem') }}</title>
     @endif
 
     <!-- Fonts -->
@@ -18,12 +18,12 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <wireui:scripts />
+    @wireUiScripts
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
-    <div class="flex min-h-screen flex-col items-center justify-center bg-slate-400 pb-16">
-        <x-application-logo-full class="w-80 select-none fill-current" />
+    <div class="flex min-h-screen flex-col items-center justify-center bg-slate-400 pb-16 space-y-8">
+        <x-application-logo-full class="w-[500px] select-none max-w-[90vw]" />
         <div class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-sm sm:rounded-lg">
             {{ $slot }}
         </div>
