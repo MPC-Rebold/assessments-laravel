@@ -22,8 +22,8 @@
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
-    <div class="flex min-h-screen flex-col items-center justify-center bg-slate-400 pb-16 space-y-8">
-        <x-application-logo-full class="w-[500px] select-none max-w-[90vw]" />
+    <div class="flex min-h-screen flex-col items-center justify-center space-y-8 bg-slate-400 pb-16">
+        <x-application-logo-full class="w-[500px] max-w-[90vw] select-none" />
         <div class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-sm sm:rounded-lg">
             {{ $slot }}
         </div>
