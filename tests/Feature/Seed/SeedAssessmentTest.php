@@ -10,20 +10,12 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\Volt\Volt;
 use Tests\SeedProtection;
 
-beforeAll(function () {
-    SeedProtection::backupSeed();
-});
-
 beforeEach(function () {
     SeedProtection::preTest();
 });
 
 afterEach(function () {
     SeedProtection::postTest();
-});
-
-afterAll(function () {
-    SeedProtection::restoreSeed();
 });
 
 test('SeedService createAssessment creates Assessment in database and storage', function () {

@@ -4,7 +4,6 @@ namespace App\Util;
 
 use App\Models\Assessment;
 use App\Models\Master;
-use Exception;
 
 class FileHelper
 {
@@ -78,7 +77,7 @@ class FileHelper
      */
     public static function getAssessmentPathByTitles(string $masterTitle, string $assessmentTitle): string
     {
-        return database_path('seed/' . $masterTitle . '/' . $assessmentTitle . '.txt');
+        return config('seed.seed_path') . '/' . $masterTitle . '/' . $assessmentTitle . '.txt';
     }
 
     /**
@@ -86,8 +85,6 @@ class FileHelper
      *
      * @param Master|string $master the master to get the path of as a title string or a Master object
      * @return string the path of the master in the seed directory
-     *
-     * @throws Exception if the master title is empty
      */
     public static function getMasterPath(Master|string $master): string
     {
@@ -97,10 +94,16 @@ class FileHelper
             $masterTitle = $master;
         }
 
-        if (! trim($masterTitle)) {
-            throw new Exception('Master title is required');
-        }
+        return config('seed.seed_path') . '/' . $masterTitle;
+    }
 
-        return database_path('seed/' . $masterTitle);
+    /**
+     * Returns the path of the admin file
+     *
+     * @return string the path of the admin file
+     */
+    public static function getAdminFilePath(): string
+    {
+        return config('seed.seed_path') . '/admin.txt';
     }
 }

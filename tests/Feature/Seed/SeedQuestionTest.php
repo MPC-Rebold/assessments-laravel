@@ -10,20 +10,12 @@ use App\Services\SeedService;
 use Livewire\Volt\Volt;
 use Tests\SeedProtection;
 
-beforeAll(function () {
-    SeedProtection::backupSeed();
-});
-
 beforeEach(function () {
     SeedProtection::preTest();
 });
 
 afterEach(function () {
     SeedProtection::postTest();
-});
-
-afterAll(function () {
-    SeedProtection::restoreSeed();
 });
 
 test('Submitting Question answer creates question with correct answer in database', function () {
@@ -34,7 +26,7 @@ test('Submitting Question answer creates question with correct answer in databas
     AssessmentCourse::factory()->create(['course_id' => $course->id, 'assessment_id' => $assessment->id, 'assessment_canvas_id' => 1, 'due_at' => now()->addDay()]);
 
     $enrolledUser = User::factory()->nonAdmin()->create();
-    $course->users()->attach($enrolledUser->id);
+    $course->enrollUser($enrolledUser);
 
     $this->actingAs($enrolledUser);
     Volt::test('assessment.question', ['question' => $question, 'course' => $course])
@@ -58,7 +50,7 @@ test('Submitting Question answer creates question with incorrect answer in datab
     AssessmentCourse::factory()->create(['course_id' => $course->id, 'assessment_id' => $assessment->id, 'assessment_canvas_id' => 1, 'due_at' => now()->addDay()]);
 
     $enrolledUser = User::factory()->nonAdmin()->create();
-    $course->users()->attach($enrolledUser->id);
+    $course->enrollUser($enrolledUser);
 
     $this->actingAs($enrolledUser);
     Volt::test('assessment.question', ['question' => $question, 'course' => $course])

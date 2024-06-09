@@ -7,20 +7,12 @@ use App\Services\SeedService;
 use Livewire\Volt\Volt;
 use Tests\SeedProtection;
 
-beforeAll(function () {
-    SeedProtection::backupSeed();
-});
-
 beforeEach(function () {
     SeedProtection::preTest();
 });
 
 afterEach(function () {
     SeedProtection::postTest();
-});
-
-afterAll(function () {
-    SeedProtection::restoreSeed();
 });
 
 test('SeedService createMaster creates Master in database and storage', function () {

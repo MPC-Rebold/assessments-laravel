@@ -168,7 +168,7 @@ new class extends Component {
     @else
         <footer class="fixed bottom-0 mx-auto w-full bg-positive-500 px-4 py-0 shadow-inner sm:px-6 lg:px-8">
             <div class="flex justify-center text-white">
-                Practice Mode
+                PRACTICE MODE
             </div>
         </footer>
     @endif

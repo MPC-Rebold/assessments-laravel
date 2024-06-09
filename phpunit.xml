@@ -33,5 +33,6 @@
         <env name="TESTING_CANVAS_ASSESSMENT_ID" value="474326"/>
         <env name="TESTING_CANVAS_ASSESSMENT_NAME" value="__TestAssessment"/>
         <env name="TESTING_CANVAS_ENROLL_USER_EMAIL" value="awang6015@mpc.edu"/>
+        <env name="SEED_PATH" value="./storage/tmp/test_seed"/>
     </php>
 </phpunit>

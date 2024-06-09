@@ -46,4 +46,9 @@ class Course extends Model
     {
         return $this->hasMany(AssessmentCourse::class);
     }
+
+    public function enrollUser(User $user): void
+    {
+        $this->users()->attach($user);
+    }
 }

@@ -11,20 +11,12 @@ use Tests\SeedProtection;
 
 uses()->group('sync');
 
-beforeAll(function () {
-    SeedProtection::backupSeed();
-});
-
 beforeEach(function () {
     SeedProtection::preTest();
 });
 
 afterEach(function () {
     SeedProtection::postTest();
-});
-
-afterAll(function () {
-    SeedProtection::restoreSeed();
 });
 
 test('TESTING_CANVAS_COURSE to exist on canvas', function () {

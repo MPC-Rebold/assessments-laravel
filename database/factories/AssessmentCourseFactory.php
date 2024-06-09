@@ -43,4 +43,31 @@ class AssessmentCourseFactory extends Factory
             ];
         });
     }
+
+    public function pastDueDate(): AssessmentCourseFactory
+    {
+        return $this->state(function () {
+            return [
+                'due_at' => Carbon::now()->subYear(),
+            ];
+        });
+    }
+
+    public function futureDueDate(): AssessmentCourseFactory
+    {
+        return $this->state(function () {
+            return [
+                'due_at' => Carbon::now()->addYear(),
+            ];
+        });
+    }
+
+    public function nullDueDate(): AssessmentCourseFactory
+    {
+        return $this->state(function () {
+            return [
+                'due_at' => null,
+            ];
+        });
+    }
 }
