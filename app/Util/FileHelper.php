@@ -104,6 +104,6 @@ class FileHelper
      */
     public static function getAdminFilePath(): string
     {
-        return config('seed.seed_path') . '/admin.txt';
+        return config('seed.seed_path') . '/admins.txt';
     }
 }
