@@ -11,20 +11,12 @@ use App\Services\SeedService;
 use App\Services\SyncService;
 use Tests\SeedProtection;
 
-beforeAll(function () {
-    SeedProtection::backupSeed();
-});
-
 beforeEach(function () {
     SeedProtection::preTest();
 });
 
 afterEach(function () {
     SeedProtection::postTest();
-});
-
-afterAll(function () {
-    SeedProtection::restoreSeed();
 });
 
 test('turning SpecificationGrading on adjusts Course settings', function () {

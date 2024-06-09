@@ -12,20 +12,12 @@ use Tests\SeedProtection;
 
 uses()->group('sync');
 
-beforeAll(function () {
-    SeedProtection::backupSeed();
-});
-
 beforeEach(function () {
     SeedProtection::preTest();
 });
 
 afterEach(function () {
     SeedProtection::postTest();
-});
-
-afterAll(function () {
-    SeedProtection::restoreSeed();
 });
 
 test('master.upload-assessments creates single Assessment and connects to connected Courses and sets max points', function () {

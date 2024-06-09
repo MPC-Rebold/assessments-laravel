@@ -10,10 +10,6 @@ use Tests\SeedProtection;
 
 uses()->group('sync');
 
-beforeAll(function () {
-    SeedProtection::backupSeed();
-});
-
 beforeEach(function () {
     SeedProtection::preTest();
 });
@@ -22,12 +18,8 @@ afterEach(function () {
     SeedProtection::postTest();
 });
 
-afterAll(function () {
-    SeedProtection::restoreSeed();
-});
-
 test('Sync after creating master directory creates Master in database', function () {
-    mkdir(database_path('seed/__NewMaster'));
+    mkdir(config('seed.seed_path') . '/__NewMaster');
 
     SyncService::sync();
 
@@ -41,7 +33,7 @@ test('Sync after creating master directory creates Master in database', function
 test('Sync after deleting master directory assigns missing status', function () {
     $createdMaster = SeedService::createMaster('__NewMaster');
 
-    rmdir(database_path('seed/__NewMaster'));
+    rmdir(config('seed.seed_path'). '/__NewMaster');
 
     SyncService::sync();
 
@@ -53,7 +45,7 @@ test('Sync after deleting master directory assigns missing status', function () 
 test('Sync after creating assessment file creates Assessment with Questions in database', function () {
     $createdMaster = SeedService::createMaster('__NewMaster');
 
-    file_put_contents(database_path('seed/__NewMaster/__NewAssessment.txt'), "question\n@@answer@@");
+    file_put_contents(config('seed.seed_path') . '/__NewMaster/__NewAssessment.txt', "question\n@@answer@@");
 
     SyncService::sync();
 

@@ -14,20 +14,12 @@ use Tests\SeedProtection;
 
 uses()->group('sync');
 
-beforeAll(function () {
-    SeedProtection::backupSeed();
-});
-
 beforeEach(function () {
     SeedProtection::preTest();
 });
 
 afterEach(function () {
     SeedProtection::postTest();
-});
-
-afterAll(function () {
-    SeedProtection::restoreSeed();
 });
 
 test('Submitting Assessment to Canvas submits positive point grade for Course with SpecificationSetting off', function () {

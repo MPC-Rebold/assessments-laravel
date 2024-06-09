@@ -117,11 +117,11 @@ new class extends Component {
                                     class="h-5 w-5 cursor-pointer text-gray-500 transition-all hover:text-negative-500"
                                     wire:click="deleteAttempt({{ $attempt->id }})" />
                                 <div>
-                                    {{ Carbon::parse($attempt->created_at)->format('Y-m-d H:i:s T') }}
+                                    {{ Carbon::parse($attempt->created_at)->setTimezone('PST')->format('Y-m-d H:i:s T') }}
                                 </div>
                             </div>
                             <div class="flex items-center space-x-4">
-                                <div>{{ $attempt->answer }}</div>
+                                <div class="whitespace-pre font-mono">{{ $attempt->answer }}</div>
                                 @if ($attempt->is_correct)
                                     <x-icon name="check" class="h-5 w-5 text-positive-400" solid />
                                 @else

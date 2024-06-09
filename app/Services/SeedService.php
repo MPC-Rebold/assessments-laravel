@@ -20,7 +20,7 @@ class SeedService
      */
     public static function getMasters(): array
     {
-        return array_map('basename', glob(database_path('seed') . '/*', GLOB_ONLYDIR));
+        return array_map('basename', glob(config('seed.seed_path') . '/*', GLOB_ONLYDIR));
     }
 
     /**
@@ -91,12 +91,12 @@ class SeedService
      */
     public static function restore(Master $master): void
     {
-        if (! is_dir(database_path('seed'))) {
-            mkdir(database_path('seed'));
+        if (! is_dir(config('seed.seed_path'))) {
+            mkdir(config('seed.seed_path'));
         }
 
-        if (! is_dir(database_path('seed/' . $master->title))) {
-            mkdir(database_path('seed/' . $master->title));
+        if (! is_dir(FileHelper::getMasterPath($master))) {
+            mkdir(FileHelper::getMasterPath($master));
         }
 
         foreach ($master->assessments as $assessment) {
@@ -132,7 +132,7 @@ class SeedService
      */
     public static function getAdmins(): array
     {
-        $admins = file_get_contents(database_path('seed/admins.txt'));
+        $admins = file_get_contents(FileHelper::getAdminFilePath());
         $admins = explode("\n", $admins);
 
         return array_filter(array_map('trim', $admins));
@@ -369,7 +369,7 @@ class SeedService
         }
 
         $oldPath = FileHelper::getAssessmentPath($assessment);
-        $newPath = database_path('seed/' . $assessment->master->title . '/' . $newTitle . '.txt');
+        $newPath = config('seed.seed_path') . '/' . $assessment->master->title . '/' . $newTitle . '.txt';
         $existingAssessment = Assessment::where([
             ['title', $newTitle],
             ['master_id', $assessment->master_id],

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Util\FileHelper;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -22,7 +23,7 @@ class ProviderController extends Controller
             return false;
         }
 
-        $admins = file_get_contents(database_path('seed/admins.txt'));
+        $admins = file_get_contents(FileHelper::getAdminFilePath());
         $admins = explode("\n", $admins);
         $admins = array_map('trim', $admins);
 

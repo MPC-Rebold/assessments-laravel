@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\UserException;
 use App\Models\AssessmentCourse;
 use App\Models\QuestionUser;
 use App\Models\User;
@@ -115,7 +116,7 @@ class CanvasService
             }
         }
 
-        throw new Exception('Timeout');
+        throw new UserException('Timeout');
     }
 
     /**
@@ -395,11 +396,19 @@ class CanvasService
     {
         CanvasService::setMaxPoints($assessmentCourse);
 
-        $resetRequest = CanvasService::gradeAssessmentCourseForAllUsers($assessmentCourse, reset: true);
-        CanvasService::await($resetRequest);
+        try {
+            $resetRequest = CanvasService::gradeAssessmentCourseForAllUsers($assessmentCourse, reset: true);
+            CanvasService::await($resetRequest);
+        } catch (UserException) {
+        } catch (Exception $e) {
+            CanvasService::gradeAssessmentCourseForAllUsers($assessmentCourse);
+            throw new Exception("Failed to reset grades for assessment course: $e");
+        }
 
-        $regradeRequest = CanvasService::gradeAssessmentCourseForAllUsers($assessmentCourse);
-        CanvasService::await($regradeRequest);
-
+        try {
+            $regradeRequest = CanvasService::gradeAssessmentCourseForAllUsers($assessmentCourse);
+            CanvasService::await($regradeRequest);
+        } catch (UserException) {
+        }
     }
 }
