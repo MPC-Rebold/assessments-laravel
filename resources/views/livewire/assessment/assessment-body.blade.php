@@ -20,7 +20,7 @@ new class extends Component {
     public Course $course;
     public Collection $questions;
 
-    public string|null $dueAt;
+    public Carbon|null $dueAt;
     public bool $isPastDue;
 
     public int $percentage;
@@ -36,9 +36,7 @@ new class extends Component {
         $this->questions = $this->assessment->questions->sortBy('number');
 
         if ($this->assessmentCourse->due_at) {
-            $this->dueAt = Carbon::parse($this->assessmentCourse->due_at)
-                ->setTimezone('PST')
-                ->format('M j, g:i A T');
+            $this->dueAt = Carbon::parse($this->assessmentCourse->due_at)->setTimezone('PST');
         } else {
             $this->dueAt = null;
         }
@@ -94,7 +92,7 @@ new class extends Component {
             <div class="flex flex-wrap items-baseline justify-between gap-2 text-nowrap">
                 <h1 class="text-2xl">{{ $assessment->title }}</h1>
                 <div class="flex items-baseline text-slate-800">
-                    Due at: {{ $dueAt ?? 'No due date' }}
+                    Due at: {{ $dueAt ? $dueAt->format('M j, g:i A T') : 'No due date' }}
                 </div>
             </div>
             <hr class="border-2">
