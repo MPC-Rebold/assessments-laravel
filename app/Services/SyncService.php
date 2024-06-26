@@ -354,7 +354,7 @@ class SyncService
             foreach ($validAssessments as $validAssessment) {
                 if ($assessment->title === $validAssessment['title']) {
                     $assessment_canvas_id = $validAssessment['canvas_id'];
-                    $due_at = $validAssessment['due_at'];
+                    $due_at = $validAssessment['lock_at'];
                     break;
                 }
             }
@@ -462,6 +462,7 @@ class SyncService
                 'canvas_id' => $canvasAssignment['id'],
                 'title' => $canvasAssignment['name'],
                 'due_at' => $canvasAssignment['due_at'],
+                'lock_at' => $canvasAssignment['lock_at'],
             ];
         }
 
