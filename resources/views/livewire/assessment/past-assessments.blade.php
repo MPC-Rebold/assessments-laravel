@@ -24,8 +24,7 @@ new class extends Component {
             ->user()
             ->courses->find($this->courseId)
             ->assessmentCourses->filter(fn($assessmentCourse) => $assessmentCourse->isPastDue())
-            ->sortBy('due_at')
-            ->take(4);
+            ->sortBy('due_at');
     }
 }; ?>
 
