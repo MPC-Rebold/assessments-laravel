@@ -13,10 +13,30 @@ new class extends Component {
     public Collection $activeAssessmentCourses;
     public Collection $inactiveAssessmentCourses;
 
+    private function sortAssessmentCourses(Collection $assessmentCourses): Collection
+    {
+        $withDueAt = $assessmentCourses->whereNotNull('due_at')->sortBy('due_at');
+        $withoutDueAt = $assessmentCourses->whereNull('due_at')->sort(function (AssessmentCourse $a, AssessmentCourse $b) {
+            $titleA = $a->assessment->title;
+            $titleB = $b->assessment->title;
+
+            preg_match('/\d+$/', $titleA, $matchesA);
+            preg_match('/\d+$/', $titleB, $matchesB);
+
+            if (!empty($matchesA) && !empty($matchesB)) {
+                return (int)$matchesA[0] <=> (int)$matchesB[0];
+            }
+
+            return $titleA <=> $titleB;
+        });
+
+        return $withDueAt->concat($withoutDueAt);
+    }
+
     public function mount(Collection $assessmentCourses): void
     {
         $validAssessmentCourses = $assessmentCourses->where('assessment_canvas_id', '!=', -1);
-        $this->assessmentCourses = $validAssessmentCourses->whereNotNull('due_at')->sortBy('due_at')->concat($validAssessmentCourses->whereNull('due_at')->sortBy('title'));
+        $this->assessmentCourses = $this->sortAssessmentCourses($validAssessmentCourses);
 
         $this->activeAssessmentCourses = $this->assessmentCourses->where('is_active', 1);
         $this->inactiveAssessmentCourses = $this->assessmentCourses->where('is_active', 0);
@@ -26,7 +46,8 @@ new class extends Component {
 <div class="space-y-4">
     @if ($assessmentCourses->isNotEmpty())
         @foreach ($activeAssessmentCourses as $assessmentCourse)
-            <livewire:assessment.assessment-card-active :assessmentCourse="$assessmentCourse" :key="$assessmentCourse->id" />
+            <livewire:assessment.assessment-card-active :assessmentCourse="$assessmentCourse"
+                                                        :key="$assessmentCourse->id" />
         @endforeach
         @if ($inactiveAssessmentCourses->isNotEmpty())
             <div x-data="{ open: false }">
@@ -39,16 +60,17 @@ new class extends Component {
                         <div class="flex items-center space-x-2">
                             <div :class="{ 'rotate-180': open }" class="transition-transform ease-in-out">
                                 <x-icon name="chevron-down"
-                                    class="h-5 w-5 transition-all ease-in-out group-hover:scale-125" />
+                                        class="h-5 w-5 transition-all ease-in-out group-hover:scale-125" />
                             </div>
                         </div>
                     </div>
                 </button>
                 <div :class="{ 'max-h-0 invisible': !open, 'max-h-[999vh] py-4': open }"
-                    class="overflow-hidden transition-all duration-300 ease-in-out">
+                     class="overflow-hidden transition-all duration-300 ease-in-out">
                     <div class="space-y-4">
                         @foreach ($inactiveAssessmentCourses as $assessmentCourse)
-                            <livewire:assessment.assessment-card-inactive :assessmentCourse="$assessmentCourse" :key="$assessmentCourse->id" />
+                            <livewire:assessment.assessment-card-inactive :assessmentCourse="$assessmentCourse"
+                                                                          :key="$assessmentCourse->id" />
                         @endforeach
                     </div>
                 </div>
