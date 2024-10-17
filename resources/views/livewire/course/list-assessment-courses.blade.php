@@ -14,7 +14,19 @@ new class extends Component {
     public function mount(Course $course): void
     {
         $this->course = $course;
-        $this->assessmentCourses = $course->assessmentCourses;
+        $this->assessmentCourses = $course->assessmentCourses->sort(function (AssessmentCourse $a, AssessmentCourse $b) {
+            $titleA = $a->assessment->title;
+            $titleB = $b->assessment->title;
+
+            preg_match('/\d+$/', $titleA, $matchesA);
+            preg_match('/\d+$/', $titleB, $matchesB);
+
+            if (!empty($matchesA) && !empty($matchesB)) {
+                return (int)$matchesA[0] <=> (int)$matchesB[0];
+            }
+
+            return $titleA <=> $titleB;
+        });
     }
 }; ?>
 
