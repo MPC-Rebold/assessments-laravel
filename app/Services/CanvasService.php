@@ -352,7 +352,7 @@ class CanvasService
 
         return self::editAssignment($assessmentCourse,
             [
-                'points_possible' => $is_specification ? 0 : $assessmentCourse->assessment->questionCount(),
+                'points_possible' => $is_specification ? 1 : $assessmentCourse->assessment->questionCount(),
                 'grading_type' => $is_specification ? 'pass_fail' : 'points',
             ]
         );
