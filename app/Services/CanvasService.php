@@ -160,16 +160,27 @@ class CanvasService
      */
     public static function getCourses(): array
     {
-        $teacherCourses = self::get(
-            'courses',
-            ['enrollment_type' => 'teacher', 'include[]' => 'favorites']
-        );
+        $courses = [];
 
-        if (config('app.env') === 'testing') {
-            return array_filter($teacherCourses->json(), (fn ($course) => $course['is_favorite'] && $course['name'] === config('canvas.testing_course_name')));
+        $params = [
+            'enrollment_type' => 'teacher',
+            'include[]' => 'favorites',
+            'page' => 1,
+        ];
+
+        while (true) {
+            $response = self::get('courses', $params);
+            $courses = array_merge($courses, $response->json());
+
+            $link = $response->header('link') ?: '';
+            if (str_contains($link, 'rel="next"')) {
+                $params['page']++;
+            } else {
+                break;
+            }
         }
 
-        return array_filter($teacherCourses->json(), (fn ($course) => $course['is_favorite']));
+        return array_filter($courses, fn ($c) => $c['is_favorite']);
     }
 
     /**
