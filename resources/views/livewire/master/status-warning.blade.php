@@ -35,7 +35,7 @@ new class extends Component {
             @foreach ($missingCourses as $course)
                 <li>
                     <div>
-                        The course <b>{{ $course->title }}</b>was not found in Canvas. Try adding it to <a
+                        The course <b>{{ $course->title }}</b> was not found in Canvas. Try adding it to <a
                             target="_blank" href="{{ config('canvas.host') . '/courses' }}" class="underline">your
                             favorites</a> or disconnecting it.
                     </div>
@@ -45,9 +45,8 @@ new class extends Component {
                 <li>
                     <div>
                         The assessment <b>{{ $assessment->title }}</b> of course
-                        <b>{{ Course::find($assessment->pivot->course_id ?? $assessment->pivot['course_id'])->title }}</b>
-                        was not found in Canvas. It will not be available to
-                        students.
+                        <b>{{ Course::find($assessment->pivot->course_id ?? $assessment->pivot['course_id'])->title }}</b> was
+                        not found in Canvas. It will not be available to students.
                     </div>
                 </li>
             @endforeach
