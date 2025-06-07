@@ -49,7 +49,7 @@ new class extends Component {
                     <div
                         class="group flex flex-wrap items-center justify-between gap-4 rounded-lg px-4 py-3 transition-all hover:bg-gray-200 hover:shadow sm:px-6">
                         <div class="flex items-center space-x-2">
-                            <x-avatar xs :src="$enrolledStudent->avatar" />
+                            <x-avatar xs :src="$enrolledStudent->avatar" class="shrink-0" />
                             <div class="group-hover:underline">
                                 {{ $enrolledStudent->email }}
                             </div>
@@ -63,7 +63,7 @@ new class extends Component {
                                 </p>
                             </div>
                             <x-icon name="chevron-right"
-                                class="h-5 text-gray-500 transition-all group-hover:translate-x-1 group-hover:scale-110" />
+                                    class="h-5 text-gray-500 transition-all group-hover:translate-x-1 group-hover:scale-110" />
                         </div>
                     </div>
                 </a>

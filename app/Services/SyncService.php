@@ -432,10 +432,16 @@ class SyncService
     {
         $validStudents = [];
         foreach ($enrolled as $enrollment) {
-            $validStudents[] = $enrollment['user']['login_id'];
+            $normalizedEmail = preg_replace(
+                '/^NORMALIZATION-COLLISION-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-(.+)$/',
+                '$1',
+                $enrollment['user']['login_id']
+            );
+
+            $validStudents[] = $normalizedEmail;
 
             UserCanvas::updateOrCreate(
-                ['user_email' => $enrollment['user']['login_id']],
+                ['user_email' => $normalizedEmail],
                 ['canvas_id' => $enrollment['user']['id']]
             );
         }
