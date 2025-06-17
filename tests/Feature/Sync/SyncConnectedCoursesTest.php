@@ -30,7 +30,7 @@ test('TESTING_CANVAS_COURSE to exist on canvas', function () {
         ->and($availableAssessments->pluck('name'))->toContain(config('canvas.testing_assessment_name'))
         ->and($availableAssessments->pluck('id'))->toContain(config('canvas.testing_assessment_id'))
         ->and($availableAssessments->pluck('name'))->not()->toContain('__NewAssessment')
-        ->and(collect($enrolledUsers)->pluck('user.login_id')->toArray())->toContain(config('canvas.testing_enrolled_user_email'));
+        ->and(collect($enrolledUsers)->pluck('user.email')->toArray())->toContain(config('canvas.testing_enrolled_user_email'));
 });
 
 test('SyncService updateConnectedCourses connects Courses for non-existent canvas course', function () {
