@@ -397,7 +397,7 @@ class SyncService
         $promises = [];
 
         foreach ($courseIds as $courseId) {
-            $promises[] = CanvasService::getCourseEnrollments($courseId, true);
+            $promises[] = CanvasService::getCourseUsers($courseId, true);
             $promises[] = CanvasService::getCourseAssignments($courseId, true);
         }
 
@@ -431,13 +431,19 @@ class SyncService
     private static function getValidStudents(array $enrolled): array
     {
         $validStudents = [];
-        foreach ($enrolled as $enrollment) {
-            $validStudents[] = $enrollment['user']['email'];
+        foreach ($enrolled as $user) {
+
+            if (! isset($user['email'])) {
+                continue; // Skip users without an associated email
+            }
+
+            $validStudents[] = $user['email'];
 
             UserCanvas::updateOrCreate(
-                ['user_email' => $enrollment['user']['email']],
-                ['canvas_id' => $enrollment['user']['id']]
+                ['user_email' => $user['email']],
+                ['canvas_id' => $user['id']]
             );
+
         }
 
         return $validStudents;

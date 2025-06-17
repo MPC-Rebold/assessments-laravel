@@ -196,15 +196,15 @@ class CanvasService
     }
 
     /**
-     * Get the enrollments for a course
+     * Get the enrolled users for a course
      *
      * @param int $courseId
      * @param bool $async
      * @return Response|Promise
      */
-    public static function getCourseEnrollments(int $courseId, bool $async = false): Response|Promise
+    public static function getCourseUsers(int $courseId, bool $async = false): Response|Promise
     {
-        return self::get("courses/$courseId/enrollments", async: $async);
+        return self::get("courses/$courseId/users", async: $async);
     }
 
     /**

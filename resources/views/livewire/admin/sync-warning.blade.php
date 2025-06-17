@@ -7,10 +7,10 @@ use App\Models\Settings;
 new class extends Component {
     public bool $scheduleIsRunning;
 
-    public function mount()
+    public function mount(): void
     {
         $scheduleLastRun = Settings::first()->last_schedule_run_at;
-        //schedule has been run in the last 12 hours or is null
+        // the schedule has been run in the last 12 hours or is null
         $this->scheduleIsRunning = $scheduleLastRun === null || Carbon::parse($scheduleLastRun)->diffInHours(Carbon::now()) < 12;
     }
 }; ?>
