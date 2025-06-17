@@ -23,7 +23,7 @@ test('TESTING_CANVAS_COURSE to exist on canvas', function () {
     $availableCourses = collect(CanvasService::getCourses());
     $availableCourseIds = $availableCourses->pluck('id')->toArray();
     $availableAssessments = collect(CanvasService::getCourseAssignments(config('canvas.testing_course_id'))->json());
-    $enrolledUsers = CanvasService::getCourseEnrollments(config('canvas.testing_course_id'))->json();
+    $enrolledUsers = CanvasService::getCourseUsers(config('canvas.testing_course_id'))->json();
 
     expect($availableCourseIds)->toContain(config('canvas.testing_course_id'))
         ->and($availableCourses->firstWhere('id', config('canvas.testing_course_id'))['name'])->toBe(config('canvas.testing_course_name'))
